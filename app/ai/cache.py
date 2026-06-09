@@ -13,6 +13,7 @@
   - openai / gms: 자동 활성화 — 중복 API 호출 차단
 """
 
+import copy
 import hashlib
 import json
 import logging
@@ -80,11 +81,12 @@ class CachedAIProvider(AIProvider):
         if key in self._fn_cache:
             self._fn_cache.move_to_end(key)
             logger.debug("cache hit  [fn]   %s…", key[:8])
-            return self._fn_cache[key]
+            # deepcopy로 복사본 반환 — 호출자가 dict를 수정해도 캐시 오염 방지
+            return copy.deepcopy(self._fn_cache[key])
 
         logger.debug("cache miss [fn]   %s…", key[:8])
         result = await self._primary.function_call(messages, tools, tool_choice)
-        self._put(self._fn_cache, key, result)
+        self._put(self._fn_cache, key, copy.deepcopy(result))  # 저장도 복사본으로
         return result
 
     # ── Stats (디버그·테스트용) ────────────────────────────────────────────────
