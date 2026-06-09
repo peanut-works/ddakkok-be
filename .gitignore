@@ -35,6 +35,12 @@ htmlcov/
 # Docker
 docker-compose.override.yml
 
+# AI 모델 가중치 (용량 큰 파일 — .gitkeep만 추적)
+models/*.pth
+models/*.pt
+models/*.bin
+models/*.onnx
+
 # Harness (개인 사용 중 — 팀 합의 후 아래 블록 제거)
 AGENTS.md
 .harness/
