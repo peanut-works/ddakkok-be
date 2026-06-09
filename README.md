@@ -122,6 +122,30 @@ Swagger:
 http://localhost:8000/docs
 ```
 
+## DB 마이그레이션
+
+Docker Compose 실행 후 Alembic migration을 적용합니다.
+
+```bash
+docker compose exec backend uv run --no-sync alembic upgrade head
+```
+
+## Seed 데이터 삽입
+
+Migration 적용 후 seed 데이터를 삽입합니다.
+
+```bash
+docker compose exec backend uv run --no-sync python scripts/seed.py
+```
+
+개발용 테스트 계정:
+
+```text
+teacher@ddakkok.com
+```
+
+자세한 seed 데이터 구성과 확인 명령은 [docs/seed.md](docs/seed.md)를 참고합니다.
+
 ## 프론트엔드 연동
 
 Vite 프론트엔드 로컬 주소는 CORS 허용 목록에 포함되어 있습니다.

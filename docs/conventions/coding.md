@@ -29,6 +29,8 @@
 - 클라이언트 오류는 `HTTPException`으로 반환한다.
 - 서비스 레이어에서는 도메인 예외를 raise하고, 라우터에서 `HTTPException`으로 변환한다.
 - 외부 API(OpenAI, CLOVA OCR) 호출은 타임아웃과 재시도를 명시한다.
+- API 에러 응답은 공통 형식인 `{"error": {"code": "...", "message": "...", "details": ...}}`를 사용한다.
+- FastAPI exception handler는 `app/core/exceptions.py`에 등록하고, 에러 응답 스키마는 `app/schemas/error.py`에 정의한다.
 
 ## Testing
 
