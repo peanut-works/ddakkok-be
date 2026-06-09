@@ -82,6 +82,27 @@
       "skin_conditions": [],
       "sensitive_ingredients": [],
       "notes": "특이사항 없음"
+    },
+    {
+      "child_id": 9,
+      "allergies": [
+        "견과류"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "아몬드, 호두 등 견과류 성분 포함 식품 주의"
+    },
+    {
+      "child_id": 10,
+      "allergies": [],
+      "skin_conditions": [
+        "민감성 피부"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "색소"
+      ],
+      "notes": "향료와 색소 포함 제품 사용 시 피부 반응 확인 필요"
     }
   ]
 }
