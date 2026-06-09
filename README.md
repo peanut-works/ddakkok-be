@@ -141,7 +141,17 @@ docker compose exec backend uv run --no-sync python scripts/seed.py
 개발용 테스트 계정:
 
 ```text
-teacher@ddakkok.com
+email: teacher@ddakkok.com
+password: ddakkok1234
+token: mock-token:user:1 
+```
+
+로그인 API:
+
+```text
+POST /api/auth/login
+POST /api/auth/demo
+GET /api/auth/me
 ```
 
 자세한 seed 데이터 구성과 확인 명령은 [docs/seed.md](docs/seed.md)를 참고합니다.
