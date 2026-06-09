@@ -19,6 +19,11 @@ class Facility(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
+    facility_type: Mapped[str] = mapped_column(
+        String(30),
+        default="DAYCARE",
+        nullable=False,
+    )
     address: Mapped[str | None] = mapped_column(String(255))
     phone: Mapped[str | None] = mapped_column(String(30))
 
