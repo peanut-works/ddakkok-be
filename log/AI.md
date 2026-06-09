@@ -5,6 +5,25 @@
 
 ---
 
+## 2026-06-09 — AI-05: 설명 생성 프롬프트 작성
+
+### Rule Checker 결과 → 교사용 설명 텍스트 생성
+
+**변경 파일**
+- `app/ai/llm.py` — `ExplanationInput` 모델 + `ExplanationGenerator` 클래스
+
+**설계 결정**
+- `ExplanationInput`: status(PASS/WARN/FAIL) + product + ingredient + matched_rules 입력
+- `_SYSTEM_PROMPT` 제약 4가지 명시
+  1. 위험 여부 재판단 금지 — 판정은 Rule Checker가 완료
+  2. matched_rules 목록만 근거로 사용
+  3. 의료적 진단 표현 금지 ("알레르기 반응이 생긴다" 등)
+  4. 판정별 권고 문구 필수 포함 (보호자/관리자 확인 권고)
+- `_build_user_message`: 판정·성분·규칙을 구조화된 텍스트로 조립해 LLM에 전달
+- chat_complete 실패 시 빈 문자열 반환 (파이프라인 중단 방지)
+
+---
+
 ## 2026-06-09 — AI-04: 라벨 파싱 프롬프트 작성
 
 ### OCR 원문 → 제품 정보 JSON 구조화 (NER)
