@@ -1,0 +1,17 @@
+{
+  "watched_paths": [
+    "app/**",
+    "main.py"
+  ],
+  "decision_paths": [
+    "docs/decisions/**"
+  ],
+  "ignored_paths": [
+    "**/*.test.*",
+    "**/*.spec.*",
+    "docs/**",
+    "scripts/**",
+    "harness-starter-kit/**",
+    "log/**"
+  ]
+}

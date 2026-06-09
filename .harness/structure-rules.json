@@ -1,0 +1,20 @@
+{
+  "forbidden_patterns": [
+    "**/temp_*",
+    "**/*_new.*",
+    "**/*_old.*",
+    "**/*_backup.*",
+    "**/*_fix.*",
+    "**/*.bak"
+  ],
+  "ignored_directories": [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    "harness-starter-kit"
+  ]
+}

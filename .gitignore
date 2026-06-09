@@ -41,8 +41,5 @@ models/*.pt
 models/*.bin
 models/*.onnx
 
-# Harness (개인 사용 중 — 팀 합의 후 아래 블록 제거)
-AGENTS.md
-.harness/
-scripts/
+# Harness starter kit (읽기 전용 참조 자료 — 커밋하지 않음)
 harness-starter-kit/
