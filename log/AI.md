@@ -5,6 +5,28 @@
 
 ---
 
+## 2026-06-09 — AI-03: OCR Mock 응답 작성
+
+### 실제 OCR 없이 제품 등록 흐름 시연용 mock 구현
+
+**변경 파일**
+- `app/ai/ocr_mock_data.py` — 시나리오별 OCR 원시 텍스트 상수 (wipes/lotion/sunscreen)
+- `app/ai/ocr.py` — `OCRProvider` ABC + `MockOCRProvider` 구현
+
+**시나리오 구성**
+| 시나리오 | 제품 | 핵심 성분 | 예상 판정 |
+|---|---|---|---|
+| `wipes` | A브랜드 물티슈 | 카제인나트륨 (우유 유래) | FAIL |
+| `lotion` | 베이비소프트 로션 | 페녹시에탄올 (영유아 주의) | WARN |
+| `sunscreen` | 징크 선크림 | 문제 성분 없음 | PASS |
+
+**설계 결정**
+- `OCRProvider` ABC로 추상화 — 실제 CLOVA OCR 구현체로 교체 시 인터페이스 동일
+- `MockOCRProvider`는 시나리오 키로 초기화, 잘못된 키는 `DEFAULT_OCR_SCENARIO`(wipes)로 자동 fallback
+- 각 시나리오 텍스트는 실제 라벨 형식(전성분 표기, 유통기한 등) 그대로 구성 → NER 파싱 연동 가능
+
+---
+
 ## 2026-06-09 — AI-02: Mock 설명 응답 작성
 
 ### FAIL/WARN/PASS 예시 응답 및 API 실패 fallback 구현
