@@ -1,7 +1,7 @@
 # 해커톤 현장 세팅 가이드 (AI 파이프라인)
 
 담당: 손준혁 (AI 리드)  
-최종 업데이트: AI-11 완료 시점
+최종 업데이트: AI-12 완료 시점
 
 ---
 
@@ -137,7 +137,7 @@ curl http://localhost:8000/api/ai/ping
 | `{"status": "ok", "provider": "openai", ...}` | OpenAI 정상 연결 |
 | `{"status": "fallback", ...}` | API 호출 실패 → mock 자동 전환 (시연 가능) |
 
-### 시나리오 데모 테스트 (AI-15 완료 후 추가)
+### 시나리오 데모 테스트 (AI-13 완료 후 추가)
 
 ```bash
 # 세 가지 시나리오로 전체 파이프라인 테스트
@@ -166,10 +166,50 @@ tail -f log/ai_failures.log
 
 ---
 
+---
+
+## 7. Rule Checker 데이터 파일 (BE-13 — 별도 세팅 불필요)
+
+서버 시작 시 자동 로딩. 파일이 없으면 서버가 뜨지 않으므로 경로 확인 필수.
+
+| 파일 | 역할 |
+|---|---|
+| `app/data/01_seed/07_safety_rules.json` | 위험 성분 규칙 8개 (ALLERGY/SKIN/EXPIRY/UNKNOWN) |
+| `app/data/01_seed/06_ingredient_aliases.json` | 성분 별칭 정규화 사전 (카제인Na → 카제인나트륨 등) |
+
+```bash
+# 파일 존재 확인
+ls app/data/01_seed/07_safety_rules.json
+ls app/data/01_seed/06_ingredient_aliases.json
+```
+
+현장에서 규칙 추가 필요 시 JSON 파일 직접 수정 → 서버 재시작으로 반영.
+
+---
+
+## 8. 파이프라인 오케스트레이터 (AI-12 — 별도 세팅 불필요)
+
+`AnalysisPipeline`이 아래 컴포넌트를 자동으로 연결:
+
+```
+이미지 bytes
+  → ImagePreprocessor  (기울기·원근·곡면·주름·조도 보정)
+  → OCRProvider        (mock 또는 CLOVA — .env 설정 따름)
+  → LabelParser        (NER — mock 또는 OpenAI/GMS — .env 설정 따름)
+  → RuleChecker        (JSON 규칙 파일 × 아동 프로필 대조)
+  → ExplanationGenerator (교사용 설명 — mock 또는 OpenAI/GMS)
+  → PipelineResult
+```
+
+각 컴포넌트는 독립 실패 허용 — 어느 단계가 실패해도 fallback으로 자동 전환되어
+시연이 중단되지 않음.
+
+---
+
 ## 향후 추가 예정 세팅 항목
 
-| AI 티켓 | 추가될 세팅 |
+| 티켓 | 추가될 세팅 |
 |---|---|
-| AI-11: CLOVA OCR | `CLOVA_OCR_API_KEY`, `CLOVA_OCR_API_URL`, `OCR_PROVIDER=clova` |
-| AI-16: Embeddings | pgvector extension 초기화, `python -m app.scripts.load_knowledge` 실행 |
-| AI-18: 아동 프로필 연동 | 백엔드 팀 DB 모델 완성 후 Rule Checker 연동 확인 |
+| AI-13: 안전카드 API | 이미지 업로드 엔드포인트 — 별도 env 불필요 |
+| AI-14: Embeddings | pgvector extension 초기화, `python -m app.scripts.load_knowledge` 실행 |
+| AI-15: RAG | 지식 베이스 로딩 완료 후 확인 |
