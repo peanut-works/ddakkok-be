@@ -5,6 +5,7 @@ from fastapi.responses import RedirectResponse
 from app.api.routes.ai import router as ai_router
 from app.api.routes.health import router as health_router
 from app.core.config import get_settings
+from app.core.exceptions import register_exception_handlers
 
 settings = get_settings()
 
@@ -21,6 +22,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+register_exception_handlers(app)
 
 app.include_router(health_router)
 app.include_router(ai_router)
