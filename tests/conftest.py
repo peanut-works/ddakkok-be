@@ -1,22 +1,32 @@
 """pytest 공통 설정 및 테스트 전 모듈 모킹.
 
-cv2 / numpy / torch 는 무거운 의존성으로 CI / 단위 테스트 환경에서 미설치일 수 있다.
-실제 이미지 처리 로직은 app/services/image_processing.py 전용 테스트에서 커버.
-파이프라인 오케스트레이션 테스트는 ImagePreprocessor 를 Mock 으로 교체하므로
-실제 cv2 호출이 발생하지 않지만, 모듈 임포트 시 cv2 import 가 실행된다.
-따라서 pytest 수집(collection) 전에 sys.modules 에 stub 을 삽입해 ImportError 방지.
+루트 경로 설정:
+    sys.path 에 프로젝트 루트를 추가해 `from app.xxx import ...` 임포트를 보장한다.
+
+cv2 / numpy / torch stub:
+    cv2 / numpy / torch 는 무거운 의존성으로 CI / 단위 테스트 환경에서 미설치일 수 있다.
+    실제 이미지 처리 로직은 app/services/image_processing.py 전용 테스트에서 커버.
+    파이프라인 오케스트레이션 테스트는 ImagePreprocessor 를 Mock 으로 교체하므로
+    실제 cv2 호출이 발생하지 않지만, 모듈 임포트 시 cv2 import 가 실행된다.
+    따라서 pytest 수집(collection) 전에 sys.modules 에 stub 을 삽입해 ImportError 방지.
 """
 
 import sys
 import types
+from pathlib import Path
 from unittest.mock import MagicMock
+
+# ── 루트 경로 설정 ────────────────────────────────────────────────────────────
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT_DIR))
+
+# ── 무거운 의존성 stub (cv2 / numpy / torch / _doctr) ─────────────────────────
 
 
 def _make_cv2_stub() -> types.ModuleType:
     """cv2 stub 모듈 생성."""
     mod = types.ModuleType("cv2")
-    # 파이프라인 테스트에서 실제로 호출되지 않지만
-    # image_processing.py 가 참조하는 상수/함수 최소 정의
     for attr in (
         "IMREAD_COLOR", "THRESH_BINARY_INV", "THRESH_OTSU",
         "THRESH_BINARY", "RETR_EXTERNAL", "CHAIN_APPROX_SIMPLE",
@@ -40,31 +50,23 @@ def _make_cv2_stub() -> types.ModuleType:
 
 
 def _make_numpy_stub() -> types.ModuleType:
-    """numpy stub — real numpy 가 있으면 그걸 쓰고, 없으면 MagicMock."""
+    """numpy stub — 설치돼 있으면 실제 numpy, 없으면 MagicMock."""
     try:
         import numpy as real_np
         return real_np  # type: ignore[return-value]
     except ImportError:
         mod = types.ModuleType("numpy")
-        mod.ndarray = MagicMock()  # type: ignore[attr-defined]
-        mod.uint8 = MagicMock()    # type: ignore[attr-defined]
-        mod.float32 = MagicMock()  # type: ignore[attr-defined]
-        mod.frombuffer = MagicMock()  # type: ignore[attr-defined]
-        mod.array = MagicMock()    # type: ignore[attr-defined]
-        mod.diff = MagicMock()     # type: ignore[attr-defined]
-        mod.median = MagicMock()   # type: ignore[attr-defined]
-        mod.ones = MagicMock()     # type: ignore[attr-defined]
-        mod.column_stack = MagicMock()  # type: ignore[attr-defined]
+        for attr in ("ndarray", "uint8", "float32", "frombuffer",
+                     "array", "diff", "median", "ones", "column_stack"):
+            setattr(mod, attr, MagicMock())  # type: ignore[attr-defined]
         return mod
 
 
 def _make_torch_stub() -> types.ModuleType:
     """torch stub — 없을 때만 삽입."""
-    mod = types.ModuleType("torch")
-    return mod
+    return types.ModuleType("torch")
 
 
-# pytest 수집(collection) 직전에 실행 — conftest.py 임포트 시점에 삽입
 if "cv2" not in sys.modules:
     sys.modules["cv2"] = _make_cv2_stub()
 
@@ -74,7 +76,6 @@ if "numpy" not in sys.modules:
 if "torch" not in sys.modules:
     sys.modules["torch"] = _make_torch_stub()
 
-# _doctr 도 동일하게 stub
 if "app.services._doctr" not in sys.modules:
     _doctr_stub = types.ModuleType("app.services._doctr")
 
