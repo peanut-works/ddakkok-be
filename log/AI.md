@@ -5,6 +5,32 @@
 
 ---
 
+## 2026-06-09 — AI-07: GMS Client 껍데기 작성
+
+### 현장 GMS key 수령 즉시 연결 가능한 HTTP 클라이언트 구조 구현
+
+**변경 파일**
+- `app/ai/gms.py` — `NotImplementedError` → httpx 기반 실제 HTTP 클라이언트로 교체
+- `pyproject.toml` — `httpx>=0.27.0` 명시적 의존성 추가
+
+**현장 연결 절차 (주석에도 포함)**
+1. `.env`에 `GMS_API_KEY` / `GMS_API_URL` / `GMS_MODEL` 입력
+2. `AI_PROVIDER=gms` 변경
+3. `docker compose restart backend`
+4. `GET /api/ai/ping` 으로 연결 확인
+
+**TODO 항목 (GMS 스펙 확인 후 수정)**
+- 인증 헤더 이름 (현재: `Authorization: Bearer`)
+- chat completions 경로 (현재: `/chat/completions`)
+- 응답 JSON 필드 경로 (현재: `choices[0].message.content`)
+- function calling 지원 여부 및 응답 파싱 형식
+
+**설계 결정**
+- 스펙 미확정이므로 OpenAI 호환 형식을 기본값으로 사용
+- 연결 실패 시 `FallbackAIProvider`가 mock으로 자동 전환 (기존 동작 유지)
+
+---
+
 ## 2026-06-09 — AI-06: OpenAI 테스트 연결
 
 ### GET /api/ai/ping — AI provider 연결 테스트 엔드포인트
