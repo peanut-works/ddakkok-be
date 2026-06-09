@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     ai_provider: str = "mock"
     ocr_provider: str = "mock"
 
+    ai_cache_enabled: bool = True
+    ai_cache_maxsize: int = 256
+
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"
 
