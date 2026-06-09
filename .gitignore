@@ -35,9 +35,11 @@ htmlcov/
 # Docker
 docker-compose.override.yml
 
-# Harness (개인 사용 중 — 팀 합의 후 아래 블록 제거)
-AGENTS.md
-.harness/
-scripts/
-docs/
+# AI 모델 가중치 (용량 큰 파일 — .gitkeep만 추적)
+models/*.pth
+models/*.pt
+models/*.bin
+models/*.onnx
+
+# Harness starter kit (읽기 전용 참조 자료 — 커밋하지 않음)
 harness-starter-kit/
