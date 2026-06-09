@@ -122,6 +122,14 @@ Swagger:
 http://localhost:8000/docs
 ```
 
+정적 Swagger 문서용 OpenAPI YAML 생성:
+
+```bash
+uv run python scripts/export_openapi.py
+```
+
+Vercel을 통한 Swagger 공유 방법은 [docs/swagger.md](docs/swagger.md)를 참고합니다.
+
 ## DB 마이그레이션
 
 Docker Compose 실행 후 Alembic migration을 적용합니다.

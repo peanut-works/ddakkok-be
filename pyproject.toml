@@ -19,6 +19,7 @@ dependencies = [
     "torch>=2.0.0",
     "torchvision>=0.15.0",
     "alembic>=1.18.4",
+    "pyyaml>=6.0.3",
 ]
 
 [dependency-groups]

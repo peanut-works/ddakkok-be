@@ -5,23 +5,34 @@
 """
 
 import logging
-from typing import Any
 
 from fastapi import APIRouter, Depends
 
 from app.ai.base import AIProvider, ChatMessage
 from app.ai.factory import get_ai_provider
 from app.core.config import Settings, get_settings
+from app.schemas.ai import AiPingResponse
+from app.schemas.error import ErrorResponse
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/ai", tags=["ai"])
 
 
-@router.get("/ping")
+@router.get(
+    "/ping",
+    response_model=AiPingResponse,
+    summary="AI provider connection check",
+    responses={
+        500: {
+            "model": ErrorResponse,
+            "description": "Internal server error",
+        }
+    },
+)
 async def ai_ping(
     provider: AIProvider = Depends(get_ai_provider),
     settings: Settings = Depends(get_settings),
-) -> dict[str, Any]:
+) -> AiPingResponse:
     """AI provider 연결 테스트.
 
     - AI_PROVIDER=openai: OpenAI API 실제 호출 (15초 timeout)
@@ -44,17 +55,17 @@ async def ai_ping(
 
     try:
         response = await provider.chat_complete(messages, temperature=0.0)
-        return {
-            "status": "ok",
-            "provider": settings.ai_provider,
-            "response": response,
-        }
+        return AiPingResponse(
+            status="ok",
+            provider=settings.ai_provider,
+            response=response,
+        )
     except Exception as e:
         # FallbackAIProvider가 이미 모든 예외를 잡지만, 만일의 경우를 대비한 최후 방어선.
         # 프론트에는 항상 200 + 정상 형식 반환.
         logger.error("ai_ping 최종 예외 — provider=%s error=%s", settings.ai_provider, e)
-        return {
-            "status": "fallback",
-            "provider": settings.ai_provider,
-            "response": "AI 연결에 실패했습니다. Mock 응답으로 대체됩니다.",
-        }
+        return AiPingResponse(
+            status="fallback",
+            provider=settings.ai_provider,
+            response="AI 연결에 실패했습니다. Mock 응답으로 대체됩니다.",
+        )
