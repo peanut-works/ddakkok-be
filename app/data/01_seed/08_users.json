@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "facility_id": 1,
+      "email": "teacher@ddakkok.com",
+      "password_hash": "test-password-hash",
+      "name": "테스트교사",
+      "role": "TEACHER"
+    }
+  ]
+}
