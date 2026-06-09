@@ -5,6 +5,22 @@
 
 ---
 
+## 2026-06-09 — AI-04: 라벨 파싱 프롬프트 작성
+
+### OCR 원문 → 제품 정보 JSON 구조화 (NER)
+
+**변경 파일**
+- `app/ai/ner.py` — `NERResult` 모델 + `LabelParser` 클래스
+
+**설계 결정**
+- `LabelParser.parse(ocr_text)` → `NERResult` (product/ingredient/expiry/maker)
+- `_EXTRACT_TOOL`: GPT-4o-mini Function Calling용 JSON Schema 정의
+- `_SYSTEM_PROMPT`: 텍스트에 명시된 내용만 추출, 추측 금지, 실패 시 빈 값 반환 규칙 명시
+- function_call 예외 시 예외 propagate 없이 빈 `NERResult()` 반환 → 파이프라인 중단 방지
+- `AIProvider` 주입 방식 — Mock/OpenAI/GMS 교체 시 `LabelParser` 코드 무변경
+
+---
+
 ## 2026-06-09 — AI-03: OCR Mock 응답 작성
 
 ### 실제 OCR 없이 제품 등록 흐름 시연용 mock 구현
