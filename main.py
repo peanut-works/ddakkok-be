@@ -7,6 +7,7 @@ from app.api.routes.auth import router as auth_router
 from app.api.routes.health import router as health_router
 from app.core.config import get_settings
 from app.core.exceptions import register_exception_handlers
+from app.schemas.common import RootResponse
 
 settings = get_settings()
 
@@ -31,13 +32,17 @@ app.include_router(ai_router)
 app.include_router(auth_router)
 
 
-@app.get("/")
-def root():
-    return {
-        "message": "Ddakkok API",
-        "docs": "/docs",
-        "health": "/api/health",
-    }
+@app.get(
+    "/",
+    response_model=RootResponse,
+    summary="API root",
+)
+def root() -> RootResponse:
+    return RootResponse(
+        message="Ddakkok API",
+        docs="/docs",
+        health="/api/health",
+    )
 
 
 @app.get("/api/docs", include_in_schema=False)
