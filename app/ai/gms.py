@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 # GMS API가 OpenAI 호환 형식을 사용한다고 가정.
 # 스펙 확인 후 경로·필드명 수정 필요.
 _CHAT_PATH = "/chat/completions"  # TODO: GMS 실제 경로로 교체
+_DEFAULT_TIMEOUT = 15.0  # 초. OpenAIProvider와 통일
 
 
 class GMSProvider(AIProvider):
@@ -62,7 +63,7 @@ class GMSProvider(AIProvider):
             "messages": [{"role": m.role, "content": m.content} for m in messages],
             "temperature": temperature,
         }
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=_DEFAULT_TIMEOUT) as client:
             response = await client.post(
                 f"{self._api_url}{_CHAT_PATH}",
                 headers=self._build_headers(),
@@ -88,7 +89,7 @@ class GMSProvider(AIProvider):
             "tools": tools,
             "tool_choice": tool_choice,
         }
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=_DEFAULT_TIMEOUT) as client:
             response = await client.post(
                 f"{self._api_url}{_CHAT_PATH}",
                 headers=self._build_headers(),
