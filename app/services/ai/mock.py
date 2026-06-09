@@ -1,17 +1,29 @@
-import json
-
 from app.services.ai.base import AIProvider, ChatMessage
+from app.services.ai.mock_data import MOCK_EXPLANATIONS, MOCK_FUNCTION_CALL_RESULT
+
+
+def _detect_status(messages: list[ChatMessage]) -> str:
+    """메시지 내용에서 FAIL / WARN / PASS 키워드를 감지해 시나리오를 결정한다."""
+    combined = " ".join(m.content for m in messages).upper()
+    if "FAIL" in combined:
+        return "FAIL"
+    if "WARN" in combined:
+        return "WARN"
+    if "PASS" in combined:
+        return "PASS"
+    return "FAIL"  # 기본값: 가장 정보량이 많은 FAIL 예시
 
 
 class MockAIProvider(AIProvider):
-    """테스트용 mock provider. 외부 API 없이 고정 응답을 반환한다."""
+    """테스트·시연용 mock provider. 외부 API 없이 판정별 고정 설명을 반환한다."""
 
     async def chat_complete(
         self,
         messages: list[ChatMessage],
         temperature: float = 0.3,
     ) -> str:
-        return "[mock] 이 제품은 테스트 응답입니다."
+        status = _detect_status(messages)
+        return MOCK_EXPLANATIONS[status]
 
     async def function_call(
         self,
@@ -19,9 +31,4 @@ class MockAIProvider(AIProvider):
         tools: list[dict],
         tool_choice: str = "auto",
     ) -> dict:
-        return {
-            "product": "mock 제품",
-            "ingredient": ["정제수", "글리세린"],
-            "expiry": "2027-01-01",
-            "maker": "mock 제조사",
-        }
+        return MOCK_FUNCTION_CALL_RESULT
