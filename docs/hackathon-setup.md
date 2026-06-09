@@ -1,7 +1,7 @@
 # 해커톤 현장 세팅 가이드 (AI 파이프라인)
 
 담당: 손준혁 (AI 리드)  
-최종 업데이트: AI-10 완료 시점
+최종 업데이트: AI-11 완료 시점
 
 ---
 
@@ -17,8 +17,9 @@
 - [ ] `GeoTr.py` → `app/services/geo_tr.py` 복사
 - [ ] `GeoTr.pth` → `models/doctr.pth` 저장
 
-### 추후 추가 예정 (AI-11 완료 후)
-- [ ] CLOVA OCR API key 입력 및 `OCR_PROVIDER=clova` 변경
+### CLOVA OCR 세팅
+- [ ] CLOVA OCR API key / URL 입력
+- [ ] `OCR_PROVIDER=clova` 변경 후 `docker compose restart backend`
 
 ---
 
@@ -46,13 +47,13 @@ GMS_API_URL=https://...     # 예) https://gms.kakao.com/v1
 GMS_MODEL=...               # 예) gms-pro
 ```
 
-### OCR (AI-11 완료 후 설정)
+### OCR
 
 ```env
-# 현재는 mock. CLOVA 연동 완료 후 변경.
-OCR_PROVIDER=clova          # mock → clova
-CLOVA_OCR_API_KEY=...
-CLOVA_OCR_API_URL=https://...
+# 현재는 mock. CLOVA key 수령 후 변경.
+OCR_PROVIDER=clova              # mock → clova
+CLOVA_OCR_API_KEY=...           # Naver Cloud Console에서 발급
+CLOVA_OCR_API_URL=https://...   # 예) https://ocr.apigw.ntruss.com/custom/v1/XXXXX/...
 ```
 
 ### 캐시 · 기타
