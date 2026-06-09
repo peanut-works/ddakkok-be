@@ -1,0 +1,84 @@
+{
+  "children": [
+    {
+      "id": 1,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "강민준",
+      "birth_date": "2022-03-15",
+      "gender": "M",
+      "memo": "우유 알레르기 주의",
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "김서아",
+      "birth_date": "2022-07-02",
+      "gender": "F",
+      "memo": "민감성 피부",
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "이도윤",
+      "birth_date": "2022-10-21",
+      "gender": "M",
+      "memo": "특이사항 없음",
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "최하린",
+      "birth_date": "2022-12-05",
+      "gender": "F",
+      "memo": "계란 알레르기 주의",
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "박지호",
+      "birth_date": "2021-04-11",
+      "gender": "M",
+      "memo": "땅콩 및 견과류 알레르기 주의",
+      "is_active": true
+    },
+    {
+      "id": 6,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "정윤서",
+      "birth_date": "2021-06-28",
+      "gender": "F",
+      "memo": "아토피 피부",
+      "is_active": true
+    },
+    {
+      "id": 7,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "오시우",
+      "birth_date": "2021-09-14",
+      "gender": "M",
+      "memo": "우유 알레르기 및 아토피 주의",
+      "is_active": true
+    },
+    {
+      "id": 8,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "한지아",
+      "birth_date": "2021-11-30",
+      "gender": "F",
+      "memo": "특이사항 없음",
+      "is_active": true
+    }
+  ]
+}
