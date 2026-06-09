@@ -1,0 +1,12 @@
+{
+  "facilities": [
+    {
+      "id": 1,
+      "name": "땅콩어린이집",
+      "address": "서울시 강남구 테헤란로 123",
+      "phone": "02-0000-0000",
+      "facility_type": "DAYCARE",
+      "is_active": true
+    }
+  ]
+}

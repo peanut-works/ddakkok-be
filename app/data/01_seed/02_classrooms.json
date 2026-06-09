@@ -1,0 +1,20 @@
+{
+  "classrooms": [
+    {
+      "id": 1,
+      "facility_id": 1,
+      "name": "햇님반",
+      "age_group": "만 3세",
+      "teacher_name": "김하늘",
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "facility_id": 1,
+      "name": "별님반",
+      "age_group": "만 4세",
+      "teacher_name": "박소라",
+      "is_active": true
+    }
+  ]
+}

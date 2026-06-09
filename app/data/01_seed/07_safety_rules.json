@@ -1,0 +1,114 @@
+{
+  "safety_rules": [
+    {
+      "rule_code": "ALLERGY_MILK_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "우유",
+      "ingredient_keywords": [
+        "우유",
+        "카제인나트륨",
+        "카제인Na",
+        "유청",
+        "유청단백",
+        "탈지분유",
+        "전지분유"
+      ],
+      "severity": "FAIL",
+      "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "ALLERGY_EGG_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "계란",
+      "ingredient_keywords": [
+        "계란",
+        "난백",
+        "난황",
+        "전란",
+        "계란분말"
+      ],
+      "severity": "FAIL",
+      "reason": "계란 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "ALLERGY_PEANUT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "땅콩",
+      "ingredient_keywords": [
+        "땅콩",
+        "피넛",
+        "땅콩버터",
+        "땅콩분말",
+        "땅콩오일"
+      ],
+      "severity": "FAIL",
+      "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "ALLERGY_NUT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "견과류",
+      "ingredient_keywords": [
+        "견과류",
+        "아몬드",
+        "호두",
+        "캐슈넛",
+        "헤이즐넛",
+        "피스타치오",
+        "마카다미아"
+      ],
+      "severity": "FAIL",
+      "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "SKIN_SENSITIVE_001",
+      "target_type": "SKIN",
+      "trigger_name": "민감성 피부",
+      "ingredient_keywords": [
+        "향료",
+        "에탄올",
+        "알코올",
+        "페녹시에탄올"
+      ],
+      "severity": "WARN",
+      "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
+      "source_name": "자체 주의 성분 사전"
+    },
+    {
+      "rule_code": "SKIN_ATOPY_001",
+      "target_type": "SKIN",
+      "trigger_name": "아토피",
+      "ingredient_keywords": [
+        "향료",
+        "색소",
+        "에탄올",
+        "알코올"
+      ],
+      "severity": "WARN",
+      "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+      "source_name": "자체 주의 성분 사전"
+    },
+    {
+      "rule_code": "EXPIRY_DATE_001",
+      "target_type": "EXPIRY",
+      "trigger_name": "유통기한 만료",
+      "ingredient_keywords": [],
+      "severity": "EXPIRED",
+      "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+      "source_name": "제품 유통기한 기준"
+    },
+    {
+      "rule_code": "OCR_UNKNOWN_001",
+      "target_type": "UNKNOWN",
+      "trigger_name": "성분 확인 불가",
+      "ingredient_keywords": [],
+      "severity": "UNKNOWN",
+      "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+      "source_name": "OCR 실패 처리 기준"
+    }
+  ]
+}

@@ -1,0 +1,643 @@
+{
+  "meta": {
+    "dataset_name": "child_product_safety_demo_seed",
+    "dataset_version": "0.1.0",
+    "created_at": "2026-06-09",
+    "language": "ko-KR",
+    "data_type": "MOCK",
+    "purpose": "해커톤 시연용 영유아 제품 안전성 룰체커 시드 데이터",
+    "description": "시설, 반, 아동 건강 프로필, 제품 성분, 성분 동의어, 안전 룰셋을 이용해 아동별 제품 사용 가능 여부를 PASS/WARN/FAIL/EXPIRED/UNKNOWN 상태로 확인하기 위한 목업 데이터입니다.",
+    "service_context": {
+      "target_user": "어린이집, 유치원, 보육시설 교사 및 관리자",
+      "main_flow": [
+        "제품 성분표 또는 OCR 결과 입력",
+        "성분명을 표준명으로 정규화",
+        "아동 건강 프로필과 안전 룰셋 비교",
+        "아동별 안전 상태 판정",
+        "교사에게 요약 결과 제공"
+      ]
+    },
+    "coverage": {
+      "child_health_cases": [
+        "특이사항 없음",
+        "우유 알레르기",
+        "계란 알레르기",
+        "땅콩 알레르기",
+        "견과류 알레르기",
+        "민감성 피부",
+        "아토피",
+        "알레르기와 피부 질환 복합 케이스"
+      ],
+      "demo_statuses": [
+        "PASS",
+        "WARN",
+        "FAIL",
+        "EXPIRED",
+        "UNKNOWN"
+      ],
+      "product_demo_cases": {
+        "PASS": [
+          101
+        ],
+        "WARN": [
+          105,
+          106
+        ],
+        "FAIL": [
+          103,
+          104
+        ],
+        "FAIL_AND_WARN": [
+          102,
+          107
+        ],
+        "EXPIRED": [
+          108
+        ],
+        "UNKNOWN": [
+          109
+        ]
+      }
+    },
+    "counts": {
+      "facilities": 1,
+      "classrooms": 2,
+      "children": 8,
+      "child_health_profiles": 8,
+      "products": 9,
+      "ingredient_aliases": 18,
+      "safety_rules": 8
+    },
+    "rule_policy": {
+      "pass_handling": "위험 룰에 매칭되지 않고 유통기한도 유효하면 백엔드에서 PASS로 처리합니다.",
+      "warn_handling": "피부 상태나 민감 성분에 매칭되는 경우 WARN으로 처리합니다.",
+      "fail_handling": "알레르기 성분에 매칭되는 경우 FAIL로 처리합니다.",
+      "expired_handling": "제품 유통기한이 현재 날짜보다 이전이면 EXPIRED로 처리합니다.",
+      "unknown_handling": "성분 목록이 비어 있거나 OCR/파싱 실패 상태이면 UNKNOWN으로 처리합니다."
+    },
+    "enum_definitions": {
+      "facility_type": [
+        "DAYCARE"
+      ],
+      "product_category": [
+        "WET_TISSUE",
+        "LOTION",
+        "CLEANSER",
+        "FOOD",
+        "ETC"
+      ],
+      "target_type": [
+        "ALLERGY",
+        "SKIN",
+        "EXPIRY",
+        "UNKNOWN"
+      ],
+      "severity": [
+        "PASS",
+        "WARN",
+        "FAIL",
+        "EXPIRED",
+        "UNKNOWN"
+      ]
+    },
+    "validation_notes": [
+      "본 데이터는 실제 제품 안전성을 보장하지 않는 해커톤 시연용 목업 데이터입니다.",
+      "성분 동의어와 안전 룰셋은 시연에 필요한 최소 범위만 포함합니다.",
+      "PASS는 별도 룰로 저장하지 않고, 매칭되는 위험 룰이 없을 때 계산 결과로 생성하는 것을 권장합니다.",
+      "제품 109는 성분표 훼손 또는 OCR 실패 상황을 검증하기 위한 UNKNOWN 전용 케이스입니다."
+    ]
+  },
+  "facilities": [
+    {
+      "id": 1,
+      "name": "땅콩어린이집",
+      "address": "서울시 강남구 테헤란로 123",
+      "phone": "02-0000-0000",
+      "facility_type": "DAYCARE",
+      "is_active": true
+    }
+  ],
+  "classrooms": [
+    {
+      "id": 1,
+      "facility_id": 1,
+      "name": "햇님반",
+      "age_group": "만 3세",
+      "teacher_name": "김하늘",
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "facility_id": 1,
+      "name": "별님반",
+      "age_group": "만 4세",
+      "teacher_name": "박소라",
+      "is_active": true
+    }
+  ],
+  "children": [
+    {
+      "id": 1,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "강민준",
+      "birth_date": "2022-03-15",
+      "gender": "M",
+      "memo": "우유 알레르기 주의",
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "김서아",
+      "birth_date": "2022-07-02",
+      "gender": "F",
+      "memo": "민감성 피부",
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "이도윤",
+      "birth_date": "2022-10-21",
+      "gender": "M",
+      "memo": "특이사항 없음",
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "최하린",
+      "birth_date": "2022-12-05",
+      "gender": "F",
+      "memo": "계란 알레르기 주의",
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "박지호",
+      "birth_date": "2021-04-11",
+      "gender": "M",
+      "memo": "땅콩 및 견과류 알레르기 주의",
+      "is_active": true
+    },
+    {
+      "id": 6,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "정윤서",
+      "birth_date": "2021-06-28",
+      "gender": "F",
+      "memo": "아토피 피부",
+      "is_active": true
+    },
+    {
+      "id": 7,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "오시우",
+      "birth_date": "2021-09-14",
+      "gender": "M",
+      "memo": "우유 알레르기 및 아토피 주의",
+      "is_active": true
+    },
+    {
+      "id": 8,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "한지아",
+      "birth_date": "2021-11-30",
+      "gender": "F",
+      "memo": "특이사항 없음",
+      "is_active": true
+    }
+  ],
+  "child_health_profiles": [
+    {
+      "child_id": 1,
+      "allergies": [
+        "우유"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "우유 및 우유 유래 성분 섭취·접촉 주의"
+    },
+    {
+      "child_id": 2,
+      "allergies": [],
+      "skin_conditions": [
+        "민감성 피부"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "에탄올",
+        "페녹시에탄올"
+      ],
+      "notes": "향료, 에탄올 포함 제품 사용 시 피부 반응 확인 필요"
+    },
+    {
+      "child_id": 3,
+      "allergies": [],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "특이사항 없음"
+    },
+    {
+      "child_id": 4,
+      "allergies": [
+        "계란"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "계란, 난백, 난황 등 계란 유래 성분 주의"
+    },
+    {
+      "child_id": 5,
+      "allergies": [
+        "땅콩",
+        "견과류"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "땅콩 및 견과류 성분 포함 식품 주의"
+    },
+    {
+      "child_id": 6,
+      "allergies": [],
+      "skin_conditions": [
+        "아토피"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "색소",
+        "에탄올"
+      ],
+      "notes": "아토피 피부로 자극 가능 성분 포함 제품 사용 주의"
+    },
+    {
+      "child_id": 7,
+      "allergies": [
+        "우유"
+      ],
+      "skin_conditions": [
+        "아토피"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "색소",
+        "에탄올"
+      ],
+      "notes": "우유 유래 성분과 아토피 자극 가능 성분 모두 확인 필요"
+    },
+    {
+      "child_id": 8,
+      "allergies": [],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "특이사항 없음"
+    }
+  ],
+  "products": [
+    {
+      "id": 101,
+      "facility_id": 1,
+      "name": "세이프 데일리 핸드워시",
+      "category": "CLEANSER",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000101",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "정제수, 글리세린, 코코베타인, 구연산",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인",
+        "구연산"
+      ],
+      "demo_purpose": "위험 성분이 없어 전체 PASS 확인"
+    },
+    {
+      "id": 102,
+      "facility_id": 1,
+      "name": "밀크 프로틴 보습 물티슈",
+      "category": "WET_TISSUE",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000102",
+      "expiry_date": "2027-08-31",
+      "raw_ingredients_text": "정제수, 글리세린, 카제인Na, 페녹시에탄올",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "페녹시에탄올"
+      ],
+      "demo_purpose": "우유 알레르기 FAIL + 민감성 피부 WARN 동시 확인. 카제인Na 별칭 정규화 포함"
+    },
+    {
+      "id": 103,
+      "facility_id": 1,
+      "name": "에그 소프트 쿠키",
+      "category": "FOOD",
+      "manufacturer": "해커톤푸드",
+      "barcode": "880100000103",
+      "expiry_date": "2027-02-28",
+      "raw_ingredients_text": "밀가루, 설탕, 계란, 난백, 버터",
+      "ingredients": [
+        "밀가루",
+        "설탕",
+        "계란",
+        "난백",
+        "버터"
+      ],
+      "demo_purpose": "계란 알레르기 FAIL 확인"
+    },
+    {
+      "id": 104,
+      "facility_id": 1,
+      "name": "땅콩버터 크런치바",
+      "category": "FOOD",
+      "manufacturer": "해커톤푸드",
+      "barcode": "880100000104",
+      "expiry_date": "2027-05-20",
+      "raw_ingredients_text": "귀리, 설탕, 땅콩버터, 아몬드, 식물성유지",
+      "ingredients": [
+        "귀리",
+        "설탕",
+        "땅콩버터",
+        "아몬드",
+        "식물성유지"
+      ],
+      "demo_purpose": "땅콩/견과류 알레르기 중 땅콩 룰 FAIL 확인"
+    },
+    {
+      "id": 105,
+      "facility_id": 1,
+      "name": "향기 톡톡 키즈 로션",
+      "category": "LOTION",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000105",
+      "expiry_date": "2027-11-30",
+      "raw_ingredients_text": "정제수, 글리세린, 향료, 알코올",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "향료",
+        "에탄올"
+      ],
+      "demo_purpose": "민감성 피부 WARN + 아토피 WARN 확인. 알코올 별칭 정규화 포함"
+    },
+    {
+      "id": 106,
+      "facility_id": 1,
+      "name": "컬러 버블 클렌저",
+      "category": "CLEANSER",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000106",
+      "expiry_date": "2027-09-15",
+      "raw_ingredients_text": "정제수, 코코베타인, 색소, 구연산",
+      "ingredients": [
+        "정제수",
+        "코코베타인",
+        "색소",
+        "구연산"
+      ],
+      "demo_purpose": "아토피 WARN 전용 확인"
+    },
+    {
+      "id": 107,
+      "facility_id": 1,
+      "name": "복합 주의 키즈 크림",
+      "category": "LOTION",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000107",
+      "expiry_date": "2027-10-10",
+      "raw_ingredients_text": "정제수, 글리세린, 카제인나트륨, 향료, 에탄올",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "향료",
+        "에탄올"
+      ],
+      "demo_purpose": "한 제품에서 FAIL과 WARN이 함께 발생하는 복합 케이스 확인"
+    },
+    {
+      "id": 108,
+      "facility_id": 1,
+      "name": "유통기한 지난 물티슈",
+      "category": "WET_TISSUE",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000108",
+      "expiry_date": "2025-12-31",
+      "raw_ingredients_text": "정제수, 글리세린, 코코베타인",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인"
+      ],
+      "demo_purpose": "유통기한 만료 EXPIRED 확인"
+    },
+    {
+      "id": 109,
+      "facility_id": 1,
+      "name": "성분표 훼손 제품",
+      "category": "ETC",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000109",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "성분표 훼손으로 판독 불가",
+      "ingredients": [],
+      "demo_purpose": "OCR/파싱 실패 시 UNKNOWN 확인. 백엔드가 ingredients empty 또는 OCR status failed를 UNKNOWN으로 처리해야 함"
+    }
+  ],
+  "ingredient_aliases": [
+    {
+      "alias": "카제인Na",
+      "canonical_name": "카제인나트륨"
+    },
+    {
+      "alias": "우유단백",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "유청",
+      "canonical_name": "유청단백"
+    },
+    {
+      "alias": "난백",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "난황",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "전란",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "계란분말",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "피넛",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "땅콩버터",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "땅콩분말",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "땅콩오일",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "알코올",
+      "canonical_name": "에탄올"
+    },
+    {
+    "alias": "아몬드",
+    "canonical_name": "견과류"
+    },
+    {
+      "alias": "호두",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "캐슈넛",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "헤이즐넛",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "피스타치오",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "마카다미아",
+      "canonical_name": "견과류"
+    }
+  ],
+  "safety_rules": [
+    {
+      "rule_code": "ALLERGY_MILK_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "우유",
+      "ingredient_keywords": [
+        "우유",
+        "카제인나트륨",
+        "카제인Na",
+        "유청",
+        "유청단백",
+        "탈지분유",
+        "전지분유"
+      ],
+      "severity": "FAIL",
+      "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "ALLERGY_EGG_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "계란",
+      "ingredient_keywords": [
+        "계란",
+        "난백",
+        "난황",
+        "전란",
+        "계란분말"
+      ],
+      "severity": "FAIL",
+      "reason": "계란 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "ALLERGY_PEANUT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "땅콩",
+      "ingredient_keywords": [
+        "땅콩",
+        "피넛",
+        "땅콩버터",
+        "땅콩분말",
+        "땅콩오일"
+      ],
+      "severity": "FAIL",
+      "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "ALLERGY_NUT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "견과류",
+      "ingredient_keywords": [
+        "견과류",
+        "아몬드",
+        "호두",
+        "캐슈넛",
+        "헤이즐넛",
+        "피스타치오",
+        "마카다미아"
+      ],
+      "severity": "FAIL",
+      "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "SKIN_SENSITIVE_001",
+      "target_type": "SKIN",
+      "trigger_name": "민감성 피부",
+      "ingredient_keywords": [
+        "향료",
+        "에탄올",
+        "알코올",
+        "페녹시에탄올"
+      ],
+      "severity": "WARN",
+      "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
+      "source_name": "자체 주의 성분 사전"
+    },
+    {
+      "rule_code": "SKIN_ATOPY_001",
+      "target_type": "SKIN",
+      "trigger_name": "아토피",
+      "ingredient_keywords": [
+        "향료",
+        "색소",
+        "에탄올",
+        "알코올"
+      ],
+      "severity": "WARN",
+      "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+      "source_name": "자체 주의 성분 사전"
+    },
+    {
+      "rule_code": "EXPIRY_DATE_001",
+      "target_type": "EXPIRY",
+      "trigger_name": "유통기한 만료",
+      "ingredient_keywords": [],
+      "severity": "EXPIRED",
+      "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+      "source_name": "제품 유통기한 기준"
+    },
+    {
+      "rule_code": "OCR_UNKNOWN_001",
+      "target_type": "UNKNOWN",
+      "trigger_name": "성분 확인 불가",
+      "ingredient_keywords": [],
+      "severity": "UNKNOWN",
+      "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+      "source_name": "OCR 실패 처리 기준"
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "child_health_profiles": [
+    {
+      "child_id": 1,
+      "allergies": [
+        "우유"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "우유 및 우유 유래 성분 섭취·접촉 주의"
+    },
+    {
+      "child_id": 2,
+      "allergies": [],
+      "skin_conditions": [
+        "민감성 피부"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "에탄올",
+        "페녹시에탄올"
+      ],
+      "notes": "향료, 에탄올 포함 제품 사용 시 피부 반응 확인 필요"
+    },
+    {
+      "child_id": 3,
+      "allergies": [],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "특이사항 없음"
+    },
+    {
+      "child_id": 4,
+      "allergies": [
+        "계란"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "계란, 난백, 난황 등 계란 유래 성분 주의"
+    },
+    {
+      "child_id": 5,
+      "allergies": [
+        "땅콩",
+        "견과류"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "땅콩 및 견과류 성분 포함 식품 주의"
+    },
+    {
+      "child_id": 6,
+      "allergies": [],
+      "skin_conditions": [
+        "아토피"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "색소",
+        "에탄올"
+      ],
+      "notes": "아토피 피부로 자극 가능 성분 포함 제품 사용 주의"
+    },
+    {
+      "child_id": 7,
+      "allergies": [
+        "우유"
+      ],
+      "skin_conditions": [
+        "아토피"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "색소",
+        "에탄올"
+      ],
+      "notes": "우유 유래 성분과 아토피 자극 가능 성분 모두 확인 필요"
+    },
+    {
+      "child_id": 8,
+      "allergies": [],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "특이사항 없음"
+    }
+  ]
+}
