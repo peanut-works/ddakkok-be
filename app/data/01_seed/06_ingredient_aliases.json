@@ -1,0 +1,76 @@
+{
+  "ingredient_aliases": [
+    {
+      "alias": "카제인Na",
+      "canonical_name": "카제인나트륨"
+    },
+    {
+      "alias": "우유단백",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "유청",
+      "canonical_name": "유청단백"
+    },
+    {
+      "alias": "난백",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "난황",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "전란",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "계란분말",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "피넛",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "땅콩버터",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "땅콩분말",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "땅콩오일",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "알코올",
+      "canonical_name": "에탄올"
+    },
+    {
+    "alias": "아몬드",
+    "canonical_name": "견과류"
+    },
+    {
+      "alias": "호두",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "캐슈넛",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "헤이즐넛",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "피스타치오",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "마카다미아",
+      "canonical_name": "견과류"
+    }
+  ]
+}
