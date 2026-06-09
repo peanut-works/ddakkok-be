@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api", tags=["health"])
 
 
 @router.get("/health")
-def health_check():
+def health_check() -> dict[str, str]:
     return {
         "status": "ok",
         "message": "Ddakkok API is running",
@@ -19,7 +19,7 @@ def health_check():
 
 
 @router.get("/health/db")
-def database_health_check(db: Annotated[Session, Depends(get_db)]):
+def database_health_check(db: Annotated[Session, Depends(get_db)]) -> dict[str, str]:
     try:
         db.execute(text("SELECT 1"))
     except SQLAlchemyError as exc:

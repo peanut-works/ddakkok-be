@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -23,7 +24,7 @@ class AIProvider(ABC):
     async def function_call(
         self,
         messages: list[ChatMessage],
-        tools: list[dict],
-        tool_choice: str = "auto",
-    ) -> dict:
+        tools: list[dict[str, Any]],
+        tool_choice: str | dict[str, Any] = "auto",
+    ) -> dict[str, Any]:
         """Function Calling을 수행하고 파싱된 arguments dict를 반환한다."""

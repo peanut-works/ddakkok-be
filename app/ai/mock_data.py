@@ -1,5 +1,7 @@
 """Mock 응답 데이터. 시연·테스트 환경에서 외부 API 없이 사용한다."""
 
+from typing import Any
+
 MOCK_EXPLANATIONS: dict[str, str] = {
     "FAIL": (
         "이 제품은 우유 알레르기가 있는 아동에게 사용하지 않는 것이 좋습니다.\n\n"
@@ -27,7 +29,7 @@ MOCK_EXPLANATIONS: dict[str, str] = {
     ),
 }
 
-MOCK_FUNCTION_CALL_RESULT: dict = {
+MOCK_FUNCTION_CALL_RESULT: dict[str, Any] = {
     "product": "A브랜드 물티슈",
     "ingredient": ["정제수", "글리세린", "카제인나트륨", "페녹시에탄올"],
     "expiry": "2027-03-15",

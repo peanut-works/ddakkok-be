@@ -1,3 +1,5 @@
+from typing import Any
+
 from app.ai.base import AIProvider, ChatMessage
 from app.ai.mock_data import MOCK_EXPLANATIONS, MOCK_FUNCTION_CALL_RESULT
 
@@ -28,7 +30,7 @@ class MockAIProvider(AIProvider):
     async def function_call(
         self,
         messages: list[ChatMessage],
-        tools: list[dict],
-        tool_choice: str = "auto",
-    ) -> dict:
+        tools: list[dict[str, Any]],
+        tool_choice: str | dict[str, Any] = "auto",
+    ) -> dict[str, Any]:
         return MOCK_FUNCTION_CALL_RESULT

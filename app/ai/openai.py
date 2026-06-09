@@ -1,9 +1,9 @@
 import json
+from typing import Any
 
 from openai import AsyncOpenAI
 
 from app.ai.base import AIProvider, ChatMessage
-
 
 _DEFAULT_TIMEOUT = 15.0  # 초. 시연 중 hang 방지용
 
@@ -35,9 +35,9 @@ class OpenAIProvider(AIProvider):
     async def function_call(
         self,
         messages: list[ChatMessage],
-        tools: list[dict],
-        tool_choice: str = "auto",
-    ) -> dict:
+        tools: list[dict[str, Any]],
+        tool_choice: str | dict[str, Any] = "auto",
+    ) -> dict[str, Any]:
         response = await self._client.chat.completions.create(
             model=self._model,
             messages=[{"role": m.role, "content": m.content} for m in messages],
@@ -45,4 +45,5 @@ class OpenAIProvider(AIProvider):
             tool_choice=tool_choice,
         )
         tool_call = response.choices[0].message.tool_calls[0]
-        return json.loads(tool_call.function.arguments)
+        result: dict[str, Any] = json.loads(tool_call.function.arguments)
+        return result
