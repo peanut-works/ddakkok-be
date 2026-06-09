@@ -10,6 +10,7 @@ from app.models.base import Base, TimestampMixin
 if TYPE_CHECKING:
     from app.models.child import Child
     from app.models.facility import Facility
+    from app.models.user import User
 
 
 class Classroom(Base, TimestampMixin):
@@ -29,5 +30,9 @@ class Classroom(Base, TimestampMixin):
     )
     children: Mapped[list[Child]] = relationship(
         "Child",
+        back_populates="classroom",
+    )
+    users: Mapped[list[User]] = relationship(
+        "User",
         back_populates="classroom",
     )

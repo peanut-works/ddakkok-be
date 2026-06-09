@@ -96,7 +96,8 @@ def reset_sequences(db: Session) -> None:
 def seed_facilities(db: Session) -> int:
     items = load_collection("01_facilities.json", "facilities")
     db.add_all(
-        Facility(**pick(item, {"id", "name", "address", "phone"})) for item in items
+        Facility(**pick(item, {"id", "name", "facility_type", "address", "phone"}))
+        for item in items
     )
     return len(items)
 
@@ -116,7 +117,15 @@ def seed_users(db: Session) -> int:
         User(
             **pick(
                 item,
-                {"id", "facility_id", "email", "password_hash", "name", "role"},
+                {
+                    "id",
+                    "facility_id",
+                    "classroom_id",
+                    "email",
+                    "password_hash",
+                    "name",
+                    "role",
+                },
             )
         )
         for item in items
