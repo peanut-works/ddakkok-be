@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from app.ai.base import AIProvider, ChatMessage
 from app.ai.mock import MockAIProvider
@@ -36,9 +37,9 @@ class FallbackAIProvider(AIProvider):
     async def function_call(
         self,
         messages: list[ChatMessage],
-        tools: list[dict],
-        tool_choice: str = "auto",
-    ) -> dict:
+        tools: list[dict[str, Any]],
+        tool_choice: str | dict[str, Any] = "auto",
+    ) -> dict[str, Any]:
         try:
             return await self._primary.function_call(messages, tools, tool_choice)
         except Exception as e:

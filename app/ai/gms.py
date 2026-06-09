@@ -21,6 +21,7 @@
 
 import json
 import logging
+from typing import Any
 
 import httpx
 
@@ -72,14 +73,14 @@ class GMSProvider(AIProvider):
             response.raise_for_status()
             data = response.json()
             # TODO: GMS 응답 구조 확인 후 필드 경로 수정
-            return data["choices"][0]["message"]["content"]
+            return str(data["choices"][0]["message"]["content"])
 
     async def function_call(
         self,
         messages: list[ChatMessage],
-        tools: list[dict],
-        tool_choice: str = "auto",
-    ) -> dict:
+        tools: list[dict[str, Any]],
+        tool_choice: str | dict[str, Any] = "auto",
+    ) -> dict[str, Any]:
         # TODO: GMS function calling 지원 여부 확인
         #   - 지원한다면: OpenAI와 동일한 tools 파라미터 전달
         #   - 지원 안 한다면: JSON 출력 프롬프트로 대체 후 파싱
@@ -99,4 +100,5 @@ class GMSProvider(AIProvider):
             data = response.json()
             # TODO: GMS function call 응답 구조 확인 후 파싱 로직 수정
             tool_call = data["choices"][0]["message"]["tool_calls"][0]
-            return json.loads(tool_call["function"]["arguments"])
+            result: dict[str, Any] = json.loads(tool_call["function"]["arguments"])
+            return result

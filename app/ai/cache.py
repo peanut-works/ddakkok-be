@@ -18,6 +18,7 @@ import hashlib
 import json
 import logging
 from collections import OrderedDict
+from typing import Any
 
 from app.ai.base import AIProvider, ChatMessage
 
@@ -49,7 +50,7 @@ class CachedAIProvider(AIProvider):
         self._primary = primary
         self._maxsize = maxsize
         self._chat_cache: OrderedDict[str, str] = OrderedDict()
-        self._fn_cache: OrderedDict[str, dict] = OrderedDict()
+        self._fn_cache: OrderedDict[str, dict[str, Any]] = OrderedDict()
 
     # ── Public ────────────────────────────────────────────────────────────────
 
@@ -73,9 +74,9 @@ class CachedAIProvider(AIProvider):
     async def function_call(
         self,
         messages: list[ChatMessage],
-        tools: list[dict],
-        tool_choice: str = "auto",
-    ) -> dict:
+        tools: list[dict[str, Any]],
+        tool_choice: str | dict[str, Any] = "auto",
+    ) -> dict[str, Any]:
         key = _make_key([m.model_dump() for m in messages], tools, str(tool_choice))
 
         if key in self._fn_cache:
@@ -107,9 +108,9 @@ class CachedAIProvider(AIProvider):
 
     # ── Internal ──────────────────────────────────────────────────────────────
 
-    def _put(self, cache: "OrderedDict[str, object]", key: str, value: object) -> None:
+    def _put(self, cache: "OrderedDict[str, Any]", key: str, value: Any) -> None:
         """캐시에 항목 추가. maxsize 초과 시 가장 오래된 항목 제거."""
         if len(cache) >= self._maxsize:
             evicted_key, _ = cache.popitem(last=False)
             logger.debug("cache evict %s…", evicted_key[:8])
-        cache[key] = value  # type: ignore[assignment]
+        cache[key] = value

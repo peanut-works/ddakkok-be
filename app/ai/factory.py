@@ -2,13 +2,13 @@ from functools import lru_cache
 
 from fastapi import Depends
 
-from app.core.config import Settings, get_settings
 from app.ai.base import AIProvider
 from app.ai.cache import CachedAIProvider
 from app.ai.fallback import FallbackAIProvider
 from app.ai.gms import GMSProvider
 from app.ai.mock import MockAIProvider
 from app.ai.openai import OpenAIProvider
+from app.core.config import Settings, get_settings
 
 
 @lru_cache

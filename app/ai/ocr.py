@@ -11,6 +11,7 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from functools import lru_cache
+from typing import Any
 
 import httpx
 
@@ -103,7 +104,7 @@ class ClovaOCRProvider(OCRProvider):
         return self._parse_response(data)
 
     @staticmethod
-    def _parse_response(data: dict) -> str:
+    def _parse_response(data: dict[str, Any]) -> str:
         """CLOVA OCR 응답 JSON → 원시 텍스트.
 
         fields 배열을 순서대로 이어붙이고 lineBreak=True인 경우 줄바꿈 삽입.

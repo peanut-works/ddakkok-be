@@ -26,6 +26,7 @@ TODO (프론트 팀 확인 후):
 """
 
 import logging
+from collections.abc import Callable
 
 import cv2
 import numpy as np
@@ -91,7 +92,7 @@ class ImagePreprocessor:
     def _safe_apply(
         self,
         img: "np.ndarray",
-        fn: "callable",
+        fn: "Callable[[np.ndarray], np.ndarray]",
         step_name: str,
     ) -> "np.ndarray":
         """각 계층을 예외 안전하게 실행. 실패 시 이전 단계 이미지 유지."""

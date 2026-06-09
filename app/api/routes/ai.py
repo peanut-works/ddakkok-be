@@ -5,6 +5,7 @@
 """
 
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Depends
 
@@ -20,7 +21,7 @@ router = APIRouter(prefix="/api/ai", tags=["ai"])
 async def ai_ping(
     provider: AIProvider = Depends(get_ai_provider),
     settings: Settings = Depends(get_settings),
-) -> dict:
+) -> dict[str, Any]:
     """AI provider 연결 테스트.
 
     - AI_PROVIDER=openai: OpenAI API 실제 호출 (15초 timeout)

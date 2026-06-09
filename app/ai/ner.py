@@ -10,6 +10,7 @@
 """
 
 import logging
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -21,7 +22,7 @@ _file_logger = logging.getLogger("ai.failures")
 
 # ── Tool schema ───────────────────────────────────────────────────────────────
 
-_EXTRACT_TOOL: list[dict] = [
+_EXTRACT_TOOL: list[dict[str, Any]] = [
     {
         "type": "function",
         "function": {
