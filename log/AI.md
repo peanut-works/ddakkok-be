@@ -5,6 +5,26 @@
 
 ---
 
+## 2026-06-09 — AI-02: Mock 설명 응답 작성
+
+### FAIL/WARN/PASS 예시 응답 및 API 실패 fallback 구현
+
+**변경 파일**
+- `app/ai/` — AI 모듈 디렉토리 `app/services/ai/` → `app/ai/`로 이동 (import 경로 전면 수정)
+- `app/ai/mock_data.py` — FAIL/WARN/PASS 판정별 교사용 설명 예시 + NER mock 결과 (신규)
+- `app/ai/mock.py` — 메시지 내 키워드(FAIL/WARN/PASS) 감지 후 해당 예시 반환 (개선)
+- `app/ai/fallback.py` — `FallbackAIProvider` 래퍼: primary 실패 시 mock으로 자동 전환 (신규)
+- `app/ai/factory.py` — openai/gms provider를 `FallbackAIProvider`로 감싸도록 수정
+- `app/ai/__init__.py` — `FallbackAIProvider` export 추가
+
+**설계 결정**
+- AI 모듈을 `app/services/ai/` 대신 `app/ai/`로 분리 — AI 파이프라인이 단순 서비스가 아닌 독립 레이어임을 구조로 표현
+- `FallbackAIProvider`는 래퍼 패턴으로 구현 — primary provider 교체 없이 fallback 동작 추가 가능
+- mock provider는 messages 내용 기반으로 시나리오 자동 감지 (FAIL 기본값)
+- GMS key 없는 시연 환경에서도 `AI_PROVIDER=gms` 설정 그대로 유지하며 mock 응답 반환
+
+---
+
 ## 2026-06-09 — AI-01: AI Provider 구조 설계
 
 ### AI Provider 추상화 레이어 구현
