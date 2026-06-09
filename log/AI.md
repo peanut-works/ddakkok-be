@@ -5,6 +5,28 @@
 
 ---
 
+## 2026-06-09 — AI-06: OpenAI 테스트 연결
+
+### GET /api/ai/ping — AI provider 연결 테스트 엔드포인트
+
+**변경 파일**
+- `app/api/routes/ai.py` — `GET /api/ai/ping` 엔드포인트 신규
+- `main.py` — ai_router 등록
+
+**동작 방식**
+| AI_PROVIDER 설정 | 동작 |
+|---|---|
+| `mock` | MockAIProvider 즉시 반환 (API 호출 없음) |
+| `openai` | OpenAI API 최소 프롬프트 1회 호출 |
+| `openai` + 잘못된 key | FallbackAIProvider → mock 자동 전환, 401 로그 출력 |
+
+**설계 결정**
+- API key는 서버 환경변수(`OPENAI_API_KEY`)에서만 읽으며 응답에 포함하지 않음
+- `get_ai_provider()` Depends 주입 — provider 교체 시 엔드포인트 코드 무변경
+- `temperature=0.0` — 테스트 목적이므로 결정론적 응답
+
+---
+
 ## 2026-06-09 — AI-05: 설명 생성 프롬프트 작성
 
 ### Rule Checker 결과 → 교사용 설명 텍스트 생성
