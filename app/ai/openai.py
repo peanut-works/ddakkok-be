@@ -2,7 +2,7 @@ import json
 
 from openai import AsyncOpenAI
 
-from app.services.ai.base import AIProvider, ChatMessage
+from app.ai.base import AIProvider, ChatMessage
 
 
 class OpenAIProvider(AIProvider):

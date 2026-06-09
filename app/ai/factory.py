@@ -3,10 +3,11 @@ from functools import lru_cache
 from fastapi import Depends
 
 from app.core.config import Settings, get_settings
-from app.services.ai.base import AIProvider
-from app.services.ai.gms import GMSProvider
-from app.services.ai.mock import MockAIProvider
-from app.services.ai.openai import OpenAIProvider
+from app.ai.base import AIProvider
+from app.ai.fallback import FallbackAIProvider
+from app.ai.gms import GMSProvider
+from app.ai.mock import MockAIProvider
+from app.ai.openai import OpenAIProvider
 
 
 @lru_cache
@@ -19,14 +20,22 @@ def _build_provider(
     gms_model: str,
 ) -> AIProvider:
     if ai_provider == "openai":
-        return OpenAIProvider(api_key=openai_api_key, model=openai_model)
+        return FallbackAIProvider(
+            primary=OpenAIProvider(api_key=openai_api_key, model=openai_model)
+        )
     if ai_provider == "gms":
-        return GMSProvider(api_key=gms_api_key, api_url=gms_api_url, model=gms_model)
+        return FallbackAIProvider(
+            primary=GMSProvider(api_key=gms_api_key, api_url=gms_api_url, model=gms_model)
+        )
     return MockAIProvider()
 
 
 def get_ai_provider(settings: Settings = Depends(get_settings)) -> AIProvider:
-    """FastAPI Depends로 주입 가능한 AI provider 팩토리."""
+    """FastAPI Depends로 주입 가능한 AI provider 팩토리.
+
+    - mock: MockAIProvider 직접 반환
+    - openai / gms: FallbackAIProvider로 감싸 API 실패 시 mock으로 자동 전환
+    """
     return _build_provider(
         ai_provider=settings.ai_provider,
         openai_api_key=settings.openai_api_key,
