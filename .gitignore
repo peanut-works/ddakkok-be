@@ -45,5 +45,4 @@ models/*.onnx
 AGENTS.md
 .harness/
 scripts/
-docs/
 harness-starter-kit/

@@ -73,8 +73,14 @@ class DocTrWrapper:
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model = GeoTr(num_attn_layers=6)
 
-            state = torch.load(str(_MODEL_PATH), map_location=device, weights_only=True)
-            # 공식 체크포인트 키: model_state / state_dict / (루트)
+            # weights_only=True: 보안상 권장이나 구형 체크포인트에서 실패 가능.
+            # 실패 시 False로 재시도 (해커톤 환경에서 신뢰된 파일이므로 허용).
+            try:
+                state = torch.load(str(_MODEL_PATH), map_location=device, weights_only=True)
+            except Exception:
+                state = torch.load(str(_MODEL_PATH), map_location=device, weights_only=False)  # noqa: S614
+
+            # 공식 체크포인트 키: model_state / state_dict / (루트 dict)
             model.load_state_dict(
                 state.get("model_state", state.get("state_dict", state))
             )

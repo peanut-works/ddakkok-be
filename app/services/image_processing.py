@@ -253,7 +253,9 @@ class ImagePreprocessor:
         matches = [cv2.DMatch(i, i, 0) for i in range(len(src_list))]
 
         tps = cv2.createThinPlateSplineShapeTransformer()
-        tps.estimateTransformation(dst, src, matches)
+        # estimateTransformation(변환할 점, 목표 점, matches)
+        # src = 곡선 위치, dst = 직선 목표 → src → dst 방향으로 변환
+        tps.estimateTransformation(src, dst, matches)
         result = tps.warpImage(img)
         return result if result is not None else img
 
