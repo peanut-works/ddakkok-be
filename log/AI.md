@@ -5,6 +5,30 @@
 
 ---
 
+## 2026-06-09 — AI-09: AI 응답 캐싱
+
+### 같은 입력에 대한 AI 중복 호출 제거
+
+**변경 파일**
+- `app/ai/cache.py` — `CachedAIProvider` 구현
+- `app/ai/factory.py` — openai/gms provider에 캐시 래퍼 적용
+- `app/core/config.py` — `ai_cache_enabled`, `ai_cache_maxsize` 설정 추가
+- `.env.example` — 캐시 설정 항목 추가
+
+**설계 결정**
+- in-memory `OrderedDict` LRU — Redis 없이 단일 컨테이너에서 동작
+- SHA-256 해시로 입력 키 생성 (messages + temperature/tools)
+- mock provider는 캐시 미적용 — 비용 없는 호출이므로 불필요
+- `AI_CACHE_ENABLED=false`로 캐시 레이어 전체 비활성화 가능
+- 컨테이너 재시작 시 초기화 (해커톤 환경에서 충분)
+
+**래퍼 체인 (openai 기준)**
+```
+OpenAIProvider → FallbackAIProvider → CachedAIProvider ← 요청
+```
+
+---
+
 ## 2026-06-09 — AI-08: AI 실패 fallback 처리
 
 ### AI 호출 실패 시 시연 중단 없이 mock 응답 유지
