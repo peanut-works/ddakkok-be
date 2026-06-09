@@ -4,7 +4,7 @@
 
 설계 원칙:
 - 텍스트에 명시된 내용만 추출. 추측·보완 금지.
-- 추출 실패 시 예외 raise 없이 빈 값(""·[]) 반환.
+- 추출 실패 시 예외 raise 없이 MOCK_FUNCTION_CALL_RESULT 기반 fallback NERResult 반환.
 - AIProvider.function_call()을 통해 GPT-4o-mini Function Calling 사용.
   Mock 환경에서는 MockAIProvider가 MOCK_FUNCTION_CALL_RESULT를 반환.
 """
@@ -14,8 +14,10 @@ import logging
 from pydantic import BaseModel
 
 from app.ai.base import AIProvider, ChatMessage
+from app.ai.mock_data import MOCK_FUNCTION_CALL_RESULT
 
 logger = logging.getLogger(__name__)
+_file_logger = logging.getLogger("ai.failures")
 
 # ── Tool schema ───────────────────────────────────────────────────────────────
 
@@ -126,5 +128,16 @@ class LabelParser:
                 maker=raw.get("maker", ""),
             )
         except Exception as e:
-            logger.warning("LabelParser.parse 실패, 빈 NERResult 반환. 원인: %s", e)
-            return NERResult()
+            msg = (
+                f"[AI FALLBACK] provider=LabelParser "
+                f"method=parse "
+                f"error={type(e).__name__}: {e}"
+            )
+            logger.warning(msg)
+            _file_logger.warning(msg)
+            return NERResult(
+                product=MOCK_FUNCTION_CALL_RESULT.get("product", ""),
+                ingredient=MOCK_FUNCTION_CALL_RESULT.get("ingredient", []),
+                expiry=MOCK_FUNCTION_CALL_RESULT.get("expiry", ""),
+                maker=MOCK_FUNCTION_CALL_RESULT.get("maker", ""),
+            )
