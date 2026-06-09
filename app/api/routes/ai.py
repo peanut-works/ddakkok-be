@@ -7,7 +7,6 @@
 """
 
 import logging
-from typing import Any
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 from sqlalchemy.orm import Session, joinedload
@@ -23,6 +22,8 @@ from app.models.child import Child
 from app.models.classroom import Classroom
 from app.models.product import Product
 from app.models.safety_check import SafetyCheck, SafetyCheckResult
+from app.schemas.ai import AiPingResponse
+from app.schemas.error import ErrorResponse
 from app.schemas.safety_card import ChildSafetyResult, MatchedRuleSummary, SafetyCardResponse
 
 logger = logging.getLogger(__name__)
@@ -32,11 +33,21 @@ router = APIRouter(prefix="/api/ai", tags=["ai"])
 # ── GET /ping ─────────────────────────────────────────────────────────────────
 
 
-@router.get("/ping")
+@router.get(
+    "/ping",
+    response_model=AiPingResponse,
+    summary="AI provider connection check",
+    responses={
+        500: {
+            "model": ErrorResponse,
+            "description": "Internal server error",
+        }
+    },
+)
 async def ai_ping(
     provider: AIProvider = Depends(get_ai_provider),
     settings: Settings = Depends(get_settings),
-) -> dict[str, Any]:
+) -> AiPingResponse:
     """AI provider 연결 테스트.
 
     - AI_PROVIDER=openai/gms: 실제 API 호출 (15초 timeout)
@@ -56,14 +67,18 @@ async def ai_ping(
     ]
     try:
         response = await provider.chat_complete(messages, temperature=0.0)
-        return {"status": "ok", "provider": settings.ai_provider, "response": response}
+        return AiPingResponse(
+            status="ok",
+            provider=settings.ai_provider,
+            response=response,
+        )
     except Exception as e:
         logger.error("ai_ping 최종 예외 — provider=%s error=%s", settings.ai_provider, e)
-        return {
-            "status": "fallback",
-            "provider": settings.ai_provider,
-            "response": "AI 연결에 실패했습니다. Mock 응답으로 대체됩니다.",
-        }
+        return AiPingResponse(
+            status="fallback",
+            provider=settings.ai_provider,
+            response="AI 연결에 실패했습니다. Mock 응답으로 대체됩니다.",
+        )
 
 
 # ── POST /analyze ─────────────────────────────────────────────────────────────
@@ -129,11 +144,6 @@ def _fetch_children(
 ) -> tuple[Classroom, list[RuleCheckerProfile], dict[int, str]]:
     """반 ID로 Classroom + 활성 아동 건강 프로필을 조회한다.
 
-    Returns:
-        (classroom, profiles, name_map)
-        - profiles:  Rule Checker 입력용 ChildHealthProfile 목록
-        - name_map:  child_id → child_name (응답 변환용)
-
     Raises:
         HTTPException 404: 반 ID가 존재하지 않는 경우
     """
@@ -169,15 +179,10 @@ def _save_to_db(
     result: PipelineResult,
     classroom: Classroom,
 ) -> SafetyCheck:
-    """파이프라인 결과를 Product → SafetyCheck → SafetyCheckResult 순으로 저장한다.
-
-    스캔할 때마다 Product 레코드를 새로 생성한다.
-    (해커톤 범위 — 향후 barcode/이름 기반 중복 제거 가능)
-    """
+    """파이프라인 결과를 Product → SafetyCheck → SafetyCheckResult 순으로 저장한다."""
     ner = result.ner_result
     report = result.safety_report
 
-    # 1. Product
     product = Product(
         facility_id=classroom.facility_id,
         name=ner.product or "알 수 없는 제품",
@@ -189,9 +194,8 @@ def _save_to_db(
         ocr_raw_text=result.ocr_text,
     )
     db.add(product)
-    db.flush()  # product.id 확보
+    db.flush()
 
-    # 2. SafetyCheck
     check = SafetyCheck(
         facility_id=classroom.facility_id,
         product_id=product.id,
@@ -204,9 +208,8 @@ def _save_to_db(
         unknown_count=report.unknown_count,
     )
     db.add(check)
-    db.flush()  # check.id 확보
+    db.flush()
 
-    # 3. SafetyCheckResult — 아동 1명당 레코드 1개 (가장 심각한 규칙 기록)
     for child_result in report.child_results:
         primary = (
             max(child_result.matched_rules, key=lambda r: r.status.severity_rank())
@@ -233,7 +236,7 @@ def _build_response(
     name_map: dict[int, str],
     check_id: int | None,
 ) -> SafetyCardResponse:
-    """PipelineResult + 아동 이름 맵 → SafetyCardResponse."""
+    """PipelineResult → SafetyCardResponse 변환."""
     report = result.safety_report
     return SafetyCardResponse(
         check_id=check_id,
