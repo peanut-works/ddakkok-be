@@ -15,6 +15,7 @@ from app.schemas.safety_card import (
     MatchedRuleSummary,
     SafetyCardResponse,
 )
+from app.schemas.classroom import ClassroomResponse
 
 __all__ = [
     "AuthResponse",
@@ -34,4 +35,5 @@ __all__ = [
     "MatchedRuleSummary",
     "RootResponse",
     "SafetyCardResponse",
+    "ClassroomResponse",
 ]

@@ -4,6 +4,7 @@ from fastapi.responses import RedirectResponse
 
 from app.api.routes.ai import router as ai_router
 from app.api.routes.auth import router as auth_router
+from app.api.routes.classrooms import router as classrooms_router
 from app.api.routes.health import router as health_router
 from app.core.config import get_settings
 from app.core.exceptions import register_exception_handlers
@@ -30,6 +31,7 @@ register_exception_handlers(app)
 app.include_router(health_router)
 app.include_router(ai_router)
 app.include_router(auth_router)
+app.include_router(classrooms_router)
 
 
 @app.get(
