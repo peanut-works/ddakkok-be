@@ -1,0 +1,154 @@
+{
+  "products": [
+    {
+      "id": 101,
+      "facility_id": 1,
+      "name": "세이프 데일리 핸드워시",
+      "category": "CLEANSER",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000101",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "정제수, 글리세린, 코코베타인, 구연산",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인",
+        "구연산"
+      ],
+      "demo_purpose": "위험 성분이 없어 전체 PASS 확인"
+    },
+    {
+      "id": 102,
+      "facility_id": 1,
+      "name": "밀크 프로틴 보습 물티슈",
+      "category": "WET_TISSUE",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000102",
+      "expiry_date": "2027-08-31",
+      "raw_ingredients_text": "정제수, 글리세린, 카제인Na, 페녹시에탄올",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "페녹시에탄올"
+      ],
+      "demo_purpose": "우유 알레르기 FAIL + 민감성 피부 WARN 동시 확인. 카제인Na 별칭 정규화 포함"
+    },
+    {
+      "id": 103,
+      "facility_id": 1,
+      "name": "에그 소프트 쿠키",
+      "category": "FOOD",
+      "manufacturer": "해커톤푸드",
+      "barcode": "880100000103",
+      "expiry_date": "2027-02-28",
+      "raw_ingredients_text": "밀가루, 설탕, 계란, 난백, 버터",
+      "ingredients": [
+        "밀가루",
+        "설탕",
+        "계란",
+        "난백",
+        "버터"
+      ],
+      "demo_purpose": "계란 알레르기 FAIL 확인"
+    },
+    {
+      "id": 104,
+      "facility_id": 1,
+      "name": "땅콩버터 크런치바",
+      "category": "FOOD",
+      "manufacturer": "해커톤푸드",
+      "barcode": "880100000104",
+      "expiry_date": "2027-05-20",
+      "raw_ingredients_text": "귀리, 설탕, 땅콩버터, 아몬드, 식물성유지",
+      "ingredients": [
+        "귀리",
+        "설탕",
+        "땅콩버터",
+        "아몬드",
+        "식물성유지"
+      ],
+      "demo_purpose": "땅콩/견과류 알레르기 중 땅콩 룰 FAIL 확인"
+    },
+    {
+      "id": 105,
+      "facility_id": 1,
+      "name": "향기 톡톡 키즈 로션",
+      "category": "LOTION",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000105",
+      "expiry_date": "2027-11-30",
+      "raw_ingredients_text": "정제수, 글리세린, 향료, 알코올",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "향료",
+        "에탄올"
+      ],
+      "demo_purpose": "민감성 피부 WARN + 아토피 WARN 확인. 알코올 별칭 정규화 포함"
+    },
+    {
+      "id": 106,
+      "facility_id": 1,
+      "name": "컬러 버블 클렌저",
+      "category": "CLEANSER",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000106",
+      "expiry_date": "2027-09-15",
+      "raw_ingredients_text": "정제수, 코코베타인, 색소, 구연산",
+      "ingredients": [
+        "정제수",
+        "코코베타인",
+        "색소",
+        "구연산"
+      ],
+      "demo_purpose": "아토피 WARN 전용 확인"
+    },
+    {
+      "id": 107,
+      "facility_id": 1,
+      "name": "복합 주의 키즈 크림",
+      "category": "LOTION",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000107",
+      "expiry_date": "2027-10-10",
+      "raw_ingredients_text": "정제수, 글리세린, 카제인나트륨, 향료, 에탄올",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "향료",
+        "에탄올"
+      ],
+      "demo_purpose": "한 제품에서 FAIL과 WARN이 함께 발생하는 복합 케이스 확인"
+    },
+    {
+      "id": 108,
+      "facility_id": 1,
+      "name": "유통기한 지난 물티슈",
+      "category": "WET_TISSUE",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000108",
+      "expiry_date": "2025-12-31",
+      "raw_ingredients_text": "정제수, 글리세린, 코코베타인",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인"
+      ],
+      "demo_purpose": "유통기한 만료 EXPIRED 확인"
+    },
+    {
+      "id": 109,
+      "facility_id": 1,
+      "name": "성분표 훼손 제품",
+      "category": "ETC",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000109",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "성분표 훼손으로 판독 불가",
+      "ingredients": [],
+      "demo_purpose": "OCR/파싱 실패 시 UNKNOWN 확인. 백엔드가 ingredients empty 또는 OCR status failed를 UNKNOWN으로 처리해야 함"
+    }
+  ]
+}
