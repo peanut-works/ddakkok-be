@@ -154,6 +154,37 @@ class AnalysisPipeline:
             explanation=explanation,
         )
 
+    async def analyze_from_text(
+        self,
+        ocr_text: str,
+        children: list[ChildHealthProfile],
+    ) -> PipelineResult:
+        """OCR 텍스트 직접 입력 → PipelineResult. 이미지 없이 데모·테스트용.
+
+        Step 1(이미지 전처리), Step 2(OCR)를 건너뛰고 Step 3(NER)부터 실행.
+
+        Args:
+            ocr_text:  이미 추출된 OCR 텍스트 (MockOCR 시나리오 등)
+            children:  대조할 아동 건강 프로필 목록
+        """
+        logger.info("[Pipeline] analyze_from_text — NER부터 실행 (이미지·OCR 스킵)")
+
+        ner_result = await self._parser.parse(ocr_text)
+        logger.debug("[Pipeline] NER: product=%s ingredient=%d개",
+                     ner_result.product, len(ner_result.ingredient))
+
+        safety_report = self._run_checker(ner_result, children)
+        logger.info("[Pipeline] 판정=%s", safety_report.overall_status)
+
+        explanation = await self._generate_explanation(ner_result, safety_report)
+
+        return PipelineResult(
+            ocr_text=ocr_text,
+            ner_result=ner_result,
+            safety_report=safety_report,
+            explanation=explanation,
+        )
+
     # ── Internal ──────────────────────────────────────────────────────────────
 
     def _run_checker(
