@@ -66,13 +66,41 @@ safety_rules: 8
 
 ```text
 email: teacher@ddakkok.com
-password_hash: test-password-hash
-name: 테스트교사
+password: ddakkok1234
+password_hash: plain:ddakkok1234
+name: 김하늘
 role: TEACHER
 facility_id: 1
+classroom_id: 1
 ```
 
-`password_hash`는 BE-08 로그인 구현 전 임시 seed 값입니다.
+`password_hash`는 BE-08 데모 로그인을 위한 임시 plain prefix 값입니다.
+실제 배포 인증에서는 bcrypt/argon2 기반 hash로 교체해야 합니다.
+
+## 로그인 API
+
+이메일/시설 계정 로그인:
+
+```bash
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"teacher@ddakkok.com","password":"ddakkok1234","login_method":"FACILITY"}'
+```
+
+체험하기 로그인:
+
+```bash
+curl -X POST http://localhost:8000/api/auth/demo
+```
+
+로그인 사용자 정보 확인:
+
+```bash
+curl http://localhost:8000/api/auth/me \
+  -H "Authorization: Bearer mock-token:user:1"
+```
+
+카카오 로그인은 OAuth callback 서버 설정이 준비된 뒤 구현합니다.
 
 ## 결과 확인
 
@@ -85,7 +113,7 @@ docker compose exec db psql -U ddakkok -d ddakkok -c "SELECT 'facilities' AS tab
 테스트 계정 확인:
 
 ```bash
-docker compose exec db psql -U ddakkok -d ddakkok -c "SELECT id, email, name, role, facility_id FROM users;"
+docker compose exec db psql -U ddakkok -d ddakkok -c "SELECT id, email, name, role, facility_id, classroom_id FROM users;"
 ```
 
 아동 수 확인:

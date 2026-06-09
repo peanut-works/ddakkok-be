@@ -3,9 +3,10 @@
     {
       "id": 1,
       "facility_id": 1,
+      "classroom_id": 1,
       "email": "teacher@ddakkok.com",
-      "password_hash": "test-password-hash",
-      "name": "테스트교사",
+      "password_hash": "plain:ddakkok1234",
+      "name": "김하늘",
       "role": "TEACHER"
     }
   ]
