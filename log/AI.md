@@ -5,6 +5,30 @@
 
 ---
 
+## 2026-06-09 — AI-08: AI 실패 fallback 처리
+
+### AI 호출 실패 시 시연 중단 없이 mock 응답 유지
+
+**변경 파일**
+- `app/ai/openai.py` — `timeout=15.0s` 기본값 추가
+- `app/ai/gms.py` — timeout 30s → 15s (OpenAI와 통일)
+- `app/ai/fallback.py` — 실패 로그를 `log/ai_failures.log`에 파일 저장 추가
+- `app/api/routes/ai.py` — `/api/ai/ping` 최종 except 추가 (항상 200 반환 보장)
+
+**실패 처리 3단 방어선**
+```
+1차: FallbackAIProvider — 모든 예외 잡아 mock으로 전환 (기존)
+2차: log/ai_failures.log — 실패 내용 파일 기록 (AI-08 추가)
+3차: api route try/except — 만일의 경우 200 + fallback 형식 반환 (AI-08 추가)
+```
+
+**ai_failures.log 기록 형식**
+```
+2026-06-09 07:12:45,489 WARNING [AI FALLBACK] provider=GMSProvider method=chat_complete error=ConnectError: ...
+```
+
+---
+
 ## 2026-06-09 — AI-07: GMS Client 껍데기 작성
 
 ### 현장 GMS key 수령 즉시 연결 가능한 HTTP 클라이언트 구조 구현
