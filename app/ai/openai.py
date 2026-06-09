@@ -5,11 +5,19 @@ from openai import AsyncOpenAI
 from app.ai.base import AIProvider, ChatMessage
 
 
+_DEFAULT_TIMEOUT = 15.0  # 초. 시연 중 hang 방지용
+
+
 class OpenAIProvider(AIProvider):
     """OpenAI GPT-4o-mini 기반 provider."""
 
-    def __init__(self, api_key: str, model: str = "gpt-4o-mini") -> None:
-        self._client = AsyncOpenAI(api_key=api_key)
+    def __init__(
+        self,
+        api_key: str,
+        model: str = "gpt-4o-mini",
+        timeout: float = _DEFAULT_TIMEOUT,
+    ) -> None:
+        self._client = AsyncOpenAI(api_key=api_key, timeout=timeout)
         self._model = model
 
     async def chat_complete(

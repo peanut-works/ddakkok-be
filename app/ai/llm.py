@@ -7,7 +7,7 @@
 - matched_rules에 있는 내용만 근거로 사용한다.
 - 의료적 진단 표현을 사용하지 않는다. ("알레르기 반응이 생긴다" X)
 - 보호자/관리자 확인 권고 문구를 판정별로 포함한다.
-- 생성 실패 시 예외 없이 빈 문자열 반환.
+- 생성 실패 시 예외 없이 MOCK_EXPLANATIONS[status] fallback 반환.
 """
 
 import logging
@@ -16,8 +16,10 @@ from typing import Literal
 from pydantic import BaseModel
 
 from app.ai.base import AIProvider, ChatMessage
+from app.ai.mock_data import MOCK_EXPLANATIONS
 
 logger = logging.getLogger(__name__)
+_file_logger = logging.getLogger("ai.failures")
 
 # ── System prompt ─────────────────────────────────────────────────────────────
 
@@ -118,5 +120,11 @@ class ExplanationGenerator:
         try:
             return await self._provider.chat_complete(messages, temperature=0.3)
         except Exception as e:
-            logger.warning("ExplanationGenerator.generate 실패, 빈 문자열 반환. 원인: %s", e)
-            return ""
+            msg = (
+                f"[AI FALLBACK] provider=ExplanationGenerator "
+                f"method=generate status={inp.status} "
+                f"error={type(e).__name__}: {e}"
+            )
+            logger.warning(msg)
+            _file_logger.warning(msg)
+            return MOCK_EXPLANATIONS[inp.status]
