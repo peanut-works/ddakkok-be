@@ -1,0 +1,196 @@
+openapi: 3.1.0
+info:
+  title: ddakkok-be
+  description: 영유아 맞춤 제품 안전관리 서비스 딱콕 API
+  version: 0.1.0
+paths:
+  /api/health:
+    get:
+      tags:
+      - health
+      summary: API health check
+      operationId: health_check_api_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/health/db:
+    get:
+      tags:
+      - health
+      summary: Database connection health check
+      operationId: database_health_check_api_health_db_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseHealthResponse'
+        '500':
+          description: Database connection failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/ai/ping:
+    get:
+      tags:
+      - ai
+      summary: AI provider connection check
+      description: 'AI provider 연결 테스트.
+
+
+        - AI_PROVIDER=openai: OpenAI API 실제 호출 (15초 timeout)
+
+        - AI_PROVIDER=mock  : mock 응답 즉시 반환
+
+        - 호출 실패 시       : FallbackAIProvider가 mock으로 자동 전환
+
+        - 어떤 경우에도 200 + 정상 JSON 형식으로 응답 (시연 중단 없음)
+
+
+        API key는 서버 환경변수에서만 읽으며 응답에 포함되지 않는다.'
+      operationId: ai_ping_api_ai_ping_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiPingResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /:
+    get:
+      summary: API root
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RootResponse'
+components:
+  schemas:
+    AiPingResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+        provider:
+          type: string
+          title: Provider
+        response:
+          type: string
+          title: Response
+      type: object
+      required:
+      - status
+      - provider
+      - response
+      title: AiPingResponse
+      examples:
+      - provider: mock
+        response: 연결 성공
+        status: ok
+      - provider: openai
+        response: AI 연결에 실패했습니다. Mock 응답으로 대체됩니다.
+        status: fallback
+    DatabaseHealthResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+        database:
+          type: string
+          title: Database
+      type: object
+      required:
+      - status
+      - database
+      title: DatabaseHealthResponse
+      example:
+        database: connected
+        status: ok
+    ErrorDetail:
+      properties:
+        code:
+          type: string
+          title: Code
+          examples:
+          - NOT_FOUND
+        message:
+          type: string
+          title: Message
+          examples:
+          - Resource not found
+        details:
+          anyOf:
+          - {}
+          - type: 'null'
+          title: Details
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorDetail
+    ErrorResponse:
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorDetail'
+      type: object
+      required:
+      - error
+      title: ErrorResponse
+    HealthResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - status
+      - message
+      title: HealthResponse
+      example:
+        message: Ddakkok API is running
+        status: ok
+    RootResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        docs:
+          type: string
+          title: Docs
+        health:
+          type: string
+          title: Health
+      type: object
+      required:
+      - message
+      - docs
+      - health
+      title: RootResponse
+      example:
+        docs: /docs
+        health: /api/health
+        message: Ddakkok API
