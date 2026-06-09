@@ -5,6 +5,45 @@
 
 ---
 
+## 2026-06-09 — AI-11: CLOVA OCR 연동
+
+### Naver CLOVA OCR API 클라이언트 구현
+
+**변경 파일**
+- `app/ai/ocr.py` — `ClovaOCRProvider` + `FallbackOCRProvider` + `get_ocr_provider()` 팩토리 추가
+- `app/core/config.py` — `clova_ocr_api_key`, `clova_ocr_api_url` 설정 추가
+- `.env.example` — CLOVA 항목 추가
+- `docs/hackathon-setup.md` — OCR 세팅 절차 업데이트
+
+**구현 내용**
+- `ClovaOCRProvider.extract_text(image: bytes) → str`
+  - base64 인코딩 후 CLOVA OCR API POST 요청
+  - 응답 `fields[].inferText`를 `lineBreak` 기준으로 줄바꿈 처리해 반환
+- `FallbackOCRProvider`: primary(CLOVA) 실패 시 MockOCRProvider 자동 전환
+- `get_ocr_provider()`: `OCR_PROVIDER=clova` → FallbackOCRProvider(ClovaOCRProvider), `mock` → MockOCRProvider
+
+**Fallback 동작**
+```
+ClovaOCRProvider 호출 실패
+  → FallbackOCRProvider가 경고 로그 기록
+  → MockOCRProvider(기본 시나리오)로 자동 전환
+  → 시연 중단 없음
+```
+
+**설계 결정**
+- `OCR_PROVIDER=mock` 상태에서는 FallbackOCRProvider 없이 MockOCRProvider 직접 반환 (비용 없는 호출)
+- timeout=15.0초 (AI provider와 통일)
+- requestId에 uuid4 사용 (CLOVA API 중복 요청 방지)
+
+**현장 세팅 (docs/hackathon-setup.md 참조)**
+```env
+OCR_PROVIDER=clova
+CLOVA_OCR_API_KEY=...
+CLOVA_OCR_API_URL=https://ocr.apigw.ntruss.com/custom/v1/...
+```
+
+---
+
 ## 2026-06-09 — AI-10: 이미지 전처리 서비스 (5계층 보정)
 
 ### OCR 정확도 향상을 위한 이미지 전처리 파이프라인

@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     ai_provider: str = "mock"
     ocr_provider: str = "mock"
 
+    clova_ocr_api_key: str = ""
+    clova_ocr_api_url: str = ""
+
     ai_cache_enabled: bool = True
     ai_cache_maxsize: int = 256
 
