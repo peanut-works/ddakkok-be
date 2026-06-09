@@ -1,0 +1,154 @@
+{
+  "ocr_results": [
+    {
+      "mock_image_name": "product_101.jpg",
+      "ocr_status": "SUCCESS",
+      "ocr_raw_text": "세이프 데일리 핸드워시 전성분: 정제수, 글리세린, 코코베타인, 구연산 유통기한: 2027.12.31",
+      "parsed_result": {
+        "product_name": "세이프 데일리 핸드워시",
+        "category": "CLEANSER",
+        "manufacturer": "해커톤생활건강",
+        "ingredients": [
+          "정제수",
+          "글리세린",
+          "코코베타인",
+          "구연산"
+        ],
+        "expiry_date": "2027-12-31"
+      }
+    },
+    {
+      "mock_image_name": "product_102.jpg",
+      "ocr_status": "SUCCESS",
+      "ocr_raw_text": "밀크 프로틴 보습 물티슈 전성분: 정제수, 글리세린, 카제인Na, 페녹시에탄올 유통기한: 2027.08.31",
+      "parsed_result": {
+        "product_name": "밀크 프로틴 보습 물티슈",
+        "category": "WET_TISSUE",
+        "manufacturer": "해커톤생활건강",
+        "ingredients": [
+          "정제수",
+          "글리세린",
+          "카제인나트륨",
+          "페녹시에탄올"
+        ],
+        "expiry_date": "2027-08-31"
+      }
+    },
+    {
+      "mock_image_name": "product_103.jpg",
+      "ocr_status": "SUCCESS",
+      "ocr_raw_text": "에그 소프트 쿠키 전성분: 밀가루, 설탕, 계란, 난백, 버터 유통기한: 2027.02.28",
+      "parsed_result": {
+        "product_name": "에그 소프트 쿠키",
+        "category": "FOOD",
+        "manufacturer": "해커톤푸드",
+        "ingredients": [
+          "밀가루",
+          "설탕",
+          "계란",
+          "난백",
+          "버터"
+        ],
+        "expiry_date": "2027-02-28"
+      }
+    },
+    {
+      "mock_image_name": "product_104.jpg",
+      "ocr_status": "SUCCESS",
+      "ocr_raw_text": "땅콩버터 크런치바 전성분: 귀리, 설탕, 땅콩버터, 아몬드, 식물성유지 유통기한: 2027.05.20",
+      "parsed_result": {
+        "product_name": "땅콩버터 크런치바",
+        "category": "FOOD",
+        "manufacturer": "해커톤푸드",
+        "ingredients": [
+          "귀리",
+          "설탕",
+          "땅콩버터",
+          "아몬드",
+          "식물성유지"
+        ],
+        "expiry_date": "2027-05-20"
+      }
+    },
+    {
+      "mock_image_name": "product_105.jpg",
+      "ocr_status": "SUCCESS",
+      "ocr_raw_text": "향기 톡톡 키즈 로션 전성분: 정제수, 글리세린, 향료, 알코올 유통기한: 2027.11.30",
+      "parsed_result": {
+        "product_name": "향기 톡톡 키즈 로션",
+        "category": "LOTION",
+        "manufacturer": "해커톤생활건강",
+        "ingredients": [
+          "정제수",
+          "글리세린",
+          "향료",
+          "에탄올"
+        ],
+        "expiry_date": "2027-11-30"
+      }
+    },
+    {
+      "mock_image_name": "product_106.jpg",
+      "ocr_status": "SUCCESS",
+      "ocr_raw_text": "컬러 버블 클렌저 전성분: 정제수, 코코베타인, 색소, 구연산 유통기한: 2027.09.15",
+      "parsed_result": {
+        "product_name": "컬러 버블 클렌저",
+        "category": "CLEANSER",
+        "manufacturer": "해커톤생활건강",
+        "ingredients": [
+          "정제수",
+          "코코베타인",
+          "색소",
+          "구연산"
+        ],
+        "expiry_date": "2027-09-15"
+      }
+    },
+    {
+      "mock_image_name": "product_107.jpg",
+      "ocr_status": "SUCCESS",
+      "ocr_raw_text": "복합 주의 키즈 크림 전성분: 정제수, 글리세린, 카제인나트륨, 향료, 에탄올 유통기한: 2027.10.10",
+      "parsed_result": {
+        "product_name": "복합 주의 키즈 크림",
+        "category": "LOTION",
+        "manufacturer": "해커톤생활건강",
+        "ingredients": [
+          "정제수",
+          "글리세린",
+          "카제인나트륨",
+          "향료",
+          "에탄올"
+        ],
+        "expiry_date": "2027-10-10"
+      }
+    },
+    {
+      "mock_image_name": "product_108.jpg",
+      "ocr_status": "SUCCESS",
+      "ocr_raw_text": "유통기한 지난 물티슈 전성분: 정제수, 글리세린, 코코베타인 유통기한: 2025.12.31",
+      "parsed_result": {
+        "product_name": "유통기한 지난 물티슈",
+        "category": "WET_TISSUE",
+        "manufacturer": "해커톤생활건강",
+        "ingredients": [
+          "정제수",
+          "글리세린",
+          "코코베타인"
+        ],
+        "expiry_date": "2025-12-31"
+      }
+    },
+    {
+      "mock_image_name": "product_109.jpg",
+      "ocr_status": "FAILED",
+      "ocr_raw_text": "성분표 훼손으로 판독 불가",
+      "parsed_result": {
+        "product_name": "성분표 훼손 제품",
+        "category": "ETC",
+        "manufacturer": "해커톤생활건강",
+        "ingredients": [],
+        "expiry_date": "2027-12-31"
+      }
+    }
+  ]
+}
