@@ -1,11 +1,18 @@
+import importlib
+import sys
+
 from fastapi.testclient import TestClient
-
-from main import app
-
 from sqlalchemy import select
 
-from app.core.database import SessionLocal
-from app.models.safety_check import SafetyCheck, SafetyCheckResult
+sys.modules.pop("app.core.database", None)
+database = importlib.import_module("app.core.database")
+SessionLocal = database.SessionLocal
+
+safety_check_models = importlib.import_module("app.models.safety_check")
+SafetyCheck = safety_check_models.SafetyCheck
+SafetyCheckResult = safety_check_models.SafetyCheckResult
+
+app = importlib.import_module("main").app
 
 client = TestClient(app)
 
@@ -290,3 +297,108 @@ def test_get_safety_check_detail_not_found():
     )
 
     assert response.status_code == 404
+
+
+def test_generate_safety_check_explanations_success():
+    create_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 102,
+            "classroom_id": 1,
+            "child_ids": [1, 3],
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    check_id = create_response.json()["id"]
+
+    response = client.post(
+        f"/api/safety-checks/{check_id}/explanations",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["id"] == check_id
+    assert "overall_explanation" in data
+    assert data["overall_explanation"]
+
+    assert isinstance(data["results"], list)
+    assert len(data["results"]) == 2
+
+    for result in data["results"]:
+        assert result["explanation"]
+
+
+def test_generate_safety_check_explanations_without_token():
+    response = client.post("/api/safety-checks/1/explanations")
+
+    assert response.status_code == 401
+
+
+def test_generate_safety_check_explanations_not_found():
+    response = client.post(
+        "/api/safety-checks/9999/explanations",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert response.status_code == 404
+
+
+def test_generate_safety_check_explanations_is_idempotent():
+    create_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 102,
+            "classroom_id": 1,
+            "child_ids": [1, 3],
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    check_id = create_response.json()["id"]
+
+    db = SessionLocal()
+
+    try:
+        before_count = db.scalars(
+            select(SafetyCheckResult).where(
+                SafetyCheckResult.safety_check_id == check_id
+            )
+        ).all()
+    finally:
+        db.close()
+
+    first_response = client.post(
+        f"/api/safety-checks/{check_id}/explanations",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+    second_response = client.post(
+        f"/api/safety-checks/{check_id}/explanations",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert first_response.status_code == 200
+    assert second_response.status_code == 200
+
+    db = SessionLocal()
+
+    try:
+        after_results = db.scalars(
+            select(SafetyCheckResult)
+            .where(SafetyCheckResult.safety_check_id == check_id)
+            .order_by(SafetyCheckResult.id.asc())
+        ).all()
+
+        assert len(after_results) == len(before_count)
+
+        for result in after_results:
+            assert result.explanation
+    finally:
+        db.close()
