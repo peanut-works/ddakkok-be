@@ -16,6 +16,7 @@ from app.schemas.safety_card import (
     SafetyCardResponse,
 )
 from app.schemas.classroom import ClassroomResponse
+from app.schemas.product import ProductCreateRequest, ProductResponse
 
 __all__ = [
     "AuthResponse",
@@ -36,4 +37,9 @@ __all__ = [
     "RootResponse",
     "SafetyCardResponse",
     "ClassroomResponse",
+    "ChildDetailResponse",
+    "ChildHealthProfileResponse",
+    "ChildListItemResponse",
+    "ProductCreateRequest",
+    "ProductResponse",
 ]
