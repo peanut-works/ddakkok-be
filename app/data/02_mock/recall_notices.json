@@ -1,0 +1,79 @@
+{
+  "recall_notices": [
+    {
+      "id": 1,
+      "facility_id": null,
+      "product_name": "마이디데이 브로멜라인",
+      "manufacturer": "주식회사 피비에이치",
+      "category": "식품",
+      "recall_date": "2026-04-23",
+      "reason": "표시대상 알레르기 유발 원료성분(우유, 대두) 미표시",
+      "action_guide": "해당 제품은 섭취를 중단하고 구입처 또는 판매처에 반품하세요.",
+      "source": "Consumer24",
+      "source_url": null,
+      "external_id": null,
+      "menu_id": null,
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "facility_id": null,
+      "product_name": "가평잣엿",
+      "manufacturer": "㈜마음",
+      "category": "식품",
+      "recall_date": "2024-02-28",
+      "reason": "알레르기 유발물질 표시대상인 밀 미표시",
+      "action_guide": "해당 제품은 섭취를 중단하고 구입처 또는 판매처에 반품하세요.",
+      "source": "식품의약품안전처",
+      "source_url": null,
+      "external_id": null,
+      "menu_id": null,
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "facility_id": null,
+      "product_name": "낫슈99",
+      "manufacturer": "㈜우포라이스텍",
+      "category": "식품",
+      "recall_date": "2026-04-29",
+      "reason": "세균수 기준 초과 검출",
+      "action_guide": "해당 제품은 섭취를 중단하고 구입처에 반품하세요.",
+      "source": "식품의약품안전처",
+      "source_url": null,
+      "external_id": null,
+      "menu_id": null,
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "facility_id": null,
+      "product_name": "올포홈 구르미 낮잠패드(쿠앤크)",
+      "manufacturer": "㈜올포홈리빙",
+      "category": "유아용 섬유제품",
+      "recall_date": "2026-05-21",
+      "reason": "폼알데하이드 기준치 초과",
+      "action_guide": "해당 제품은 사용을 중단하고 판매처 또는 사업자 안내에 따라 교환·환불 절차를 확인하세요.",
+      "source": "제품안전정보센터",
+      "source_url": null,
+      "external_id": null,
+      "menu_id": null,
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "facility_id": null,
+      "product_name": "올포홈 구르미 낮잠패드(딸기마카롱)",
+      "manufacturer": "㈜올포홈리빙",
+      "category": "유아용 섬유제품",
+      "recall_date": "2026-05-21",
+      "reason": "폼알데하이드 기준치 초과",
+      "action_guide": "해당 제품은 사용을 중단하고 판매처 또는 사업자 안내에 따라 교환·환불 절차를 확인하세요.",
+      "source": "제품안전정보센터",
+      "source_url": null,
+      "external_id": null,
+      "menu_id": null,
+      "is_active": true
+    }
+  ]
+}

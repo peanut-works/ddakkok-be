@@ -1,0 +1,49 @@
+{
+  "recall_notices": [
+    {
+      "id": 1,
+      "facility_id": null,
+      "product_name": "아토팜 리얼베리어 크림 100ml",
+      "manufacturer": null,
+      "category": "화장품",
+      "recall_date": "2025-06-07",
+      "reason": "기준치 초과 방부제 검출",
+      "action_guide": "해당 제품을 구매한 소비자는 판매 또는 구입처에 반품하세요.",
+      "source": "Consumer24",
+      "source_url": null,
+      "external_id": null,
+      "menu_id": null,
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "facility_id": null,
+      "product_name": "베베숲 화이트머시멜로 로션",
+      "manufacturer": null,
+      "category": "화장품",
+      "recall_date": "2025-06-03",
+      "reason": "비의도적 알레르기 유발 성분 미표기",
+      "action_guide": "해당 제품을 구매한 소비자는 판매 또는 구입처에 반품하세요.",
+      "source": "Consumer24",
+      "source_url": null,
+      "external_id": null,
+      "menu_id": null,
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "facility_id": null,
+      "product_name": "쉬어베이비 선스틱 SPF50+",
+      "manufacturer": null,
+      "category": "화장품",
+      "recall_date": "2025-05-28",
+      "reason": "자외선 차단 지수 표기 오류",
+      "action_guide": "해당 제품을 구매한 소비자는 판매 또는 구입처에 반품하세요.",
+      "source": "Consumer24",
+      "source_url": null,
+      "external_id": null,
+      "menu_id": null,
+      "is_active": true
+    }
+  ]
+}

@@ -5,6 +5,7 @@ from app.models.classroom import Classroom
 from app.models.facility import Facility
 from app.models.knowledge_chunk import KnowledgeChunk
 from app.models.product import IngredientAlias, Product
+from app.models.recall_notice import RecallNotice
 from app.models.safety_check import SafetyCheck, SafetyCheckResult
 from app.models.safety_rule import SafetyRule
 from app.models.user import User
@@ -19,6 +20,7 @@ __all__ = [
     "IngredientAlias",
     "KnowledgeChunk",
     "Product",
+    "RecallNotice",
     "SafetyCheck",
     "SafetyCheckResult",
     "SafetyRule",
