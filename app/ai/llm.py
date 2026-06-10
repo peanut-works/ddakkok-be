@@ -1,6 +1,6 @@
 """LLM 설명 생성 — Rule Checker 결과를 교사용 설명 텍스트로 변환.
 
-파이프라인 위치: Rule Checker(PASS/WARN/FAIL) → [ExplanationGenerator] → 교사용 설명
+파이프라인 위치: Rule Checker(PASS/WARN/FAIL/EXPIRED/UNKNOWN) → [ExplanationGenerator] → 교사용 설명
 
 설계 원칙:
 - LLM은 위험 여부를 새로 판단하지 않는다. 판정은 Rule Checker가 완료한 것.
@@ -38,6 +38,8 @@ _SYSTEM_PROMPT = """\
    - FAIL: "보호자 또는 관리자 확인 후 대체 제품 사용을 권장합니다."
    - WARN: "교사 판단 하에 사용 여부를 결정하고, 사용 후 상태를 확인해 주세요."
    - PASS: "안전하게 사용하실 수 있습니다."
+   - EXPIRED: "유통기한이 지난 제품이므로 사용하지 않는 것을 권장합니다."
+   - UNKNOWN: "성분 정보를 확인할 수 없어 보호자 또는 관리자 확인이 필요합니다."
 3. 출처 명시: 판단 근거가 된 규칙을 간략히 인용합니다.
 4. 교사가 비전문가임을 고려해 쉬운 언어를 사용합니다.\
 """
@@ -54,7 +56,7 @@ def _build_system_prompt(context: list[str] | None) -> str:
 
 # ── Input / Output models ─────────────────────────────────────────────────────
 
-Verdict = Literal["PASS", "WARN", "FAIL"]
+Verdict = Literal["PASS", "WARN", "FAIL", "EXPIRED", "UNKNOWN"]
 
 
 class ExplanationInput(BaseModel):
@@ -76,6 +78,8 @@ _STATUS_LABEL: dict[Verdict, str] = {
     "FAIL": "❌ 사용 불가 (위험 성분 확인됨)",
     "WARN": "⚠️ 주의 필요",
     "PASS": "✅ 이상 없음",
+    "EXPIRED": "⛔ 유통기한 만료",
+    "UNKNOWN": "❓ 성분 확인 불가",
 }
 
 

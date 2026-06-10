@@ -3,19 +3,22 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.ai.base import AIProvider
+from app.ai.factory import get_ai_provider
 from app.core.database import get_db
 from app.models.user import User
 from app.schemas.safety_check import (
     SafetyCheckCreateRequest,
-    SafetyCheckResponse,
     SafetyCheckDetailResponse,
+    SafetyCheckResponse,
 )
 from app.services.auth import get_user_by_id, parse_mock_access_token
 from app.services.safety_checker import (
     SafetyCheckNotFoundError,
     SafetyCheckValidationError,
-    run_safety_check,
+    generate_safety_check_explanations,
     get_safety_check_detail,
+    run_safety_check,
 )
 
 router = APIRouter(prefix="/api/safety-checks", tags=["safety-checks"])
@@ -90,6 +93,31 @@ def get_safety_check(
             db=db,
             check_id=check_id,
             current_user=current_user,
+        )
+    except SafetyCheckNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+
+
+@router.post(
+    "/{check_id}/explanations",
+    response_model=SafetyCheckDetailResponse,
+    summary="저장된 안전 검사 결과 설명 생성",
+)
+async def create_safety_check_explanations(
+    check_id: int,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+    provider: Annotated[AIProvider, Depends(get_ai_provider)],
+) -> SafetyCheckDetailResponse:
+    try:
+        return await generate_safety_check_explanations(
+            db=db,
+            check_id=check_id,
+            current_user=current_user,
+            provider=provider,
         )
     except SafetyCheckNotFoundError as exc:
         raise HTTPException(

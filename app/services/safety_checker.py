@@ -3,6 +3,8 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
+from app.ai.base import AIProvider
+from app.ai.llm import ExplanationGenerator, ExplanationInput
 from app.ai.ner import NERResult
 from app.ai.rule_checker import (
     ChildHealthProfile as RuleCheckerChildHealthProfile,
@@ -56,6 +58,34 @@ def _get_representative_rule(matched_rules: list[Any]) -> Any | None:
     return max(
         matched_rules,
         key=lambda rule: STATUS_PRIORITY.get(_status_value(rule.status), 0),
+    )
+
+
+def _build_explanation_matched_rules(result: SafetyCheckResult) -> list[str]:
+    parts = [
+        value
+        for value in (
+            result.matched_rule_code,
+            result.matched_ingredient,
+            result.reason,
+        )
+        if value
+    ]
+
+    return [" - ".join(parts)] if parts else []
+
+
+def _build_explanation_input(
+    result: SafetyCheckResult,
+    product: Product,
+) -> ExplanationInput:
+    ingredients = _to_string_list(product.normalized_ingredients or product.ingredients)
+
+    return ExplanationInput(
+        status=result.status,
+        product=product.name,
+        ingredient=ingredients,
+        matched_rules=_build_explanation_matched_rules(result),
     )
 
 
@@ -349,3 +379,51 @@ def get_safety_check_detail(
         "results": results,
         "overall_explanation": "\n".join(explanations) if explanations else None,
     }
+
+
+async def generate_safety_check_explanations(
+    db: Session,
+    check_id: int,
+    current_user: User,
+    provider: AIProvider,
+) -> dict:
+    safety_check = db.scalar(
+        select(SafetyCheck).where(
+            SafetyCheck.id == check_id,
+            SafetyCheck.facility_id == current_user.facility_id,
+        )
+    )
+
+    if safety_check is None:
+        raise SafetyCheckNotFoundError("Safety check not found")
+
+    product = db.scalar(
+        select(Product).where(
+            Product.id == safety_check.product_id,
+            Product.facility_id == current_user.facility_id,
+        )
+    )
+
+    if product is None:
+        raise SafetyCheckNotFoundError("Product not found")
+
+    check_results = db.scalars(
+        select(SafetyCheckResult)
+        .where(SafetyCheckResult.safety_check_id == safety_check.id)
+        .order_by(SafetyCheckResult.id.asc())
+    ).all()
+
+    generator = ExplanationGenerator(provider)
+
+    for result in check_results:
+        result.explanation = await generator.generate(
+            _build_explanation_input(result, product)
+        )
+
+    db.commit()
+
+    return get_safety_check_detail(
+        db=db,
+        check_id=check_id,
+        current_user=current_user,
+    )
