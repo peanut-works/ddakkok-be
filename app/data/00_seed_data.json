@@ -1,0 +1,5548 @@
+{
+  "meta": {
+    "dataset_name": "child_product_safety_demo_seed",
+    "dataset_version": "0.1.0",
+    "created_at": "2026-06-09",
+    "language": "ko-KR",
+    "data_type": "MOCK",
+    "purpose": "해커톤 시연용 영유아 제품 안전성 룰체커 시드 데이터",
+    "description": "시설, 반, 아동 건강 프로필, 제품 성분, 성분 동의어, 안전 룰셋을 이용해 아동별 제품 사용 가능 여부를 PASS/WARN/FAIL/EXPIRED/UNKNOWN 상태로 확인하기 위한 목업 데이터입니다.",
+    "service_context": {
+      "target_user": "어린이집, 유치원, 보육시설 교사 및 관리자",
+      "main_flow": [
+        "제품 성분표 또는 OCR 결과 입력",
+        "성분명을 표준명으로 정규화",
+        "아동 건강 프로필과 안전 룰셋 비교",
+        "아동별 안전 상태 판정",
+        "교사에게 요약 결과 제공"
+      ]
+    },
+    "coverage": {
+      "child_health_cases": [
+        "특이사항 없음",
+        "우유 알레르기",
+        "계란 알레르기",
+        "땅콩 알레르기",
+        "견과류 알레르기",
+        "민감성 피부",
+        "아토피",
+        "알레르기와 피부 질환 복합 케이스"
+      ],
+      "demo_statuses": [
+        "PASS",
+        "WARN",
+        "FAIL",
+        "EXPIRED",
+        "UNKNOWN"
+      ],
+      "product_demo_cases": {
+        "PASS": [
+          101
+        ],
+        "WARN": [
+          105,
+          106
+        ],
+        "FAIL": [
+          103,
+          104
+        ],
+        "FAIL_AND_WARN": [
+          102,
+          107
+        ],
+        "EXPIRED": [
+          108
+        ],
+        "UNKNOWN": [
+          109
+        ]
+      },
+      "product_demo_cases_actual": {
+        "EXPIRED": [
+          108
+        ],
+        "FAIL": [
+          102,
+          103,
+          104,
+          107,
+          110,
+          111
+        ],
+        "PASS": [
+          101,
+          114
+        ],
+        "UNKNOWN": [
+          109
+        ],
+        "WARN": [
+          105,
+          106,
+          112,
+          113
+        ]
+      }
+    },
+    "counts": {
+      "facilities": 1,
+      "classrooms": 2,
+      "children": 8,
+      "child_health_profiles": 8,
+      "products": 14,
+      "ingredient_aliases": 18,
+      "safety_rules": 8,
+      "ocr_results": 14,
+      "scenarios": 14,
+      "sample_rule_check_responses": 14
+    },
+    "rule_policy": {
+      "pass_handling": "위험 룰에 매칭되지 않고 유통기한도 유효하면 백엔드에서 PASS로 처리합니다.",
+      "warn_handling": "피부 상태나 민감 성분에 매칭되는 경우 WARN으로 처리합니다.",
+      "fail_handling": "알레르기 성분에 매칭되는 경우 FAIL로 처리합니다.",
+      "expired_handling": "제품 유통기한이 현재 날짜보다 이전이면 EXPIRED로 처리합니다.",
+      "unknown_handling": "성분 목록이 비어 있거나 OCR/파싱 실패 상태이면 UNKNOWN으로 처리합니다."
+    },
+    "enum_definitions": {
+      "facility_type": [
+        "DAYCARE"
+      ],
+      "product_category": [
+        "WET_TISSUE",
+        "LOTION",
+        "CLEANSER",
+        "FOOD",
+        "ETC"
+      ],
+      "target_type": [
+        "ALLERGY",
+        "SKIN",
+        "EXPIRY",
+        "UNKNOWN"
+      ],
+      "severity": [
+        "PASS",
+        "WARN",
+        "FAIL",
+        "EXPIRED",
+        "UNKNOWN"
+      ]
+    },
+    "validation_notes": [
+      "본 데이터는 실제 제품 안전성을 보장하지 않는 해커톤 시연용 목업 데이터입니다.",
+      "성분 동의어와 안전 룰셋은 시연에 필요한 최소 범위만 포함합니다.",
+      "PASS는 별도 룰로 저장하지 않고, 매칭되는 위험 룰이 없을 때 계산 결과로 생성하는 것을 권장합니다.",
+      "제품 109는 성분표 훼손 또는 OCR 실패 상황을 검증하기 위한 UNKNOWN 전용 케이스입니다.",
+      "ocr_results, scenarios, sample_rule_check_responses는 2026-06-10 기준 시연 흐름에 맞춰 보강했습니다."
+    ],
+    "updated_at": "2026-06-10"
+  },
+  "facilities": [
+    {
+      "id": 1,
+      "name": "땅콩어린이집",
+      "address": "서울시 강남구 테헤란로 123",
+      "phone": "02-0000-0000",
+      "facility_type": "DAYCARE",
+      "is_active": true
+    }
+  ],
+  "classrooms": [
+    {
+      "id": 1,
+      "facility_id": 1,
+      "name": "햇님반",
+      "age_group": "만 3세",
+      "teacher_name": "김하늘",
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "facility_id": 1,
+      "name": "별님반",
+      "age_group": "만 4세",
+      "teacher_name": "박소라",
+      "is_active": true
+    }
+  ],
+  "children": [
+    {
+      "id": 1,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "강민준",
+      "birth_date": "2022-03-15",
+      "gender": "M",
+      "memo": "우유 알레르기 주의",
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "김서아",
+      "birth_date": "2022-07-02",
+      "gender": "F",
+      "memo": "민감성 피부",
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "이도윤",
+      "birth_date": "2022-10-21",
+      "gender": "M",
+      "memo": "특이사항 없음",
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "최하린",
+      "birth_date": "2022-12-05",
+      "gender": "F",
+      "memo": "계란 알레르기 주의",
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "박지호",
+      "birth_date": "2021-04-11",
+      "gender": "M",
+      "memo": "땅콩 및 견과류 알레르기 주의",
+      "is_active": true
+    },
+    {
+      "id": 6,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "정윤서",
+      "birth_date": "2021-06-28",
+      "gender": "F",
+      "memo": "아토피 피부",
+      "is_active": true
+    },
+    {
+      "id": 7,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "오시우",
+      "birth_date": "2021-09-14",
+      "gender": "M",
+      "memo": "우유 알레르기 및 아토피 주의",
+      "is_active": true
+    },
+    {
+      "id": 8,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "한지아",
+      "birth_date": "2021-11-30",
+      "gender": "F",
+      "memo": "특이사항 없음",
+      "is_active": true
+    }
+  ],
+  "child_health_profiles": [
+    {
+      "child_id": 1,
+      "allergies": [
+        "우유"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "우유 및 우유 유래 성분 섭취·접촉 주의"
+    },
+    {
+      "child_id": 2,
+      "allergies": [],
+      "skin_conditions": [
+        "민감성 피부"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "에탄올",
+        "페녹시에탄올"
+      ],
+      "notes": "향료, 에탄올 포함 제품 사용 시 피부 반응 확인 필요"
+    },
+    {
+      "child_id": 3,
+      "allergies": [],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "특이사항 없음"
+    },
+    {
+      "child_id": 4,
+      "allergies": [
+        "계란"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "계란, 난백, 난황 등 계란 유래 성분 주의"
+    },
+    {
+      "child_id": 5,
+      "allergies": [
+        "땅콩",
+        "견과류"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "땅콩 및 견과류 성분 포함 식품 주의"
+    },
+    {
+      "child_id": 6,
+      "allergies": [],
+      "skin_conditions": [
+        "아토피"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "색소",
+        "에탄올"
+      ],
+      "notes": "아토피 피부로 자극 가능 성분 포함 제품 사용 주의"
+    },
+    {
+      "child_id": 7,
+      "allergies": [
+        "우유"
+      ],
+      "skin_conditions": [
+        "아토피"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "색소",
+        "에탄올"
+      ],
+      "notes": "우유 유래 성분과 아토피 자극 가능 성분 모두 확인 필요"
+    },
+    {
+      "child_id": 8,
+      "allergies": [],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "특이사항 없음"
+    }
+  ],
+  "products": [
+    {
+      "id": 101,
+      "facility_id": 1,
+      "name": "세이프 데일리 핸드워시",
+      "category": "CLEANSER",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000101",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "정제수, 글리세린, 코코베타인, 구연산",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인",
+        "구연산"
+      ],
+      "demo_purpose": "위험 성분이 없어 전체 PASS 확인"
+    },
+    {
+      "id": 102,
+      "facility_id": 1,
+      "name": "밀크 프로틴 보습 물티슈",
+      "category": "WET_TISSUE",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000102",
+      "expiry_date": "2027-08-31",
+      "raw_ingredients_text": "정제수, 글리세린, 카제인Na, 페녹시에탄올",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "페녹시에탄올"
+      ],
+      "demo_purpose": "우유 알레르기 FAIL + 민감성 피부 WARN 동시 확인. 카제인Na 별칭 정규화 포함"
+    },
+    {
+      "id": 103,
+      "facility_id": 1,
+      "name": "에그 소프트 쿠키",
+      "category": "FOOD",
+      "manufacturer": "해커톤푸드",
+      "barcode": "880100000103",
+      "expiry_date": "2027-02-28",
+      "raw_ingredients_text": "밀가루, 설탕, 계란, 난백, 버터",
+      "ingredients": [
+        "밀가루",
+        "설탕",
+        "계란",
+        "난백",
+        "버터"
+      ],
+      "demo_purpose": "계란 알레르기 FAIL 확인"
+    },
+    {
+      "id": 104,
+      "facility_id": 1,
+      "name": "땅콩버터 크런치바",
+      "category": "FOOD",
+      "manufacturer": "해커톤푸드",
+      "barcode": "880100000104",
+      "expiry_date": "2027-05-20",
+      "raw_ingredients_text": "귀리, 설탕, 땅콩버터, 아몬드, 식물성유지",
+      "ingredients": [
+        "귀리",
+        "설탕",
+        "땅콩버터",
+        "아몬드",
+        "식물성유지"
+      ],
+      "demo_purpose": "땅콩/견과류 알레르기 중 땅콩 룰 FAIL 확인"
+    },
+    {
+      "id": 105,
+      "facility_id": 1,
+      "name": "향기 톡톡 키즈 로션",
+      "category": "LOTION",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000105",
+      "expiry_date": "2027-11-30",
+      "raw_ingredients_text": "정제수, 글리세린, 향료, 알코올",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "향료",
+        "에탄올"
+      ],
+      "demo_purpose": "민감성 피부 WARN + 아토피 WARN 확인. 알코올 별칭 정규화 포함"
+    },
+    {
+      "id": 106,
+      "facility_id": 1,
+      "name": "컬러 버블 클렌저",
+      "category": "CLEANSER",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000106",
+      "expiry_date": "2027-09-15",
+      "raw_ingredients_text": "정제수, 코코베타인, 색소, 구연산",
+      "ingredients": [
+        "정제수",
+        "코코베타인",
+        "색소",
+        "구연산"
+      ],
+      "demo_purpose": "아토피 WARN 전용 확인"
+    },
+    {
+      "id": 107,
+      "facility_id": 1,
+      "name": "복합 주의 키즈 크림",
+      "category": "LOTION",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000107",
+      "expiry_date": "2027-10-10",
+      "raw_ingredients_text": "정제수, 글리세린, 카제인나트륨, 향료, 에탄올",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "향료",
+        "에탄올"
+      ],
+      "demo_purpose": "한 제품에서 FAIL과 WARN이 함께 발생하는 복합 케이스 확인"
+    },
+    {
+      "id": 108,
+      "facility_id": 1,
+      "name": "유통기한 지난 물티슈",
+      "category": "WET_TISSUE",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000108",
+      "expiry_date": "2025-12-31",
+      "raw_ingredients_text": "정제수, 글리세린, 코코베타인",
+      "ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인"
+      ],
+      "demo_purpose": "유통기한 만료 EXPIRED 확인"
+    },
+    {
+      "id": 109,
+      "facility_id": 1,
+      "name": "성분표 훼손 제품",
+      "category": "ETC",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000109",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "성분표 훼손으로 판독 불가",
+      "ingredients": [],
+      "demo_purpose": "OCR/파싱 실패 시 UNKNOWN 확인. 백엔드가 ingredients empty 또는 OCR status failed를 UNKNOWN으로 처리해야 함"
+    },
+    {
+      "id": 110,
+      "facility_id": 1,
+      "name": "무가당 그릭 요거트",
+      "category": "FOOD",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000110",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "원유, 정제수, 혼합분유, 농축우유단백분말, 변성전분, 젤라틴",
+      "ingredients": [
+        "원유",
+        "정제수",
+        "혼합분유",
+        "농축우유단백분말",
+        "변성전분",
+        "젤라틴"
+      ],
+      "demo_purpose": "알레르기 아동 FAIL 확인"
+    },
+    {
+      "id": 111,
+      "facility_id": 1,
+      "name": "고소한인절미과자",
+      "category": "FOOD",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000111",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "쌀가루(백미/국내산) 48.55%, 팜올레인유(말레이시아산), 인절미맛시즈닝JM-0920{백설탕, 볶음대두분말(미국산) 38%, 포도당, 유당(우유/미국산), 탈지분유(우유/미국산)} 19%, 백태분말(국내산) 5.78%, 옥수수가루(콘그리스5호/호주산), 탄산칼슘",
+      "ingredients": [
+        "쌀가루",
+        "팜올레인유",
+        "백설탕",
+        "볶음대두분말",
+        "포도당",
+        "유당",
+        "우유",
+        "탈지분유",
+        "백태분말",
+        "옥수수가루",
+        "탄산칼슘"
+      ],
+      "demo_purpose": "알레르기 아동 FAIL 확인"
+    },
+    {
+      "id": 112,
+      "facility_id": 1,
+      "name": "미소지움물티슈",
+      "category": "WET_TISSUE",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000112",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "소듐벤조에이트, 라우릴피리디늄클로라이드, 합성향료(Levulinic acid), 정제수",
+      "ingredients": [
+        "소듐벤조에이트",
+        "라우릴피리디늄클로라이드",
+        "합성향료",
+        "Levulinic acid",
+        "정제수"
+      ],
+      "demo_purpose": "피부 민감/아토피 아동 WARN 확인"
+    },
+    {
+      "id": 113,
+      "facility_id": 1,
+      "name": "식기세척기 린스",
+      "category": "CLEANSER",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000113",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "레몬향, (에틸렌-프로필렌)폴리알킬렌글리콜, 구연산, 에탄올, 키실렌설폰산나트륨, 정제수",
+      "ingredients": [
+        "레몬향",
+        "향료",
+        "(에틸렌-프로필렌)폴리알킬렌글리콜",
+        "구연산",
+        "에탄올",
+        "키실렌설폰산나트륨",
+        "정제수"
+      ],
+      "demo_purpose": "피부 민감/아토피 아동 WARN 확인"
+    },
+    {
+      "id": 114,
+      "facility_id": 1,
+      "name": "종이컵",
+      "category": "PAPER_CUP",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000114",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "종이제, 폴리에틸렌",
+      "ingredients": [
+        "종이제",
+        "폴리에틸렌"
+      ],
+      "demo_purpose": "등록된 아동 건강 프로필 기준 전체 PASS 확인"
+    }
+  ],
+  "ingredient_aliases": [
+    {
+      "alias": "카제인Na",
+      "canonical_name": "카제인나트륨"
+    },
+    {
+      "alias": "우유단백",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "유청",
+      "canonical_name": "유청단백"
+    },
+    {
+      "alias": "난백",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "난황",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "전란",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "계란분말",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "피넛",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "땅콩버터",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "땅콩분말",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "땅콩오일",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "알코올",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "아몬드",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "호두",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "캐슈넛",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "헤이즐넛",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "피스타치오",
+      "canonical_name": "견과류"
+    },
+    {
+      "alias": "마카다미아",
+      "canonical_name": "견과류"
+    }
+  ],
+  "safety_rules": [
+    {
+      "rule_code": "ALLERGY_MILK_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "우유",
+      "ingredient_keywords": [
+        "우유",
+        "카제인나트륨",
+        "카제인Na",
+        "유청",
+        "유청단백",
+        "탈지분유",
+        "전지분유"
+      ],
+      "severity": "FAIL",
+      "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "ALLERGY_EGG_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "계란",
+      "ingredient_keywords": [
+        "계란",
+        "난백",
+        "난황",
+        "전란",
+        "계란분말"
+      ],
+      "severity": "FAIL",
+      "reason": "계란 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "ALLERGY_PEANUT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "땅콩",
+      "ingredient_keywords": [
+        "땅콩",
+        "피넛",
+        "땅콩버터",
+        "땅콩분말",
+        "땅콩오일"
+      ],
+      "severity": "FAIL",
+      "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "ALLERGY_NUT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "견과류",
+      "ingredient_keywords": [
+        "견과류",
+        "아몬드",
+        "호두",
+        "캐슈넛",
+        "헤이즐넛",
+        "피스타치오",
+        "마카다미아"
+      ],
+      "severity": "FAIL",
+      "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 알레르기 사전"
+    },
+    {
+      "rule_code": "SKIN_SENSITIVE_001",
+      "target_type": "SKIN",
+      "trigger_name": "민감성 피부",
+      "ingredient_keywords": [
+        "향료",
+        "에탄올",
+        "알코올",
+        "페녹시에탄올"
+      ],
+      "severity": "WARN",
+      "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
+      "source_name": "자체 주의 성분 사전"
+    },
+    {
+      "rule_code": "SKIN_ATOPY_001",
+      "target_type": "SKIN",
+      "trigger_name": "아토피",
+      "ingredient_keywords": [
+        "향료",
+        "색소",
+        "에탄올",
+        "알코올"
+      ],
+      "severity": "WARN",
+      "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+      "source_name": "자체 주의 성분 사전"
+    },
+    {
+      "rule_code": "EXPIRY_DATE_001",
+      "target_type": "EXPIRY",
+      "trigger_name": "유통기한 만료",
+      "ingredient_keywords": [],
+      "severity": "EXPIRED",
+      "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+      "source_name": "제품 유통기한 기준"
+    },
+    {
+      "rule_code": "OCR_UNKNOWN_001",
+      "target_type": "UNKNOWN",
+      "trigger_name": "성분 확인 불가",
+      "ingredient_keywords": [],
+      "severity": "UNKNOWN",
+      "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+      "source_name": "OCR 실패 처리 기준"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "email": "teacher@ddakkok.com",
+      "password_hash": "plain:ddakkok1234",
+      "name": "김하늘",
+      "role": "TEACHER"
+    }
+  ],
+  "ocr_results": [
+    {
+      "id": 1,
+      "product_id": 101,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_101_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "세이프 데일리 핸드워시",
+      "detected_barcode": "880100000101",
+      "raw_text": "정제수, 글리세린, 코코베타인, 구연산",
+      "extracted_ingredients_text": "정제수, 글리세린, 코코베타인, 구연산",
+      "extracted_ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인",
+        "구연산"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인",
+        "구연산"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 2,
+      "product_id": 102,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_102_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "밀크 프로틴 보습 물티슈",
+      "detected_barcode": "880100000102",
+      "raw_text": "정제수, 글리세린, 카제인Na, 페녹시에탄올",
+      "extracted_ingredients_text": "정제수, 글리세린, 카제인Na, 페녹시에탄올",
+      "extracted_ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "페녹시에탄올"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "페녹시에탄올"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [
+        "별칭 성분을 표준 성분명으로 정규화했습니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 3,
+      "product_id": 103,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_103_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "에그 소프트 쿠키",
+      "detected_barcode": "880100000103",
+      "raw_text": "밀가루, 설탕, 계란, 난백, 버터",
+      "extracted_ingredients_text": "밀가루, 설탕, 계란, 난백, 버터",
+      "extracted_ingredients": [
+        "밀가루",
+        "설탕",
+        "계란",
+        "난백",
+        "버터"
+      ],
+      "normalized_ingredients": [
+        "밀가루",
+        "설탕",
+        "계란",
+        "계란",
+        "버터"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [
+        "별칭 성분을 표준 성분명으로 정규화했습니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 4,
+      "product_id": 104,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_104_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "땅콩버터 크런치바",
+      "detected_barcode": "880100000104",
+      "raw_text": "귀리, 설탕, 땅콩버터, 아몬드, 식물성유지",
+      "extracted_ingredients_text": "귀리, 설탕, 땅콩버터, 아몬드, 식물성유지",
+      "extracted_ingredients": [
+        "귀리",
+        "설탕",
+        "땅콩버터",
+        "아몬드",
+        "식물성유지"
+      ],
+      "normalized_ingredients": [
+        "귀리",
+        "설탕",
+        "땅콩",
+        "견과류",
+        "식물성유지"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [
+        "별칭 성분을 표준 성분명으로 정규화했습니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 5,
+      "product_id": 105,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_105_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "향기 톡톡 키즈 로션",
+      "detected_barcode": "880100000105",
+      "raw_text": "정제수, 글리세린, 향료, 알코올",
+      "extracted_ingredients_text": "정제수, 글리세린, 향료, 알코올",
+      "extracted_ingredients": [
+        "정제수",
+        "글리세린",
+        "향료",
+        "에탄올"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "글리세린",
+        "향료",
+        "에탄올"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [
+        "별칭 성분을 표준 성분명으로 정규화했습니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 6,
+      "product_id": 106,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_106_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "컬러 버블 클렌저",
+      "detected_barcode": "880100000106",
+      "raw_text": "정제수, 코코베타인, 색소, 구연산",
+      "extracted_ingredients_text": "정제수, 코코베타인, 색소, 구연산",
+      "extracted_ingredients": [
+        "정제수",
+        "코코베타인",
+        "색소",
+        "구연산"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "코코베타인",
+        "색소",
+        "구연산"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 7,
+      "product_id": 107,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_107_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "복합 주의 키즈 크림",
+      "detected_barcode": "880100000107",
+      "raw_text": "정제수, 글리세린, 카제인나트륨, 향료, 에탄올",
+      "extracted_ingredients_text": "정제수, 글리세린, 카제인나트륨, 향료, 에탄올",
+      "extracted_ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "향료",
+        "에탄올"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "향료",
+        "에탄올"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 8,
+      "product_id": 108,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_108_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "유통기한 지난 물티슈",
+      "detected_barcode": "880100000108",
+      "raw_text": "정제수, 글리세린, 코코베타인",
+      "extracted_ingredients_text": "정제수, 글리세린, 코코베타인",
+      "extracted_ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 9,
+      "product_id": 109,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_109_damaged_label.jpg",
+      "ocr_status": "FAILED",
+      "confidence": 0.31,
+      "detected_product_name": "성분표 훼손 제품",
+      "detected_barcode": "880100000109",
+      "raw_text": "성분표 일부 훼손 / 빛 반사로 판독 불가",
+      "extracted_ingredients_text": "",
+      "extracted_ingredients": [],
+      "normalized_ingredients": [],
+      "parsing_status": "FAILED",
+      "failure_reason": "INGREDIENT_LABEL_UNREADABLE",
+      "needs_manual_review": true,
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 10,
+      "product_id": 110,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_110_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "무가당 그릭 요거트",
+      "detected_barcode": "880100000110",
+      "raw_text": "원유, 정제수, 혼합분유, 농축우유단백분말, 변성전분, 젤라틴",
+      "extracted_ingredients_text": "원유, 정제수, 혼합분유, 농축우유단백분말, 변성전분, 젤라틴",
+      "extracted_ingredients": [
+        "원유",
+        "정제수",
+        "혼합분유",
+        "농축우유단백분말",
+        "변성전분",
+        "젤라틴"
+      ],
+      "normalized_ingredients": [
+        "원유",
+        "정제수",
+        "혼합분유",
+        "농축우유단백분말",
+        "변성전분",
+        "젤라틴"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 11,
+      "product_id": 111,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_111_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.88,
+      "detected_product_name": "고소한인절미과자",
+      "detected_barcode": "880100000111",
+      "raw_text": "쌀가루(백미/국내산) 48.55%, 팜올레인유(말레이시아산), 인절미맛시즈닝JM-0920{백설탕, 볶음대두분말(미국산) 38%, 포도당, 유당(우유/미국산), 탈지분유(우유/미국산)} 19%, 백태분말(국내산) 5.78%, 옥수수가루(콘그리스5호/호주산), 탄산칼슘",
+      "extracted_ingredients_text": "쌀가루(백미/국내산) 48.55%, 팜올레인유(말레이시아산), 인절미맛시즈닝JM-0920{백설탕, 볶음대두분말(미국산) 38%, 포도당, 유당(우유/미국산), 탈지분유(우유/미국산)} 19%, 백태분말(국내산) 5.78%, 옥수수가루(콘그리스5호/호주산), 탄산칼슘",
+      "extracted_ingredients": [
+        "쌀가루",
+        "팜올레인유",
+        "백설탕",
+        "볶음대두분말",
+        "포도당",
+        "유당",
+        "우유",
+        "탈지분유",
+        "백태분말",
+        "옥수수가루",
+        "탄산칼슘"
+      ],
+      "normalized_ingredients": [
+        "쌀가루",
+        "팜올레인유",
+        "백설탕",
+        "볶음대두분말",
+        "포도당",
+        "유당",
+        "우유",
+        "탈지분유",
+        "백태분말",
+        "옥수수가루",
+        "탄산칼슘"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [
+        "함량·원산지·괄호 표현을 제거하고 주요 성분만 추출했습니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 12,
+      "product_id": 112,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_112_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.86,
+      "detected_product_name": "미소지움물티슈",
+      "detected_barcode": "880100000112",
+      "raw_text": "소듐벤조에이트, 라우릴피리디늄클로라이드, 합성향료(Levulinic acid), 정제수",
+      "extracted_ingredients_text": "소듐벤조에이트, 라우릴피리디늄클로라이드, 합성향료(Levulinic acid), 정제수",
+      "extracted_ingredients": [
+        "소듐벤조에이트",
+        "라우릴피리디늄클로라이드",
+        "합성향료",
+        "Levulinic acid",
+        "정제수"
+      ],
+      "normalized_ingredients": [
+        "소듐벤조에이트",
+        "라우릴피리디늄클로라이드",
+        "합성향료",
+        "Levulinic acid",
+        "정제수"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": true,
+      "notes": [
+        "함량·원산지·괄호 표현을 제거하고 주요 성분만 추출했습니다.",
+        "생활화학제품 성분명 일부는 교사용 확인이 필요합니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 13,
+      "product_id": 113,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_113_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.86,
+      "detected_product_name": "식기세척기 린스",
+      "detected_barcode": "880100000113",
+      "raw_text": "레몬향, (에틸렌-프로필렌)폴리알킬렌글리콜, 구연산, 에탄올, 키실렌설폰산나트륨, 정제수",
+      "extracted_ingredients_text": "레몬향, (에틸렌-프로필렌)폴리알킬렌글리콜, 구연산, 에탄올, 키실렌설폰산나트륨, 정제수",
+      "extracted_ingredients": [
+        "레몬향",
+        "향료",
+        "(에틸렌-프로필렌)폴리알킬렌글리콜",
+        "구연산",
+        "에탄올",
+        "키실렌설폰산나트륨",
+        "정제수"
+      ],
+      "normalized_ingredients": [
+        "레몬향",
+        "향료",
+        "(에틸렌-프로필렌)폴리알킬렌글리콜",
+        "구연산",
+        "에탄올",
+        "키실렌설폰산나트륨",
+        "정제수"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": true,
+      "notes": [
+        "함량·원산지·괄호 표현을 제거하고 주요 성분만 추출했습니다.",
+        "생활화학제품 성분명 일부는 교사용 확인이 필요합니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 14,
+      "product_id": 114,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_114_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "종이컵",
+      "detected_barcode": "880100000114",
+      "raw_text": "종이제, 폴리에틸렌",
+      "extracted_ingredients_text": "종이제, 폴리에틸렌",
+      "extracted_ingredients": [
+        "종이제",
+        "폴리에틸렌"
+      ],
+      "normalized_ingredients": [
+        "종이제",
+        "폴리에틸렌"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": 1,
+      "scenario_code": "DEMO_PRODUCT_101_PASS",
+      "title": "세이프 데일리 핸드워시 - 사용 가능 시나리오",
+      "description": "위험 성분이 없어 전체 PASS 확인",
+      "facility_id": 1,
+      "product_id": 101,
+      "ocr_result_id": 1,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "PASS",
+      "expected_status_counts": {
+        "PASS": 8,
+        "WARN": 0,
+        "FAIL": 0,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "WARN": [],
+        "FAIL": [],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "사용 가능",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 2,
+      "scenario_code": "DEMO_PRODUCT_102_FAIL",
+      "title": "밀크 프로틴 보습 물티슈 - 사용 보류 시나리오",
+      "description": "우유 알레르기 FAIL + 민감성 피부 WARN 동시 확인. 카제인Na 별칭 정규화 포함",
+      "facility_id": 1,
+      "product_id": 102,
+      "ocr_result_id": 2,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "FAIL",
+      "expected_status_counts": {
+        "FAIL": 2,
+        "WARN": 1,
+        "PASS": 5,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          3,
+          4,
+          5,
+          6,
+          8
+        ],
+        "WARN": [
+          2
+        ],
+        "FAIL": [
+          1,
+          7
+        ],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "일부 아동 사용 보류",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 3,
+      "scenario_code": "DEMO_PRODUCT_103_FAIL",
+      "title": "에그 소프트 쿠키 - 사용 보류 시나리오",
+      "description": "계란 알레르기 FAIL 확인",
+      "facility_id": 1,
+      "product_id": 103,
+      "ocr_result_id": 3,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "FAIL",
+      "expected_status_counts": {
+        "PASS": 7,
+        "FAIL": 1,
+        "WARN": 0,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8
+        ],
+        "WARN": [],
+        "FAIL": [
+          4
+        ],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "일부 아동 사용 보류",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 4,
+      "scenario_code": "DEMO_PRODUCT_104_FAIL",
+      "title": "땅콩버터 크런치바 - 사용 보류 시나리오",
+      "description": "땅콩/견과류 알레르기 중 땅콩 룰 FAIL 확인",
+      "facility_id": 1,
+      "product_id": 104,
+      "ocr_result_id": 4,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "FAIL",
+      "expected_status_counts": {
+        "PASS": 7,
+        "FAIL": 1,
+        "WARN": 0,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8
+        ],
+        "WARN": [],
+        "FAIL": [
+          5
+        ],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "일부 아동 사용 보류",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 5,
+      "scenario_code": "DEMO_PRODUCT_105_WARN",
+      "title": "향기 톡톡 키즈 로션 - 주의 필요 시나리오",
+      "description": "민감성 피부 WARN + 아토피 WARN 확인. 알코올 별칭 정규화 포함",
+      "facility_id": 1,
+      "product_id": 105,
+      "ocr_result_id": 5,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "WARN",
+      "expected_status_counts": {
+        "PASS": 5,
+        "WARN": 3,
+        "FAIL": 0,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          1,
+          3,
+          4,
+          5,
+          8
+        ],
+        "WARN": [
+          2,
+          6,
+          7
+        ],
+        "FAIL": [],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "주의 아동 확인 후 제한적 사용",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 6,
+      "scenario_code": "DEMO_PRODUCT_106_WARN",
+      "title": "컬러 버블 클렌저 - 주의 필요 시나리오",
+      "description": "아토피 WARN 전용 확인",
+      "facility_id": 1,
+      "product_id": 106,
+      "ocr_result_id": 6,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "WARN",
+      "expected_status_counts": {
+        "PASS": 6,
+        "WARN": 2,
+        "FAIL": 0,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          8
+        ],
+        "WARN": [
+          6,
+          7
+        ],
+        "FAIL": [],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "주의 아동 확인 후 제한적 사용",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 7,
+      "scenario_code": "DEMO_PRODUCT_107_FAIL",
+      "title": "복합 주의 키즈 크림 - 사용 보류 시나리오",
+      "description": "한 제품에서 FAIL과 WARN이 함께 발생하는 복합 케이스 확인",
+      "facility_id": 1,
+      "product_id": 107,
+      "ocr_result_id": 7,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "FAIL",
+      "expected_status_counts": {
+        "FAIL": 2,
+        "WARN": 2,
+        "PASS": 4,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          3,
+          4,
+          5,
+          8
+        ],
+        "WARN": [
+          2,
+          6
+        ],
+        "FAIL": [
+          1,
+          7
+        ],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "일부 아동 사용 보류",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 8,
+      "scenario_code": "DEMO_PRODUCT_108_EXPIRED",
+      "title": "유통기한 지난 물티슈 - 유통기한 만료 시나리오",
+      "description": "유통기한 만료 EXPIRED 확인",
+      "facility_id": 1,
+      "product_id": 108,
+      "ocr_result_id": 8,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "EXPIRED",
+      "expected_status_counts": {
+        "EXPIRED": 8,
+        "PASS": 0,
+        "WARN": 0,
+        "FAIL": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [],
+        "WARN": [],
+        "FAIL": [],
+        "EXPIRED": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "전체 사용 보류",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 9,
+      "scenario_code": "DEMO_PRODUCT_109_UNKNOWN",
+      "title": "성분표 훼손 제품 - 판단 불가 시나리오",
+      "description": "OCR/파싱 실패 시 UNKNOWN 확인. 백엔드가 ingredients empty 또는 OCR status failed를 UNKNOWN으로 처리해야 함",
+      "facility_id": 1,
+      "product_id": 109,
+      "ocr_result_id": 9,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "UNKNOWN",
+      "expected_status_counts": {
+        "UNKNOWN": 8,
+        "PASS": 0,
+        "WARN": 0,
+        "FAIL": 0,
+        "EXPIRED": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [],
+        "WARN": [],
+        "FAIL": [],
+        "EXPIRED": [],
+        "UNKNOWN": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "expected_teacher_action": "성분 재확인 전 사용 보류",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 10,
+      "scenario_code": "DEMO_PRODUCT_110_FAIL",
+      "title": "무가당 그릭 요거트 - 사용 보류 시나리오",
+      "description": "알레르기 아동 FAIL 확인",
+      "facility_id": 1,
+      "product_id": 110,
+      "ocr_result_id": 10,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "FAIL",
+      "expected_status_counts": {
+        "FAIL": 2,
+        "PASS": 6,
+        "WARN": 0,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          8
+        ],
+        "WARN": [],
+        "FAIL": [
+          1,
+          7
+        ],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "일부 아동 사용 보류",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 11,
+      "scenario_code": "DEMO_PRODUCT_111_FAIL",
+      "title": "고소한인절미과자 - 사용 보류 시나리오",
+      "description": "알레르기 아동 FAIL 확인",
+      "facility_id": 1,
+      "product_id": 111,
+      "ocr_result_id": 11,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "FAIL",
+      "expected_status_counts": {
+        "FAIL": 2,
+        "PASS": 6,
+        "WARN": 0,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          8
+        ],
+        "WARN": [],
+        "FAIL": [
+          1,
+          7
+        ],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "일부 아동 사용 보류",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 12,
+      "scenario_code": "DEMO_PRODUCT_112_WARN",
+      "title": "미소지움물티슈 - 주의 필요 시나리오",
+      "description": "피부 민감/아토피 아동 WARN 확인",
+      "facility_id": 1,
+      "product_id": 112,
+      "ocr_result_id": 12,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "WARN",
+      "expected_status_counts": {
+        "PASS": 5,
+        "WARN": 3,
+        "FAIL": 0,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          1,
+          3,
+          4,
+          5,
+          8
+        ],
+        "WARN": [
+          2,
+          6,
+          7
+        ],
+        "FAIL": [],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "주의 아동 확인 후 제한적 사용",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 13,
+      "scenario_code": "DEMO_PRODUCT_113_WARN",
+      "title": "식기세척기 린스 - 주의 필요 시나리오",
+      "description": "피부 민감/아토피 아동 WARN 확인",
+      "facility_id": 1,
+      "product_id": 113,
+      "ocr_result_id": 13,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "WARN",
+      "expected_status_counts": {
+        "PASS": 5,
+        "WARN": 3,
+        "FAIL": 0,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          1,
+          3,
+          4,
+          5,
+          8
+        ],
+        "WARN": [
+          2,
+          6,
+          7
+        ],
+        "FAIL": [],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "주의 아동 확인 후 제한적 사용",
+      "is_demo_fixed_case": true
+    },
+    {
+      "id": 14,
+      "scenario_code": "DEMO_PRODUCT_114_PASS",
+      "title": "종이컵 - 사용 가능 시나리오",
+      "description": "등록된 아동 건강 프로필 기준 전체 PASS 확인",
+      "facility_id": 1,
+      "product_id": 114,
+      "ocr_result_id": 14,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expected_overall_status": "PASS",
+      "expected_status_counts": {
+        "PASS": 8,
+        "WARN": 0,
+        "FAIL": 0,
+        "EXPIRED": 0,
+        "UNKNOWN": 0
+      },
+      "expected_child_ids_by_status": {
+        "PASS": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "WARN": [],
+        "FAIL": [],
+        "EXPIRED": [],
+        "UNKNOWN": []
+      },
+      "expected_teacher_action": "사용 가능",
+      "is_demo_fixed_case": true
+    }
+  ],
+  "sample_rule_check_responses": [
+    {
+      "scenario_id": 1,
+      "request_id": "demo-check-001",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 101,
+        "name": "세이프 데일리 핸드워시",
+        "category": "CLEANSER",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000101",
+        "expiry_date": "2027-12-31",
+        "ingredients": [
+          "정제수",
+          "글리세린",
+          "코코베타인",
+          "구연산"
+        ]
+      },
+      "ocr_result": {
+        "id": 1,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.93,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "정제수",
+          "글리세린",
+          "코코베타인",
+          "구연산"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "PASS",
+        "status_label": "사용 가능",
+        "recommended_action": "사용 가능",
+        "summary_text": "세이프 데일리 핸드워시 검사 결과, 사용 가능 8명입니다. 최종 조치는 '사용 가능'입니다.",
+        "status_counts": {
+          "PASS": 8,
+          "WARN": 0,
+          "FAIL": 0,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "강민준",
+            "김서아",
+            "이도윤",
+            "최하린",
+            "박지호",
+            "정윤서",
+            "오시우",
+            "한지아"
+          ],
+          "WARN": [],
+          "FAIL": [],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [],
+        "matched_ingredients": []
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "강민준 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "강민준 아동은 세이프 데일리 핸드워시 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "김서아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "김서아 아동은 세이프 데일리 핸드워시 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 세이프 데일리 핸드워시 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 세이프 데일리 핸드워시 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 세이프 데일리 핸드워시 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "정윤서 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "정윤서 아동은 세이프 데일리 핸드워시 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "오시우 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "오시우 아동은 세이프 데일리 핸드워시 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 세이프 데일리 핸드워시 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "세이프 데일리 핸드워시은(는) 등록된 아동 건강 프로필 기준으로 제한 없이 사용 가능합니다."
+      ]
+    },
+    {
+      "scenario_id": 2,
+      "request_id": "demo-check-002",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 102,
+        "name": "밀크 프로틴 보습 물티슈",
+        "category": "WET_TISSUE",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000102",
+        "expiry_date": "2027-08-31",
+        "ingredients": [
+          "정제수",
+          "글리세린",
+          "카제인나트륨",
+          "페녹시에탄올"
+        ]
+      },
+      "ocr_result": {
+        "id": 2,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.93,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "정제수",
+          "글리세린",
+          "카제인나트륨",
+          "페녹시에탄올"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "FAIL",
+        "status_label": "사용 보류",
+        "recommended_action": "일부 아동 사용 보류",
+        "summary_text": "밀크 프로틴 보습 물티슈 검사 결과, 사용 가능 5명, 주의 필요 1명, 사용 보류 2명입니다. 최종 조치는 '일부 아동 사용 보류'입니다.",
+        "status_counts": {
+          "FAIL": 2,
+          "WARN": 1,
+          "PASS": 5,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "이도윤",
+            "최하린",
+            "박지호",
+            "정윤서",
+            "한지아"
+          ],
+          "WARN": [
+            "김서아"
+          ],
+          "FAIL": [
+            "강민준",
+            "오시우"
+          ],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "ALLERGY_MILK_001",
+          "SKIN_SENSITIVE_001"
+        ],
+        "matched_ingredients": [
+          "카제인나트륨",
+          "페녹시에탄올"
+        ]
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "FAIL",
+          "matched_rules": [
+            {
+              "rule_code": "ALLERGY_MILK_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "우유",
+              "severity": "FAIL",
+              "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "카제인나트륨",
+                  "canonical_ingredient": "카제인나트륨",
+                  "matched_keyword": "카제인나트륨"
+                }
+              ]
+            }
+          ],
+          "explanation": "강민준 아동은 우유 알레르기가 있어 카제인나트륨 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+          "teacher_guide": "강민준 아동에게는 밀크 프로틴 보습 물티슈 사용을 보류하고 대체 제품을 확인해 주세요."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_SENSITIVE_001",
+              "target_type": "SKIN",
+              "trigger_name": "민감성 피부",
+              "severity": "WARN",
+              "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "페녹시에탄올",
+                  "canonical_ingredient": "페녹시에탄올",
+                  "matched_keyword": "페녹시에탄올"
+                }
+              ]
+            }
+          ],
+          "explanation": "김서아 아동은 민감성 피부 정보가 있어 페녹시에탄올 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "김서아 아동에게 밀크 프로틴 보습 물티슈 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 밀크 프로틴 보습 물티슈 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 밀크 프로틴 보습 물티슈 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 밀크 프로틴 보습 물티슈 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "정윤서 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "정윤서 아동은 밀크 프로틴 보습 물티슈 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "FAIL",
+          "matched_rules": [
+            {
+              "rule_code": "ALLERGY_MILK_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "우유",
+              "severity": "FAIL",
+              "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "카제인나트륨",
+                  "canonical_ingredient": "카제인나트륨",
+                  "matched_keyword": "카제인나트륨"
+                }
+              ]
+            }
+          ],
+          "explanation": "오시우 아동은 우유 알레르기가 있어 카제인나트륨 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+          "teacher_guide": "오시우 아동에게는 밀크 프로틴 보습 물티슈 사용을 보류하고 대체 제품을 확인해 주세요."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 밀크 프로틴 보습 물티슈 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "강민준 아동에게는 밀크 프로틴 보습 물티슈 사용을 보류하고 대체 제품을 확인해 주세요.",
+        "오시우 아동에게는 밀크 프로틴 보습 물티슈 사용을 보류하고 대체 제품을 확인해 주세요.",
+        "김서아 아동에게 밀크 프로틴 보습 물티슈 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+      ]
+    },
+    {
+      "scenario_id": 3,
+      "request_id": "demo-check-003",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 103,
+        "name": "에그 소프트 쿠키",
+        "category": "FOOD",
+        "manufacturer": "해커톤푸드",
+        "barcode": "880100000103",
+        "expiry_date": "2027-02-28",
+        "ingredients": [
+          "밀가루",
+          "설탕",
+          "계란",
+          "난백",
+          "버터"
+        ]
+      },
+      "ocr_result": {
+        "id": 3,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.93,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "밀가루",
+          "설탕",
+          "계란",
+          "계란",
+          "버터"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "FAIL",
+        "status_label": "사용 보류",
+        "recommended_action": "일부 아동 사용 보류",
+        "summary_text": "에그 소프트 쿠키 검사 결과, 사용 가능 7명, 사용 보류 1명입니다. 최종 조치는 '일부 아동 사용 보류'입니다.",
+        "status_counts": {
+          "PASS": 7,
+          "FAIL": 1,
+          "WARN": 0,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "강민준",
+            "김서아",
+            "이도윤",
+            "박지호",
+            "정윤서",
+            "오시우",
+            "한지아"
+          ],
+          "WARN": [],
+          "FAIL": [
+            "최하린"
+          ],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "ALLERGY_EGG_001"
+        ],
+        "matched_ingredients": [
+          "계란",
+          "난백"
+        ]
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "강민준 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "강민준 아동은 에그 소프트 쿠키 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "김서아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "김서아 아동은 에그 소프트 쿠키 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 에그 소프트 쿠키 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "FAIL",
+          "matched_rules": [
+            {
+              "rule_code": "ALLERGY_EGG_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "계란",
+              "severity": "FAIL",
+              "reason": "계란 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "계란",
+                  "canonical_ingredient": "계란",
+                  "matched_keyword": "계란"
+                },
+                {
+                  "ingredient": "난백",
+                  "canonical_ingredient": "계란",
+                  "matched_keyword": "계란"
+                },
+                {
+                  "ingredient": "난백",
+                  "canonical_ingredient": "계란",
+                  "matched_keyword": "난백"
+                }
+              ]
+            }
+          ],
+          "explanation": "최하린 아동은 계란 알레르기가 있어 계란, 난백 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+          "teacher_guide": "최하린 아동에게는 에그 소프트 쿠키 사용을 보류하고 대체 제품을 확인해 주세요."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 에그 소프트 쿠키 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "정윤서 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "정윤서 아동은 에그 소프트 쿠키 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "오시우 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "오시우 아동은 에그 소프트 쿠키 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 에그 소프트 쿠키 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "최하린 아동에게는 에그 소프트 쿠키 사용을 보류하고 대체 제품을 확인해 주세요."
+      ]
+    },
+    {
+      "scenario_id": 4,
+      "request_id": "demo-check-004",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 104,
+        "name": "땅콩버터 크런치바",
+        "category": "FOOD",
+        "manufacturer": "해커톤푸드",
+        "barcode": "880100000104",
+        "expiry_date": "2027-05-20",
+        "ingredients": [
+          "귀리",
+          "설탕",
+          "땅콩버터",
+          "아몬드",
+          "식물성유지"
+        ]
+      },
+      "ocr_result": {
+        "id": 4,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.93,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "귀리",
+          "설탕",
+          "땅콩",
+          "견과류",
+          "식물성유지"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "FAIL",
+        "status_label": "사용 보류",
+        "recommended_action": "일부 아동 사용 보류",
+        "summary_text": "땅콩버터 크런치바 검사 결과, 사용 가능 7명, 사용 보류 1명입니다. 최종 조치는 '일부 아동 사용 보류'입니다.",
+        "status_counts": {
+          "PASS": 7,
+          "FAIL": 1,
+          "WARN": 0,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "강민준",
+            "김서아",
+            "이도윤",
+            "최하린",
+            "정윤서",
+            "오시우",
+            "한지아"
+          ],
+          "WARN": [],
+          "FAIL": [
+            "박지호"
+          ],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "ALLERGY_PEANUT_001",
+          "ALLERGY_NUT_001"
+        ],
+        "matched_ingredients": [
+          "땅콩버터",
+          "아몬드"
+        ]
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "강민준 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "강민준 아동은 땅콩버터 크런치바 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "김서아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "김서아 아동은 땅콩버터 크런치바 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 땅콩버터 크런치바 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 땅콩버터 크런치바 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "FAIL",
+          "matched_rules": [
+            {
+              "rule_code": "ALLERGY_PEANUT_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "땅콩",
+              "severity": "FAIL",
+              "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "땅콩버터",
+                  "canonical_ingredient": "땅콩",
+                  "matched_keyword": "땅콩"
+                },
+                {
+                  "ingredient": "땅콩버터",
+                  "canonical_ingredient": "땅콩",
+                  "matched_keyword": "땅콩버터"
+                }
+              ]
+            },
+            {
+              "rule_code": "ALLERGY_NUT_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "견과류",
+              "severity": "FAIL",
+              "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "아몬드",
+                  "canonical_ingredient": "견과류",
+                  "matched_keyword": "견과류"
+                },
+                {
+                  "ingredient": "아몬드",
+                  "canonical_ingredient": "견과류",
+                  "matched_keyword": "아몬드"
+                }
+              ]
+            }
+          ],
+          "explanation": "박지호 아동은 견과류, 땅콩 알레르기가 있어 땅콩버터, 아몬드 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+          "teacher_guide": "박지호 아동에게는 땅콩버터 크런치바 사용을 보류하고 대체 제품을 확인해 주세요."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "정윤서 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "정윤서 아동은 땅콩버터 크런치바 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "오시우 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "오시우 아동은 땅콩버터 크런치바 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 땅콩버터 크런치바 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "박지호 아동에게는 땅콩버터 크런치바 사용을 보류하고 대체 제품을 확인해 주세요."
+      ]
+    },
+    {
+      "scenario_id": 5,
+      "request_id": "demo-check-005",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 105,
+        "name": "향기 톡톡 키즈 로션",
+        "category": "LOTION",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000105",
+        "expiry_date": "2027-11-30",
+        "ingredients": [
+          "정제수",
+          "글리세린",
+          "향료",
+          "에탄올"
+        ]
+      },
+      "ocr_result": {
+        "id": 5,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.93,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "정제수",
+          "글리세린",
+          "향료",
+          "에탄올"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "WARN",
+        "status_label": "주의 필요",
+        "recommended_action": "주의 아동 확인 후 제한적 사용",
+        "summary_text": "향기 톡톡 키즈 로션 검사 결과, 사용 가능 5명, 주의 필요 3명입니다. 최종 조치는 '주의 아동 확인 후 제한적 사용'입니다.",
+        "status_counts": {
+          "PASS": 5,
+          "WARN": 3,
+          "FAIL": 0,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "강민준",
+            "이도윤",
+            "최하린",
+            "박지호",
+            "한지아"
+          ],
+          "WARN": [
+            "김서아",
+            "정윤서",
+            "오시우"
+          ],
+          "FAIL": [],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "SKIN_SENSITIVE_001",
+          "SKIN_ATOPY_001"
+        ],
+        "matched_ingredients": [
+          "향료",
+          "에탄올"
+        ]
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "강민준 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "강민준 아동은 향기 톡톡 키즈 로션 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_SENSITIVE_001",
+              "target_type": "SKIN",
+              "trigger_name": "민감성 피부",
+              "severity": "WARN",
+              "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "향료",
+                  "canonical_ingredient": "향료",
+                  "matched_keyword": "향료"
+                },
+                {
+                  "ingredient": "에탄올",
+                  "canonical_ingredient": "에탄올",
+                  "matched_keyword": "에탄올"
+                }
+              ]
+            }
+          ],
+          "explanation": "김서아 아동은 민감성 피부 정보가 있어 에탄올, 향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "김서아 아동에게 향기 톡톡 키즈 로션 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 향기 톡톡 키즈 로션 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 향기 톡톡 키즈 로션 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 향기 톡톡 키즈 로션 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_ATOPY_001",
+              "target_type": "SKIN",
+              "trigger_name": "아토피",
+              "severity": "WARN",
+              "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "향료",
+                  "canonical_ingredient": "향료",
+                  "matched_keyword": "향료"
+                },
+                {
+                  "ingredient": "에탄올",
+                  "canonical_ingredient": "에탄올",
+                  "matched_keyword": "에탄올"
+                }
+              ]
+            }
+          ],
+          "explanation": "정윤서 아동은 아토피 정보가 있어 에탄올, 향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "정윤서 아동에게 향기 톡톡 키즈 로션 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_ATOPY_001",
+              "target_type": "SKIN",
+              "trigger_name": "아토피",
+              "severity": "WARN",
+              "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "향료",
+                  "canonical_ingredient": "향료",
+                  "matched_keyword": "향료"
+                },
+                {
+                  "ingredient": "에탄올",
+                  "canonical_ingredient": "에탄올",
+                  "matched_keyword": "에탄올"
+                }
+              ]
+            }
+          ],
+          "explanation": "오시우 아동은 아토피 정보가 있어 에탄올, 향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "오시우 아동에게 향기 톡톡 키즈 로션 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 향기 톡톡 키즈 로션 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "김서아 아동에게 향기 톡톡 키즈 로션 사용 전 소량 테스트 또는 보호자 확인을 권장합니다.",
+        "정윤서 아동에게 향기 톡톡 키즈 로션 사용 전 소량 테스트 또는 보호자 확인을 권장합니다.",
+        "오시우 아동에게 향기 톡톡 키즈 로션 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+      ]
+    },
+    {
+      "scenario_id": 6,
+      "request_id": "demo-check-006",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 106,
+        "name": "컬러 버블 클렌저",
+        "category": "CLEANSER",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000106",
+        "expiry_date": "2027-09-15",
+        "ingredients": [
+          "정제수",
+          "코코베타인",
+          "색소",
+          "구연산"
+        ]
+      },
+      "ocr_result": {
+        "id": 6,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.93,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "정제수",
+          "코코베타인",
+          "색소",
+          "구연산"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "WARN",
+        "status_label": "주의 필요",
+        "recommended_action": "주의 아동 확인 후 제한적 사용",
+        "summary_text": "컬러 버블 클렌저 검사 결과, 사용 가능 6명, 주의 필요 2명입니다. 최종 조치는 '주의 아동 확인 후 제한적 사용'입니다.",
+        "status_counts": {
+          "PASS": 6,
+          "WARN": 2,
+          "FAIL": 0,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "강민준",
+            "김서아",
+            "이도윤",
+            "최하린",
+            "박지호",
+            "한지아"
+          ],
+          "WARN": [
+            "정윤서",
+            "오시우"
+          ],
+          "FAIL": [],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "SKIN_ATOPY_001"
+        ],
+        "matched_ingredients": [
+          "색소"
+        ]
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "강민준 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "강민준 아동은 컬러 버블 클렌저 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "김서아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "김서아 아동은 컬러 버블 클렌저 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 컬러 버블 클렌저 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 컬러 버블 클렌저 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 컬러 버블 클렌저 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_ATOPY_001",
+              "target_type": "SKIN",
+              "trigger_name": "아토피",
+              "severity": "WARN",
+              "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "색소",
+                  "canonical_ingredient": "색소",
+                  "matched_keyword": "색소"
+                }
+              ]
+            }
+          ],
+          "explanation": "정윤서 아동은 아토피 정보가 있어 색소 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "정윤서 아동에게 컬러 버블 클렌저 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_ATOPY_001",
+              "target_type": "SKIN",
+              "trigger_name": "아토피",
+              "severity": "WARN",
+              "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "색소",
+                  "canonical_ingredient": "색소",
+                  "matched_keyword": "색소"
+                }
+              ]
+            }
+          ],
+          "explanation": "오시우 아동은 아토피 정보가 있어 색소 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "오시우 아동에게 컬러 버블 클렌저 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 컬러 버블 클렌저 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "정윤서 아동에게 컬러 버블 클렌저 사용 전 소량 테스트 또는 보호자 확인을 권장합니다.",
+        "오시우 아동에게 컬러 버블 클렌저 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+      ]
+    },
+    {
+      "scenario_id": 7,
+      "request_id": "demo-check-007",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 107,
+        "name": "복합 주의 키즈 크림",
+        "category": "LOTION",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000107",
+        "expiry_date": "2027-10-10",
+        "ingredients": [
+          "정제수",
+          "글리세린",
+          "카제인나트륨",
+          "향료",
+          "에탄올"
+        ]
+      },
+      "ocr_result": {
+        "id": 7,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.93,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "정제수",
+          "글리세린",
+          "카제인나트륨",
+          "향료",
+          "에탄올"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "FAIL",
+        "status_label": "사용 보류",
+        "recommended_action": "일부 아동 사용 보류",
+        "summary_text": "복합 주의 키즈 크림 검사 결과, 사용 가능 4명, 주의 필요 2명, 사용 보류 2명입니다. 최종 조치는 '일부 아동 사용 보류'입니다.",
+        "status_counts": {
+          "FAIL": 2,
+          "WARN": 2,
+          "PASS": 4,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "이도윤",
+            "최하린",
+            "박지호",
+            "한지아"
+          ],
+          "WARN": [
+            "김서아",
+            "정윤서"
+          ],
+          "FAIL": [
+            "강민준",
+            "오시우"
+          ],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "ALLERGY_MILK_001",
+          "SKIN_SENSITIVE_001",
+          "SKIN_ATOPY_001"
+        ],
+        "matched_ingredients": [
+          "카제인나트륨",
+          "향료",
+          "에탄올"
+        ]
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "FAIL",
+          "matched_rules": [
+            {
+              "rule_code": "ALLERGY_MILK_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "우유",
+              "severity": "FAIL",
+              "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "카제인나트륨",
+                  "canonical_ingredient": "카제인나트륨",
+                  "matched_keyword": "카제인나트륨"
+                }
+              ]
+            }
+          ],
+          "explanation": "강민준 아동은 우유 알레르기가 있어 카제인나트륨 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+          "teacher_guide": "강민준 아동에게는 복합 주의 키즈 크림 사용을 보류하고 대체 제품을 확인해 주세요."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_SENSITIVE_001",
+              "target_type": "SKIN",
+              "trigger_name": "민감성 피부",
+              "severity": "WARN",
+              "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "향료",
+                  "canonical_ingredient": "향료",
+                  "matched_keyword": "향료"
+                },
+                {
+                  "ingredient": "에탄올",
+                  "canonical_ingredient": "에탄올",
+                  "matched_keyword": "에탄올"
+                }
+              ]
+            }
+          ],
+          "explanation": "김서아 아동은 민감성 피부 정보가 있어 에탄올, 향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "김서아 아동에게 복합 주의 키즈 크림 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 복합 주의 키즈 크림 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 복합 주의 키즈 크림 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 복합 주의 키즈 크림 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_ATOPY_001",
+              "target_type": "SKIN",
+              "trigger_name": "아토피",
+              "severity": "WARN",
+              "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "향료",
+                  "canonical_ingredient": "향료",
+                  "matched_keyword": "향료"
+                },
+                {
+                  "ingredient": "에탄올",
+                  "canonical_ingredient": "에탄올",
+                  "matched_keyword": "에탄올"
+                }
+              ]
+            }
+          ],
+          "explanation": "정윤서 아동은 아토피 정보가 있어 에탄올, 향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "정윤서 아동에게 복합 주의 키즈 크림 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "FAIL",
+          "matched_rules": [
+            {
+              "rule_code": "ALLERGY_MILK_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "우유",
+              "severity": "FAIL",
+              "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "카제인나트륨",
+                  "canonical_ingredient": "카제인나트륨",
+                  "matched_keyword": "카제인나트륨"
+                }
+              ]
+            },
+            {
+              "rule_code": "SKIN_ATOPY_001",
+              "target_type": "SKIN",
+              "trigger_name": "아토피",
+              "severity": "WARN",
+              "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "향료",
+                  "canonical_ingredient": "향료",
+                  "matched_keyword": "향료"
+                },
+                {
+                  "ingredient": "에탄올",
+                  "canonical_ingredient": "에탄올",
+                  "matched_keyword": "에탄올"
+                }
+              ]
+            }
+          ],
+          "explanation": "오시우 아동은 우유 알레르기가 있어 카제인나트륨 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+          "teacher_guide": "오시우 아동에게는 복합 주의 키즈 크림 사용을 보류하고 대체 제품을 확인해 주세요."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 복합 주의 키즈 크림 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "강민준 아동에게는 복합 주의 키즈 크림 사용을 보류하고 대체 제품을 확인해 주세요.",
+        "오시우 아동에게는 복합 주의 키즈 크림 사용을 보류하고 대체 제품을 확인해 주세요.",
+        "김서아 아동에게 복합 주의 키즈 크림 사용 전 소량 테스트 또는 보호자 확인을 권장합니다.",
+        "정윤서 아동에게 복합 주의 키즈 크림 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+      ]
+    },
+    {
+      "scenario_id": 8,
+      "request_id": "demo-check-008",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 108,
+        "name": "유통기한 지난 물티슈",
+        "category": "WET_TISSUE",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000108",
+        "expiry_date": "2025-12-31",
+        "ingredients": [
+          "정제수",
+          "글리세린",
+          "코코베타인"
+        ]
+      },
+      "ocr_result": {
+        "id": 8,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.93,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "정제수",
+          "글리세린",
+          "코코베타인"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "EXPIRED",
+        "status_label": "유통기한 만료",
+        "recommended_action": "전체 사용 보류",
+        "summary_text": "유통기한 지난 물티슈 검사 결과, 유통기한 만료 8명입니다. 최종 조치는 '전체 사용 보류'입니다.",
+        "status_counts": {
+          "EXPIRED": 8,
+          "PASS": 0,
+          "WARN": 0,
+          "FAIL": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [],
+          "WARN": [],
+          "FAIL": [],
+          "EXPIRED": [
+            "강민준",
+            "김서아",
+            "이도윤",
+            "최하린",
+            "박지호",
+            "정윤서",
+            "오시우",
+            "한지아"
+          ],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "EXPIRY_DATE_001"
+        ],
+        "matched_ingredients": []
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "status": "EXPIRED",
+          "matched_rules": [
+            {
+              "rule_code": "EXPIRY_DATE_001",
+              "target_type": "EXPIRY",
+              "trigger_name": "유통기한 만료",
+              "severity": "EXPIRED",
+              "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "유통기한 지난 물티슈은(는) 유통기한(2025-12-31)이 지나 강민준 아동에게 사용을 권장하지 않습니다.",
+          "teacher_guide": "유통기한 지난 물티슈은(는) 유통기한이 지나 전체 아동 사용을 보류해 주세요."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "status": "EXPIRED",
+          "matched_rules": [
+            {
+              "rule_code": "EXPIRY_DATE_001",
+              "target_type": "EXPIRY",
+              "trigger_name": "유통기한 만료",
+              "severity": "EXPIRED",
+              "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "유통기한 지난 물티슈은(는) 유통기한(2025-12-31)이 지나 김서아 아동에게 사용을 권장하지 않습니다.",
+          "teacher_guide": "유통기한 지난 물티슈은(는) 유통기한이 지나 전체 아동 사용을 보류해 주세요."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "status": "EXPIRED",
+          "matched_rules": [
+            {
+              "rule_code": "EXPIRY_DATE_001",
+              "target_type": "EXPIRY",
+              "trigger_name": "유통기한 만료",
+              "severity": "EXPIRED",
+              "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "유통기한 지난 물티슈은(는) 유통기한(2025-12-31)이 지나 이도윤 아동에게 사용을 권장하지 않습니다.",
+          "teacher_guide": "유통기한 지난 물티슈은(는) 유통기한이 지나 전체 아동 사용을 보류해 주세요."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "status": "EXPIRED",
+          "matched_rules": [
+            {
+              "rule_code": "EXPIRY_DATE_001",
+              "target_type": "EXPIRY",
+              "trigger_name": "유통기한 만료",
+              "severity": "EXPIRED",
+              "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "유통기한 지난 물티슈은(는) 유통기한(2025-12-31)이 지나 최하린 아동에게 사용을 권장하지 않습니다.",
+          "teacher_guide": "유통기한 지난 물티슈은(는) 유통기한이 지나 전체 아동 사용을 보류해 주세요."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "status": "EXPIRED",
+          "matched_rules": [
+            {
+              "rule_code": "EXPIRY_DATE_001",
+              "target_type": "EXPIRY",
+              "trigger_name": "유통기한 만료",
+              "severity": "EXPIRED",
+              "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "유통기한 지난 물티슈은(는) 유통기한(2025-12-31)이 지나 박지호 아동에게 사용을 권장하지 않습니다.",
+          "teacher_guide": "유통기한 지난 물티슈은(는) 유통기한이 지나 전체 아동 사용을 보류해 주세요."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "status": "EXPIRED",
+          "matched_rules": [
+            {
+              "rule_code": "EXPIRY_DATE_001",
+              "target_type": "EXPIRY",
+              "trigger_name": "유통기한 만료",
+              "severity": "EXPIRED",
+              "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "유통기한 지난 물티슈은(는) 유통기한(2025-12-31)이 지나 정윤서 아동에게 사용을 권장하지 않습니다.",
+          "teacher_guide": "유통기한 지난 물티슈은(는) 유통기한이 지나 전체 아동 사용을 보류해 주세요."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "status": "EXPIRED",
+          "matched_rules": [
+            {
+              "rule_code": "EXPIRY_DATE_001",
+              "target_type": "EXPIRY",
+              "trigger_name": "유통기한 만료",
+              "severity": "EXPIRED",
+              "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "유통기한 지난 물티슈은(는) 유통기한(2025-12-31)이 지나 오시우 아동에게 사용을 권장하지 않습니다.",
+          "teacher_guide": "유통기한 지난 물티슈은(는) 유통기한이 지나 전체 아동 사용을 보류해 주세요."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "status": "EXPIRED",
+          "matched_rules": [
+            {
+              "rule_code": "EXPIRY_DATE_001",
+              "target_type": "EXPIRY",
+              "trigger_name": "유통기한 만료",
+              "severity": "EXPIRED",
+              "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "유통기한 지난 물티슈은(는) 유통기한(2025-12-31)이 지나 한지아 아동에게 사용을 권장하지 않습니다.",
+          "teacher_guide": "유통기한 지난 물티슈은(는) 유통기한이 지나 전체 아동 사용을 보류해 주세요."
+        }
+      ],
+      "teacher_notice_messages": [
+        "유통기한 지난 물티슈은(는) 유통기한(2025-12-31)이 지나 전체 아동 사용을 보류하세요."
+      ]
+    },
+    {
+      "scenario_id": 9,
+      "request_id": "demo-check-009",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 109,
+        "name": "성분표 훼손 제품",
+        "category": "ETC",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000109",
+        "expiry_date": "2027-12-31",
+        "ingredients": []
+      },
+      "ocr_result": {
+        "id": 9,
+        "ocr_status": "FAILED",
+        "confidence": 0.31,
+        "needs_manual_review": true,
+        "normalized_ingredients": [],
+        "failure_reason": "INGREDIENT_LABEL_UNREADABLE"
+      },
+      "overall_result": {
+        "status": "UNKNOWN",
+        "status_label": "판단 불가",
+        "recommended_action": "성분 재확인 전 사용 보류",
+        "summary_text": "성분표 훼손 제품 검사 결과, 판단 불가 8명입니다. 최종 조치는 '성분 재확인 전 사용 보류'입니다.",
+        "status_counts": {
+          "UNKNOWN": 8,
+          "PASS": 0,
+          "WARN": 0,
+          "FAIL": 0,
+          "EXPIRED": 0
+        },
+        "child_names_by_status": {
+          "PASS": [],
+          "WARN": [],
+          "FAIL": [],
+          "EXPIRED": [],
+          "UNKNOWN": [
+            "강민준",
+            "김서아",
+            "이도윤",
+            "최하린",
+            "박지호",
+            "정윤서",
+            "오시우",
+            "한지아"
+          ]
+        },
+        "matched_rule_codes": [
+          "OCR_UNKNOWN_001"
+        ],
+        "matched_ingredients": []
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "status": "UNKNOWN",
+          "matched_rules": [
+            {
+              "rule_code": "OCR_UNKNOWN_001",
+              "target_type": "UNKNOWN",
+              "trigger_name": "성분 확인 불가",
+              "severity": "UNKNOWN",
+              "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "성분표 훼손 제품은(는) 성분표를 확인할 수 없어 강민준 아동의 안전 여부를 판단할 수 없습니다.",
+          "teacher_guide": "성분 확인 전까지 성분표 훼손 제품 사용을 보류하고 제품 라벨을 다시 촬영해 주세요."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "status": "UNKNOWN",
+          "matched_rules": [
+            {
+              "rule_code": "OCR_UNKNOWN_001",
+              "target_type": "UNKNOWN",
+              "trigger_name": "성분 확인 불가",
+              "severity": "UNKNOWN",
+              "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "성분표 훼손 제품은(는) 성분표를 확인할 수 없어 김서아 아동의 안전 여부를 판단할 수 없습니다.",
+          "teacher_guide": "성분 확인 전까지 성분표 훼손 제품 사용을 보류하고 제품 라벨을 다시 촬영해 주세요."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "status": "UNKNOWN",
+          "matched_rules": [
+            {
+              "rule_code": "OCR_UNKNOWN_001",
+              "target_type": "UNKNOWN",
+              "trigger_name": "성분 확인 불가",
+              "severity": "UNKNOWN",
+              "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "성분표 훼손 제품은(는) 성분표를 확인할 수 없어 이도윤 아동의 안전 여부를 판단할 수 없습니다.",
+          "teacher_guide": "성분 확인 전까지 성분표 훼손 제품 사용을 보류하고 제품 라벨을 다시 촬영해 주세요."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "status": "UNKNOWN",
+          "matched_rules": [
+            {
+              "rule_code": "OCR_UNKNOWN_001",
+              "target_type": "UNKNOWN",
+              "trigger_name": "성분 확인 불가",
+              "severity": "UNKNOWN",
+              "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "성분표 훼손 제품은(는) 성분표를 확인할 수 없어 최하린 아동의 안전 여부를 판단할 수 없습니다.",
+          "teacher_guide": "성분 확인 전까지 성분표 훼손 제품 사용을 보류하고 제품 라벨을 다시 촬영해 주세요."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "status": "UNKNOWN",
+          "matched_rules": [
+            {
+              "rule_code": "OCR_UNKNOWN_001",
+              "target_type": "UNKNOWN",
+              "trigger_name": "성분 확인 불가",
+              "severity": "UNKNOWN",
+              "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "성분표 훼손 제품은(는) 성분표를 확인할 수 없어 박지호 아동의 안전 여부를 판단할 수 없습니다.",
+          "teacher_guide": "성분 확인 전까지 성분표 훼손 제품 사용을 보류하고 제품 라벨을 다시 촬영해 주세요."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "status": "UNKNOWN",
+          "matched_rules": [
+            {
+              "rule_code": "OCR_UNKNOWN_001",
+              "target_type": "UNKNOWN",
+              "trigger_name": "성분 확인 불가",
+              "severity": "UNKNOWN",
+              "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "성분표 훼손 제품은(는) 성분표를 확인할 수 없어 정윤서 아동의 안전 여부를 판단할 수 없습니다.",
+          "teacher_guide": "성분 확인 전까지 성분표 훼손 제품 사용을 보류하고 제품 라벨을 다시 촬영해 주세요."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "status": "UNKNOWN",
+          "matched_rules": [
+            {
+              "rule_code": "OCR_UNKNOWN_001",
+              "target_type": "UNKNOWN",
+              "trigger_name": "성분 확인 불가",
+              "severity": "UNKNOWN",
+              "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "성분표 훼손 제품은(는) 성분표를 확인할 수 없어 오시우 아동의 안전 여부를 판단할 수 없습니다.",
+          "teacher_guide": "성분 확인 전까지 성분표 훼손 제품 사용을 보류하고 제품 라벨을 다시 촬영해 주세요."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "status": "UNKNOWN",
+          "matched_rules": [
+            {
+              "rule_code": "OCR_UNKNOWN_001",
+              "target_type": "UNKNOWN",
+              "trigger_name": "성분 확인 불가",
+              "severity": "UNKNOWN",
+              "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+              "matched_ingredients": []
+            }
+          ],
+          "explanation": "성분표 훼손 제품은(는) 성분표를 확인할 수 없어 한지아 아동의 안전 여부를 판단할 수 없습니다.",
+          "teacher_guide": "성분 확인 전까지 성분표 훼손 제품 사용을 보류하고 제품 라벨을 다시 촬영해 주세요."
+        }
+      ],
+      "teacher_notice_messages": [
+        "성분표 훼손 제품은(는) 성분 확인이 불가하므로 라벨을 재촬영하거나 수기로 성분을 입력해 주세요."
+      ]
+    },
+    {
+      "scenario_id": 10,
+      "request_id": "demo-check-010",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 110,
+        "name": "무가당 그릭 요거트",
+        "category": "FOOD",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000110",
+        "expiry_date": "2027-12-31",
+        "ingredients": [
+          "원유",
+          "정제수",
+          "혼합분유",
+          "농축우유단백분말",
+          "변성전분",
+          "젤라틴"
+        ]
+      },
+      "ocr_result": {
+        "id": 10,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.93,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "원유",
+          "정제수",
+          "혼합분유",
+          "농축우유단백분말",
+          "변성전분",
+          "젤라틴"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "FAIL",
+        "status_label": "사용 보류",
+        "recommended_action": "일부 아동 사용 보류",
+        "summary_text": "무가당 그릭 요거트 검사 결과, 사용 가능 6명, 사용 보류 2명입니다. 최종 조치는 '일부 아동 사용 보류'입니다.",
+        "status_counts": {
+          "FAIL": 2,
+          "PASS": 6,
+          "WARN": 0,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "김서아",
+            "이도윤",
+            "최하린",
+            "박지호",
+            "정윤서",
+            "한지아"
+          ],
+          "WARN": [],
+          "FAIL": [
+            "강민준",
+            "오시우"
+          ],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "ALLERGY_MILK_001"
+        ],
+        "matched_ingredients": [
+          "농축우유단백분말"
+        ]
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "FAIL",
+          "matched_rules": [
+            {
+              "rule_code": "ALLERGY_MILK_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "우유",
+              "severity": "FAIL",
+              "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "농축우유단백분말",
+                  "canonical_ingredient": "농축우유단백분말",
+                  "matched_keyword": "우유"
+                }
+              ]
+            }
+          ],
+          "explanation": "강민준 아동은 우유 알레르기가 있어 농축우유단백분말 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+          "teacher_guide": "강민준 아동에게는 무가당 그릭 요거트 사용을 보류하고 대체 제품을 확인해 주세요."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "김서아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "김서아 아동은 무가당 그릭 요거트 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 무가당 그릭 요거트 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 무가당 그릭 요거트 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 무가당 그릭 요거트 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "정윤서 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "정윤서 아동은 무가당 그릭 요거트 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "FAIL",
+          "matched_rules": [
+            {
+              "rule_code": "ALLERGY_MILK_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "우유",
+              "severity": "FAIL",
+              "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "농축우유단백분말",
+                  "canonical_ingredient": "농축우유단백분말",
+                  "matched_keyword": "우유"
+                }
+              ]
+            }
+          ],
+          "explanation": "오시우 아동은 우유 알레르기가 있어 농축우유단백분말 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+          "teacher_guide": "오시우 아동에게는 무가당 그릭 요거트 사용을 보류하고 대체 제품을 확인해 주세요."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 무가당 그릭 요거트 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "강민준 아동에게는 무가당 그릭 요거트 사용을 보류하고 대체 제품을 확인해 주세요.",
+        "오시우 아동에게는 무가당 그릭 요거트 사용을 보류하고 대체 제품을 확인해 주세요."
+      ]
+    },
+    {
+      "scenario_id": 11,
+      "request_id": "demo-check-011",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 111,
+        "name": "고소한인절미과자",
+        "category": "FOOD",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000111",
+        "expiry_date": "2027-12-31",
+        "ingredients": [
+          "쌀가루",
+          "팜올레인유",
+          "백설탕",
+          "볶음대두분말",
+          "포도당",
+          "유당",
+          "우유",
+          "탈지분유",
+          "백태분말",
+          "옥수수가루",
+          "탄산칼슘"
+        ]
+      },
+      "ocr_result": {
+        "id": 11,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.88,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "쌀가루",
+          "팜올레인유",
+          "백설탕",
+          "볶음대두분말",
+          "포도당",
+          "유당",
+          "우유",
+          "탈지분유",
+          "백태분말",
+          "옥수수가루",
+          "탄산칼슘"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "FAIL",
+        "status_label": "사용 보류",
+        "recommended_action": "일부 아동 사용 보류",
+        "summary_text": "고소한인절미과자 검사 결과, 사용 가능 6명, 사용 보류 2명입니다. 최종 조치는 '일부 아동 사용 보류'입니다.",
+        "status_counts": {
+          "FAIL": 2,
+          "PASS": 6,
+          "WARN": 0,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "김서아",
+            "이도윤",
+            "최하린",
+            "박지호",
+            "정윤서",
+            "한지아"
+          ],
+          "WARN": [],
+          "FAIL": [
+            "강민준",
+            "오시우"
+          ],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "ALLERGY_MILK_001"
+        ],
+        "matched_ingredients": [
+          "우유",
+          "탈지분유"
+        ]
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "FAIL",
+          "matched_rules": [
+            {
+              "rule_code": "ALLERGY_MILK_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "우유",
+              "severity": "FAIL",
+              "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "우유",
+                  "canonical_ingredient": "우유",
+                  "matched_keyword": "우유"
+                },
+                {
+                  "ingredient": "탈지분유",
+                  "canonical_ingredient": "탈지분유",
+                  "matched_keyword": "탈지분유"
+                }
+              ]
+            }
+          ],
+          "explanation": "강민준 아동은 우유 알레르기가 있어 우유, 탈지분유 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+          "teacher_guide": "강민준 아동에게는 고소한인절미과자 사용을 보류하고 대체 제품을 확인해 주세요."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "김서아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "김서아 아동은 고소한인절미과자 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 고소한인절미과자 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 고소한인절미과자 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 고소한인절미과자 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "정윤서 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "정윤서 아동은 고소한인절미과자 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "FAIL",
+          "matched_rules": [
+            {
+              "rule_code": "ALLERGY_MILK_001",
+              "target_type": "ALLERGY",
+              "trigger_name": "우유",
+              "severity": "FAIL",
+              "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "우유",
+                  "canonical_ingredient": "우유",
+                  "matched_keyword": "우유"
+                },
+                {
+                  "ingredient": "탈지분유",
+                  "canonical_ingredient": "탈지분유",
+                  "matched_keyword": "탈지분유"
+                }
+              ]
+            }
+          ],
+          "explanation": "오시우 아동은 우유 알레르기가 있어 우유, 탈지분유 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+          "teacher_guide": "오시우 아동에게는 고소한인절미과자 사용을 보류하고 대체 제품을 확인해 주세요."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 고소한인절미과자 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "강민준 아동에게는 고소한인절미과자 사용을 보류하고 대체 제품을 확인해 주세요.",
+        "오시우 아동에게는 고소한인절미과자 사용을 보류하고 대체 제품을 확인해 주세요."
+      ]
+    },
+    {
+      "scenario_id": 12,
+      "request_id": "demo-check-012",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 112,
+        "name": "미소지움물티슈",
+        "category": "WET_TISSUE",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000112",
+        "expiry_date": "2027-12-31",
+        "ingredients": [
+          "소듐벤조에이트",
+          "라우릴피리디늄클로라이드",
+          "합성향료",
+          "Levulinic acid",
+          "정제수"
+        ]
+      },
+      "ocr_result": {
+        "id": 12,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.86,
+        "needs_manual_review": true,
+        "normalized_ingredients": [
+          "소듐벤조에이트",
+          "라우릴피리디늄클로라이드",
+          "합성향료",
+          "Levulinic acid",
+          "정제수"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "WARN",
+        "status_label": "주의 필요",
+        "recommended_action": "주의 아동 확인 후 제한적 사용",
+        "summary_text": "미소지움물티슈 검사 결과, 사용 가능 5명, 주의 필요 3명입니다. 최종 조치는 '주의 아동 확인 후 제한적 사용'입니다.",
+        "status_counts": {
+          "PASS": 5,
+          "WARN": 3,
+          "FAIL": 0,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "강민준",
+            "이도윤",
+            "최하린",
+            "박지호",
+            "한지아"
+          ],
+          "WARN": [
+            "김서아",
+            "정윤서",
+            "오시우"
+          ],
+          "FAIL": [],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "SKIN_SENSITIVE_001",
+          "SKIN_ATOPY_001"
+        ],
+        "matched_ingredients": [
+          "합성향료"
+        ]
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "강민준 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "강민준 아동은 미소지움물티슈 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_SENSITIVE_001",
+              "target_type": "SKIN",
+              "trigger_name": "민감성 피부",
+              "severity": "WARN",
+              "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "합성향료",
+                  "canonical_ingredient": "합성향료",
+                  "matched_keyword": "향료"
+                }
+              ]
+            }
+          ],
+          "explanation": "김서아 아동은 민감성 피부 정보가 있어 합성향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "김서아 아동에게 미소지움물티슈 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 미소지움물티슈 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 미소지움물티슈 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 미소지움물티슈 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_ATOPY_001",
+              "target_type": "SKIN",
+              "trigger_name": "아토피",
+              "severity": "WARN",
+              "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "합성향료",
+                  "canonical_ingredient": "합성향료",
+                  "matched_keyword": "향료"
+                }
+              ]
+            }
+          ],
+          "explanation": "정윤서 아동은 아토피 정보가 있어 합성향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "정윤서 아동에게 미소지움물티슈 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_ATOPY_001",
+              "target_type": "SKIN",
+              "trigger_name": "아토피",
+              "severity": "WARN",
+              "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "합성향료",
+                  "canonical_ingredient": "합성향료",
+                  "matched_keyword": "향료"
+                }
+              ]
+            }
+          ],
+          "explanation": "오시우 아동은 아토피 정보가 있어 합성향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "오시우 아동에게 미소지움물티슈 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 미소지움물티슈 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "김서아 아동에게 미소지움물티슈 사용 전 소량 테스트 또는 보호자 확인을 권장합니다.",
+        "정윤서 아동에게 미소지움물티슈 사용 전 소량 테스트 또는 보호자 확인을 권장합니다.",
+        "오시우 아동에게 미소지움물티슈 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+      ]
+    },
+    {
+      "scenario_id": 13,
+      "request_id": "demo-check-013",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 113,
+        "name": "식기세척기 린스",
+        "category": "CLEANSER",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000113",
+        "expiry_date": "2027-12-31",
+        "ingredients": [
+          "레몬향",
+          "향료",
+          "(에틸렌-프로필렌)폴리알킬렌글리콜",
+          "구연산",
+          "에탄올",
+          "키실렌설폰산나트륨",
+          "정제수"
+        ]
+      },
+      "ocr_result": {
+        "id": 13,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.86,
+        "needs_manual_review": true,
+        "normalized_ingredients": [
+          "레몬향",
+          "향료",
+          "(에틸렌-프로필렌)폴리알킬렌글리콜",
+          "구연산",
+          "에탄올",
+          "키실렌설폰산나트륨",
+          "정제수"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "WARN",
+        "status_label": "주의 필요",
+        "recommended_action": "주의 아동 확인 후 제한적 사용",
+        "summary_text": "식기세척기 린스 검사 결과, 사용 가능 5명, 주의 필요 3명입니다. 최종 조치는 '주의 아동 확인 후 제한적 사용'입니다.",
+        "status_counts": {
+          "PASS": 5,
+          "WARN": 3,
+          "FAIL": 0,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "강민준",
+            "이도윤",
+            "최하린",
+            "박지호",
+            "한지아"
+          ],
+          "WARN": [
+            "김서아",
+            "정윤서",
+            "오시우"
+          ],
+          "FAIL": [],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [
+          "SKIN_SENSITIVE_001",
+          "SKIN_ATOPY_001"
+        ],
+        "matched_ingredients": [
+          "향료",
+          "에탄올"
+        ]
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "강민준 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "강민준 아동은 식기세척기 린스 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_SENSITIVE_001",
+              "target_type": "SKIN",
+              "trigger_name": "민감성 피부",
+              "severity": "WARN",
+              "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "향료",
+                  "canonical_ingredient": "향료",
+                  "matched_keyword": "향료"
+                },
+                {
+                  "ingredient": "에탄올",
+                  "canonical_ingredient": "에탄올",
+                  "matched_keyword": "에탄올"
+                }
+              ]
+            }
+          ],
+          "explanation": "김서아 아동은 민감성 피부 정보가 있어 에탄올, 향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "김서아 아동에게 식기세척기 린스 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 식기세척기 린스 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 식기세척기 린스 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 식기세척기 린스 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_ATOPY_001",
+              "target_type": "SKIN",
+              "trigger_name": "아토피",
+              "severity": "WARN",
+              "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "향료",
+                  "canonical_ingredient": "향료",
+                  "matched_keyword": "향료"
+                },
+                {
+                  "ingredient": "에탄올",
+                  "canonical_ingredient": "에탄올",
+                  "matched_keyword": "에탄올"
+                }
+              ]
+            }
+          ],
+          "explanation": "정윤서 아동은 아토피 정보가 있어 에탄올, 향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "정윤서 아동에게 식기세척기 린스 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "WARN",
+          "matched_rules": [
+            {
+              "rule_code": "SKIN_ATOPY_001",
+              "target_type": "SKIN",
+              "trigger_name": "아토피",
+              "severity": "WARN",
+              "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+              "matched_ingredients": [
+                {
+                  "ingredient": "향료",
+                  "canonical_ingredient": "향료",
+                  "matched_keyword": "향료"
+                },
+                {
+                  "ingredient": "에탄올",
+                  "canonical_ingredient": "에탄올",
+                  "matched_keyword": "에탄올"
+                }
+              ]
+            }
+          ],
+          "explanation": "오시우 아동은 아토피 정보가 있어 에탄올, 향료 성분 포함 제품 사용 시 피부 반응 확인이 필요합니다.",
+          "teacher_guide": "오시우 아동에게 식기세척기 린스 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 식기세척기 린스 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "김서아 아동에게 식기세척기 린스 사용 전 소량 테스트 또는 보호자 확인을 권장합니다.",
+        "정윤서 아동에게 식기세척기 린스 사용 전 소량 테스트 또는 보호자 확인을 권장합니다.",
+        "오시우 아동에게 식기세척기 린스 사용 전 소량 테스트 또는 보호자 확인을 권장합니다."
+      ]
+    },
+    {
+      "scenario_id": 14,
+      "request_id": "demo-check-014",
+      "checked_at": "2026-06-10T09:05:00+09:00",
+      "facility": {
+        "id": 1,
+        "name": "땅콩어린이집"
+      },
+      "product": {
+        "id": 114,
+        "name": "종이컵",
+        "category": "PAPER_CUP",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000114",
+        "expiry_date": "2027-12-31",
+        "ingredients": [
+          "종이제",
+          "폴리에틸렌"
+        ]
+      },
+      "ocr_result": {
+        "id": 14,
+        "ocr_status": "SUCCESS",
+        "confidence": 0.93,
+        "needs_manual_review": false,
+        "normalized_ingredients": [
+          "종이제",
+          "폴리에틸렌"
+        ],
+        "failure_reason": null
+      },
+      "overall_result": {
+        "status": "PASS",
+        "status_label": "사용 가능",
+        "recommended_action": "사용 가능",
+        "summary_text": "종이컵 검사 결과, 사용 가능 8명입니다. 최종 조치는 '사용 가능'입니다.",
+        "status_counts": {
+          "PASS": 8,
+          "WARN": 0,
+          "FAIL": 0,
+          "EXPIRED": 0,
+          "UNKNOWN": 0
+        },
+        "child_names_by_status": {
+          "PASS": [
+            "강민준",
+            "김서아",
+            "이도윤",
+            "최하린",
+            "박지호",
+            "정윤서",
+            "오시우",
+            "한지아"
+          ],
+          "WARN": [],
+          "FAIL": [],
+          "EXPIRED": [],
+          "UNKNOWN": []
+        },
+        "matched_rule_codes": [],
+        "matched_ingredients": []
+      },
+      "child_results": [
+        {
+          "child_id": 1,
+          "child_name": "강민준",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "강민준 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "강민준 아동은 종이컵 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 2,
+          "child_name": "김서아",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "민감성 피부"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "에탄올",
+              "페녹시에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "김서아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "김서아 아동은 종이컵 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 3,
+          "child_name": "이도윤",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "이도윤 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "이도윤 아동은 종이컵 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 4,
+          "child_name": "최하린",
+          "classroom_id": 1,
+          "classroom_name": "햇님반",
+          "health_profile": {
+            "allergies": [
+              "계란"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "최하린 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "최하린 아동은 종이컵 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 5,
+          "child_name": "박지호",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "땅콩",
+              "견과류"
+            ],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "박지호 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "박지호 아동은 종이컵 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 6,
+          "child_name": "정윤서",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "정윤서 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "정윤서 아동은 종이컵 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 7,
+          "child_name": "오시우",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [
+              "우유"
+            ],
+            "skin_conditions": [
+              "아토피"
+            ],
+            "sensitive_ingredients": [
+              "향료",
+              "색소",
+              "에탄올"
+            ]
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "오시우 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "오시우 아동은 종이컵 사용 가능으로 안내할 수 있습니다."
+        },
+        {
+          "child_id": 8,
+          "child_name": "한지아",
+          "classroom_id": 2,
+          "classroom_name": "별님반",
+          "health_profile": {
+            "allergies": [],
+            "skin_conditions": [],
+            "sensitive_ingredients": []
+          },
+          "status": "PASS",
+          "matched_rules": [],
+          "explanation": "한지아 아동의 등록된 알레르기·피부 주의 정보와 매칭되는 위험 성분이 없어 사용 가능으로 판단됩니다.",
+          "teacher_guide": "한지아 아동은 종이컵 사용 가능으로 안내할 수 있습니다."
+        }
+      ],
+      "teacher_notice_messages": [
+        "종이컵은(는) 등록된 아동 건강 프로필 기준으로 제한 없이 사용 가능합니다."
+      ]
+    }
+  ]
+}
