@@ -96,3 +96,26 @@ def test_create_product_without_token():
     )
 
     assert response.status_code == 401
+
+
+def test_create_product_normalizes_ingredient_alias():
+    response = client.post(
+        "/api/products",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "name": "카제인 테스트 물티슈",
+            "category": "WET_TISSUE",
+            "manufacturer": "테스트제조사",
+            "barcode": "880000001234",
+            "expiry_date": "2027-12-31",
+            "raw_ingredients_text": "정제수, 카제인Na",
+            "ingredients": ["정제수", "카제인Na"],
+        },
+    )
+
+    assert response.status_code == 201
+
+    data = response.json()
+
+    assert data["ingredients"] == ["정제수", "카제인Na"]
+    assert data["normalized_ingredients"] == ["정제수", "카제인나트륨"]
