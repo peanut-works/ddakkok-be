@@ -393,8 +393,8 @@ def get_rule_checker(db: Session = Depends(get_db)) -> RuleChecker:
     """
     rules = _rules_from_db(db)
     aliases = _aliases_from_db(db)
-    if not rules:
-        logger.warning("[RuleChecker] DB 규칙 없음 — JSON fallback 사용")
+    if not rules or not aliases:
+        logger.warning("[RuleChecker] DB 규칙/별칭 없음 — JSON fallback 사용")
         return RuleChecker()
     logger.debug("[RuleChecker] DB에서 규칙 %d개, 별칭 %d개 로딩", len(rules), len(aliases))
     return RuleChecker(rules=rules, aliases=aliases)

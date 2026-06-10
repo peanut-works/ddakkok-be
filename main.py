@@ -37,6 +37,7 @@ async def _seed_knowledge_if_empty() -> None:
         n = await KnowledgeLoader(db=db, embed_provider=embed).load_all()
         logger.info("[Startup] knowledge_chunks %d개 적재 완료", n)
     except Exception as exc:
+        db.rollback()
         logger.warning("[Startup] 지식베이스 적재 실패 (서버는 계속 구동): %s", exc)
     finally:
         db.close()

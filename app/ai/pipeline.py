@@ -249,7 +249,6 @@ class AnalysisPipeline:
         rule_descs = _collect_rule_descriptions(report)
         query = " ".join(ner_result.ingredient[:5] + rule_descs[:3])
         try:
-            assert self._knowledge_loader is not None
             chunks = await self._knowledge_loader.search(query, top_k=3)
             return [f"[출처: {c.source}]\n{c.content}" for c in chunks]
         except Exception as exc:
