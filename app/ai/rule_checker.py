@@ -261,6 +261,29 @@ class RuleChecker:
         b = keyword.lower().strip()
         return a == b or b in a or a in b
 
+    def _dedupe_matched_rules(
+        self,
+        matched_rules: list[MatchedRule],
+    ) -> list[MatchedRule]:
+        """동일 rule/status/ingredient/reason 조합을 한 번만 남긴다."""
+        seen: set[tuple[str, CheckStatus, str, str]] = set()
+        deduped: list[MatchedRule] = []
+
+        for rule in matched_rules:
+            key = (
+                rule.rule_code,
+                rule.status,
+                rule.matched_ingredient,
+                rule.reason,
+            )
+            if key in seen:
+                continue
+
+            seen.add(key)
+            deduped.append(rule)
+
+        return deduped
+
     def _check_child(
         self,
         ner_result: NERResult,
@@ -365,6 +388,8 @@ class RuleChecker:
             )
 
         # ── 최종 판정 ────────────────────────────────────────────────────────
+        matched_rules = self._dedupe_matched_rules(matched_rules)
+
         if not matched_rules:
             return ChildCheckResult(
                 child_id=child.child_id,

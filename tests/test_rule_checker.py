@@ -79,6 +79,37 @@ def test_fail_milk_allergy(checker: RuleChecker) -> None:
     assert any(r.rule_code == "ALLERGY_MILK_001" for r in result.matched_rules)
 
 
+def test_matched_rules_are_deduplicated(checker: RuleChecker) -> None:
+    """같은 rule/status/ingredient/reason 조합은 한 번만 반환한다."""
+    ner = NERResult(
+        product="밀크 프로틴 보습 물티슈",
+        ingredient=["정제수", "글리세린", "카제인나트륨", "페녹시에탄올"],
+        expiry="2027-08-31",
+    )
+
+    report = checker.check(ner, [CHILD_MILK_ALLERGY], today=TODAY)
+    matched_rules = report.child_results[0].matched_rules
+    keys = [
+        (
+            rule.rule_code,
+            rule.status,
+            rule.matched_ingredient,
+            rule.reason,
+        )
+        for rule in matched_rules
+    ]
+
+    assert len(keys) == len(set(keys))
+    assert keys.count(
+        (
+            "ALLERGY_MILK_001",
+            CheckStatus.FAIL,
+            "카제인나트륨",
+            "우유 알레르기 관련 성분이 포함되어 있습니다.",
+        )
+    ) == 1
+
+
 def test_fail_egg_allergy(checker: RuleChecker) -> None:
     """계란 포함 식품 → 계란 알레르기 아동 FAIL."""
     ner = NERResult(

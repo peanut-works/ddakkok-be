@@ -54,6 +54,35 @@ def test_create_safety_check_success():
     assert "reason" in first_result
 
 
+def test_create_safety_check_deduplicates_matched_rules():
+    response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 102,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+
+    assert response.status_code == 201
+
+    data = response.json()
+
+    for result in data["results"]:
+        keys = [
+            (
+                rule["rule_code"],
+                rule["status"],
+                rule["matched_ingredient"],
+                rule["reason"],
+            )
+            for rule in result["matched_rules"]
+        ]
+
+        assert len(keys) == len(set(keys))
+
+
 def test_create_safety_check_only_selected_children():
     response = client.post(
         "/api/safety-checks",
