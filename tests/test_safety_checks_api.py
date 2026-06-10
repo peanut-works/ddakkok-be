@@ -2,6 +2,11 @@ from fastapi.testclient import TestClient
 
 from main import app
 
+from sqlalchemy import select
+
+from app.core.database import SessionLocal
+from app.models.safety_check import SafetyCheck, SafetyCheckResult
+
 client = TestClient(app)
 
 
@@ -156,3 +161,60 @@ def test_create_safety_check_with_duplicate_child_ids():
     )
 
     assert response.status_code == 400
+
+
+def test_create_safety_check_saves_result_to_database():
+    response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 102,
+            "classroom_id": 1,
+            "child_ids": [1, 3],
+        },
+    )
+
+    assert response.status_code == 201
+
+    data = response.json()
+    safety_check_id = data["id"]
+
+    db = SessionLocal()
+
+    try:
+        safety_check = db.get(SafetyCheck, safety_check_id)
+
+        assert safety_check is not None
+        assert safety_check.product_id == 102
+        assert safety_check.classroom_id == 1
+        assert safety_check.overall_status == data["overall_status"]
+        assert safety_check.pass_count == data["pass_count"]
+        assert safety_check.warn_count == data["warn_count"]
+        assert safety_check.fail_count == data["fail_count"]
+        assert safety_check.expired_count == data["expired_count"]
+        assert safety_check.unknown_count == data["unknown_count"]
+
+        results = db.scalars(
+            select(SafetyCheckResult)
+            .where(SafetyCheckResult.safety_check_id == safety_check_id)
+            .order_by(SafetyCheckResult.child_id.asc())
+        ).all()
+
+        assert len(results) == 2
+
+        child_ids = [result.child_id for result in results]
+        assert child_ids == [1, 3]
+
+        for result in results:
+            assert result.status in ["PASS", "WARN", "FAIL", "EXPIRED", "UNKNOWN"]
+            assert result.reason is not None
+
+        fail_result = next(
+            result for result in results if result.status == "FAIL"
+        )
+
+        assert fail_result.matched_ingredient is not None
+        assert fail_result.reason is not None
+
+    finally:
+        db.close()
