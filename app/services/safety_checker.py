@@ -245,3 +245,107 @@ def run_safety_check(
         "unknown_count": report.unknown_count,
         "results": response_results,
     }
+
+
+def get_safety_check_detail(
+    db: Session,
+    check_id: int,
+    current_user: User,
+) -> dict:
+    safety_check = db.scalar(
+        select(SafetyCheck).where(
+            SafetyCheck.id == check_id,
+            SafetyCheck.facility_id == current_user.facility_id,
+        )
+    )
+
+    if safety_check is None:
+        raise SafetyCheckNotFoundError("Safety check not found")
+
+    product = db.scalar(
+        select(Product).where(
+            Product.id == safety_check.product_id,
+            Product.facility_id == current_user.facility_id,
+        )
+    )
+
+    if product is None:
+        raise SafetyCheckNotFoundError("Product not found")
+
+    check_results = db.scalars(
+        select(SafetyCheckResult)
+        .where(SafetyCheckResult.safety_check_id == safety_check.id)
+        .order_by(SafetyCheckResult.id.asc())
+    ).all()
+
+    child_ids = [result.child_id for result in check_results]
+
+    children_by_id = {}
+
+    if child_ids:
+        children = db.scalars(
+            select(Child).where(
+                Child.id.in_(child_ids),
+                Child.facility_id == current_user.facility_id,
+            )
+        ).all()
+
+        children_by_id = {child.id: child for child in children}
+
+    results = []
+
+    for result in check_results:
+        child = children_by_id.get(result.child_id)
+
+        results.append(
+            {
+                "child_id": result.child_id,
+                "child_name": child.name if child else "알 수 없는 아동",
+                "status": result.status,
+                "matched_rule_code": result.matched_rule_code,
+                "matched_profile": result.matched_profile,
+                "matched_ingredient": result.matched_ingredient,
+                "reason": result.reason,
+                "explanation": result.explanation,
+            }
+        )
+
+    total_count = (
+        safety_check.pass_count
+        + safety_check.warn_count
+        + safety_check.fail_count
+        + safety_check.expired_count
+        + safety_check.unknown_count
+    )
+
+    explanations = [
+        result.explanation
+        for result in check_results
+        if result.explanation
+    ]
+
+    return {
+        "id": safety_check.id,
+        "product": {
+            "id": product.id,
+            "name": product.name,
+            "category": product.category,
+            "manufacturer": product.manufacturer,
+            "barcode": product.barcode,
+            "expiry_date": product.expiry_date,
+            "ingredients": product.ingredients or [],
+            "normalized_ingredients": product.normalized_ingredients or [],
+        },
+        "classroom_id": safety_check.classroom_id,
+        "summary": {
+            "overall_status": safety_check.overall_status,
+            "pass_count": safety_check.pass_count,
+            "warn_count": safety_check.warn_count,
+            "fail_count": safety_check.fail_count,
+            "expired_count": safety_check.expired_count,
+            "unknown_count": safety_check.unknown_count,
+            "total_count": total_count,
+        },
+        "results": results,
+        "overall_explanation": "\n".join(explanations) if explanations else None,
+    }

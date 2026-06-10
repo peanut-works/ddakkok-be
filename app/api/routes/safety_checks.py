@@ -5,12 +5,17 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models.user import User
-from app.schemas.safety_check import SafetyCheckCreateRequest, SafetyCheckResponse
+from app.schemas.safety_check import (
+    SafetyCheckCreateRequest,
+    SafetyCheckResponse,
+    SafetyCheckDetailResponse,
+)
 from app.services.auth import get_user_by_id, parse_mock_access_token
 from app.services.safety_checker import (
     SafetyCheckNotFoundError,
     SafetyCheckValidationError,
     run_safety_check,
+    get_safety_check_detail,
 )
 
 router = APIRouter(prefix="/api/safety-checks", tags=["safety-checks"])
@@ -63,6 +68,29 @@ def create_safety_check(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),
         ) from exc
+    except SafetyCheckNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+
+
+@router.get(
+    "/{check_id}",
+    response_model=SafetyCheckDetailResponse,
+    summary="저장된 안전 검사 결과 조회",
+)
+def get_safety_check(
+    check_id: int,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> SafetyCheckDetailResponse:
+    try:
+        return get_safety_check_detail(
+            db=db,
+            check_id=check_id,
+            current_user=current_user,
+        )
     except SafetyCheckNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
