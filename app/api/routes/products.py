@@ -9,6 +9,7 @@ from app.models.product import Product
 from app.models.user import User
 from app.schemas.product import ProductCreateRequest, ProductResponse
 from app.services.auth import get_user_by_id, parse_mock_access_token
+from app.services.ingredient_normalizer import normalize_ingredients
 
 router = APIRouter(prefix="/api/products", tags=["products"])
 
@@ -92,7 +93,7 @@ def create_product(
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> ProductResponse:
     ingredients = payload.ingredients
-    normalized_ingredients = payload.normalized_ingredients or ingredients
+    normalized_ingredients = normalize_ingredients(db, ingredients)
 
     product = Product(
         facility_id=current_user.facility_id,
