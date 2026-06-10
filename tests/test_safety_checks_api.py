@@ -218,3 +218,75 @@ def test_create_safety_check_saves_result_to_database():
 
     finally:
         db.close()
+
+
+def test_get_safety_check_detail_success():
+    create_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 102,
+            "classroom_id": 1,
+            "child_ids": [1, 3],
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    check_id = create_response.json()["id"]
+
+    response = client.get(
+        f"/api/safety-checks/{check_id}",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["id"] == check_id
+    assert data["product"]["id"] == 102
+    assert data["product"]["name"]
+    assert data["classroom_id"] == 1
+
+    assert "summary" in data
+    assert data["summary"]["overall_status"]
+    assert data["summary"]["total_count"] == 2
+
+    assert isinstance(data["results"], list)
+    assert len(data["results"]) == 2
+
+    first_result = data["results"][0]
+
+    assert "child_id" in first_result
+    assert "child_name" in first_result
+    assert "status" in first_result
+    assert "matched_ingredient" in first_result
+    assert "reason" in first_result
+    assert "explanation" in first_result
+
+    assert "overall_explanation" in data
+
+
+def test_get_safety_check_detail_without_token():
+    response = client.get("/api/safety-checks/1")
+
+    assert response.status_code == 401
+
+
+def test_get_safety_check_detail_with_invalid_token():
+    response = client.get(
+        "/api/safety-checks/1",
+        headers={"Authorization": "Bearer wrong-token"},
+    )
+
+    assert response.status_code == 401
+
+
+def test_get_safety_check_detail_not_found():
+    response = client.get(
+        "/api/safety-checks/9999",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert response.status_code == 404
