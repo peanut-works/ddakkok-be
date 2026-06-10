@@ -1,154 +1,455 @@
 {
   "ocr_results": [
     {
-      "mock_image_name": "product_101.jpg",
+      "id": 1,
+      "product_id": 101,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_101_label.jpg",
       "ocr_status": "SUCCESS",
-      "ocr_raw_text": "세이프 데일리 핸드워시 전성분: 정제수, 글리세린, 코코베타인, 구연산 유통기한: 2027.12.31",
-      "parsed_result": {
-        "product_name": "세이프 데일리 핸드워시",
-        "category": "CLEANSER",
-        "manufacturer": "해커톤생활건강",
-        "ingredients": [
-          "정제수",
-          "글리세린",
-          "코코베타인",
-          "구연산"
-        ],
-        "expiry_date": "2027-12-31"
-      }
+      "confidence": 0.93,
+      "detected_product_name": "세이프 데일리 핸드워시",
+      "detected_barcode": "880100000101",
+      "raw_text": "정제수, 글리세린, 코코베타인, 구연산",
+      "extracted_ingredients_text": "정제수, 글리세린, 코코베타인, 구연산",
+      "extracted_ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인",
+        "구연산"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인",
+        "구연산"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
     },
     {
-      "mock_image_name": "product_102.jpg",
+      "id": 2,
+      "product_id": 102,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_102_label.jpg",
       "ocr_status": "SUCCESS",
-      "ocr_raw_text": "밀크 프로틴 보습 물티슈 전성분: 정제수, 글리세린, 카제인Na, 페녹시에탄올 유통기한: 2027.08.31",
-      "parsed_result": {
-        "product_name": "밀크 프로틴 보습 물티슈",
-        "category": "WET_TISSUE",
-        "manufacturer": "해커톤생활건강",
-        "ingredients": [
-          "정제수",
-          "글리세린",
-          "카제인나트륨",
-          "페녹시에탄올"
-        ],
-        "expiry_date": "2027-08-31"
-      }
+      "confidence": 0.93,
+      "detected_product_name": "밀크 프로틴 보습 물티슈",
+      "detected_barcode": "880100000102",
+      "raw_text": "정제수, 글리세린, 카제인Na, 페녹시에탄올",
+      "extracted_ingredients_text": "정제수, 글리세린, 카제인Na, 페녹시에탄올",
+      "extracted_ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "페녹시에탄올"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "페녹시에탄올"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [
+        "별칭 성분을 표준 성분명으로 정규화했습니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
     },
     {
-      "mock_image_name": "product_103.jpg",
+      "id": 3,
+      "product_id": 103,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_103_label.jpg",
       "ocr_status": "SUCCESS",
-      "ocr_raw_text": "에그 소프트 쿠키 전성분: 밀가루, 설탕, 계란, 난백, 버터 유통기한: 2027.02.28",
-      "parsed_result": {
-        "product_name": "에그 소프트 쿠키",
-        "category": "FOOD",
-        "manufacturer": "해커톤푸드",
-        "ingredients": [
-          "밀가루",
-          "설탕",
-          "계란",
-          "난백",
-          "버터"
-        ],
-        "expiry_date": "2027-02-28"
-      }
+      "confidence": 0.93,
+      "detected_product_name": "에그 소프트 쿠키",
+      "detected_barcode": "880100000103",
+      "raw_text": "밀가루, 설탕, 계란, 난백, 버터",
+      "extracted_ingredients_text": "밀가루, 설탕, 계란, 난백, 버터",
+      "extracted_ingredients": [
+        "밀가루",
+        "설탕",
+        "계란",
+        "난백",
+        "버터"
+      ],
+      "normalized_ingredients": [
+        "밀가루",
+        "설탕",
+        "계란",
+        "계란",
+        "버터"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [
+        "별칭 성분을 표준 성분명으로 정규화했습니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
     },
     {
-      "mock_image_name": "product_104.jpg",
+      "id": 4,
+      "product_id": 104,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_104_label.jpg",
       "ocr_status": "SUCCESS",
-      "ocr_raw_text": "땅콩버터 크런치바 전성분: 귀리, 설탕, 땅콩버터, 아몬드, 식물성유지 유통기한: 2027.05.20",
-      "parsed_result": {
-        "product_name": "땅콩버터 크런치바",
-        "category": "FOOD",
-        "manufacturer": "해커톤푸드",
-        "ingredients": [
-          "귀리",
-          "설탕",
-          "땅콩버터",
-          "아몬드",
-          "식물성유지"
-        ],
-        "expiry_date": "2027-05-20"
-      }
+      "confidence": 0.93,
+      "detected_product_name": "땅콩버터 크런치바",
+      "detected_barcode": "880100000104",
+      "raw_text": "귀리, 설탕, 땅콩버터, 아몬드, 식물성유지",
+      "extracted_ingredients_text": "귀리, 설탕, 땅콩버터, 아몬드, 식물성유지",
+      "extracted_ingredients": [
+        "귀리",
+        "설탕",
+        "땅콩버터",
+        "아몬드",
+        "식물성유지"
+      ],
+      "normalized_ingredients": [
+        "귀리",
+        "설탕",
+        "땅콩",
+        "견과류",
+        "식물성유지"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [
+        "별칭 성분을 표준 성분명으로 정규화했습니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
     },
     {
-      "mock_image_name": "product_105.jpg",
+      "id": 5,
+      "product_id": 105,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_105_label.jpg",
       "ocr_status": "SUCCESS",
-      "ocr_raw_text": "향기 톡톡 키즈 로션 전성분: 정제수, 글리세린, 향료, 알코올 유통기한: 2027.11.30",
-      "parsed_result": {
-        "product_name": "향기 톡톡 키즈 로션",
-        "category": "LOTION",
-        "manufacturer": "해커톤생활건강",
-        "ingredients": [
-          "정제수",
-          "글리세린",
-          "향료",
-          "에탄올"
-        ],
-        "expiry_date": "2027-11-30"
-      }
+      "confidence": 0.93,
+      "detected_product_name": "향기 톡톡 키즈 로션",
+      "detected_barcode": "880100000105",
+      "raw_text": "정제수, 글리세린, 향료, 알코올",
+      "extracted_ingredients_text": "정제수, 글리세린, 향료, 알코올",
+      "extracted_ingredients": [
+        "정제수",
+        "글리세린",
+        "향료",
+        "에탄올"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "글리세린",
+        "향료",
+        "에탄올"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [
+        "별칭 성분을 표준 성분명으로 정규화했습니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
     },
     {
-      "mock_image_name": "product_106.jpg",
+      "id": 6,
+      "product_id": 106,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_106_label.jpg",
       "ocr_status": "SUCCESS",
-      "ocr_raw_text": "컬러 버블 클렌저 전성분: 정제수, 코코베타인, 색소, 구연산 유통기한: 2027.09.15",
-      "parsed_result": {
-        "product_name": "컬러 버블 클렌저",
-        "category": "CLEANSER",
-        "manufacturer": "해커톤생활건강",
-        "ingredients": [
-          "정제수",
-          "코코베타인",
-          "색소",
-          "구연산"
-        ],
-        "expiry_date": "2027-09-15"
-      }
+      "confidence": 0.93,
+      "detected_product_name": "컬러 버블 클렌저",
+      "detected_barcode": "880100000106",
+      "raw_text": "정제수, 코코베타인, 색소, 구연산",
+      "extracted_ingredients_text": "정제수, 코코베타인, 색소, 구연산",
+      "extracted_ingredients": [
+        "정제수",
+        "코코베타인",
+        "색소",
+        "구연산"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "코코베타인",
+        "색소",
+        "구연산"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
     },
     {
-      "mock_image_name": "product_107.jpg",
+      "id": 7,
+      "product_id": 107,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_107_label.jpg",
       "ocr_status": "SUCCESS",
-      "ocr_raw_text": "복합 주의 키즈 크림 전성분: 정제수, 글리세린, 카제인나트륨, 향료, 에탄올 유통기한: 2027.10.10",
-      "parsed_result": {
-        "product_name": "복합 주의 키즈 크림",
-        "category": "LOTION",
-        "manufacturer": "해커톤생활건강",
-        "ingredients": [
-          "정제수",
-          "글리세린",
-          "카제인나트륨",
-          "향료",
-          "에탄올"
-        ],
-        "expiry_date": "2027-10-10"
-      }
+      "confidence": 0.93,
+      "detected_product_name": "복합 주의 키즈 크림",
+      "detected_barcode": "880100000107",
+      "raw_text": "정제수, 글리세린, 카제인나트륨, 향료, 에탄올",
+      "extracted_ingredients_text": "정제수, 글리세린, 카제인나트륨, 향료, 에탄올",
+      "extracted_ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "향료",
+        "에탄올"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "글리세린",
+        "카제인나트륨",
+        "향료",
+        "에탄올"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
     },
     {
-      "mock_image_name": "product_108.jpg",
+      "id": 8,
+      "product_id": 108,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_108_label.jpg",
       "ocr_status": "SUCCESS",
-      "ocr_raw_text": "유통기한 지난 물티슈 전성분: 정제수, 글리세린, 코코베타인 유통기한: 2025.12.31",
-      "parsed_result": {
-        "product_name": "유통기한 지난 물티슈",
-        "category": "WET_TISSUE",
-        "manufacturer": "해커톤생활건강",
-        "ingredients": [
-          "정제수",
-          "글리세린",
-          "코코베타인"
-        ],
-        "expiry_date": "2025-12-31"
-      }
+      "confidence": 0.93,
+      "detected_product_name": "유통기한 지난 물티슈",
+      "detected_barcode": "880100000108",
+      "raw_text": "정제수, 글리세린, 코코베타인",
+      "extracted_ingredients_text": "정제수, 글리세린, 코코베타인",
+      "extracted_ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "글리세린",
+        "코코베타인"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
     },
     {
-      "mock_image_name": "product_109.jpg",
+      "id": 9,
+      "product_id": 109,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_109_damaged_label.jpg",
       "ocr_status": "FAILED",
-      "ocr_raw_text": "성분표 훼손으로 판독 불가",
-      "parsed_result": {
-        "product_name": "성분표 훼손 제품",
-        "category": "ETC",
-        "manufacturer": "해커톤생활건강",
-        "ingredients": [],
-        "expiry_date": "2027-12-31"
-      }
+      "confidence": 0.31,
+      "detected_product_name": "성분표 훼손 제품",
+      "detected_barcode": "880100000109",
+      "raw_text": "성분표 일부 훼손 / 빛 반사로 판독 불가",
+      "extracted_ingredients_text": "",
+      "extracted_ingredients": [],
+      "normalized_ingredients": [],
+      "parsing_status": "FAILED",
+      "failure_reason": "INGREDIENT_LABEL_UNREADABLE",
+      "needs_manual_review": true,
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 10,
+      "product_id": 110,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_110_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "무가당 그릭 요거트",
+      "detected_barcode": "880100000110",
+      "raw_text": "원유, 정제수, 혼합분유, 농축우유단백분말, 변성전분, 젤라틴",
+      "extracted_ingredients_text": "원유, 정제수, 혼합분유, 농축우유단백분말, 변성전분, 젤라틴",
+      "extracted_ingredients": [
+        "원유",
+        "정제수",
+        "혼합분유",
+        "농축우유단백분말",
+        "변성전분",
+        "젤라틴"
+      ],
+      "normalized_ingredients": [
+        "원유",
+        "정제수",
+        "혼합분유",
+        "농축우유단백분말",
+        "변성전분",
+        "젤라틴"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 11,
+      "product_id": 111,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_111_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.88,
+      "detected_product_name": "고소한인절미과자",
+      "detected_barcode": "880100000111",
+      "raw_text": "쌀가루(백미/국내산) 48.55%, 팜올레인유(말레이시아산), 인절미맛시즈닝JM-0920{백설탕, 볶음대두분말(미국산) 38%, 포도당, 유당(우유/미국산), 탈지분유(우유/미국산)} 19%, 백태분말(국내산) 5.78%, 옥수수가루(콘그리스5호/호주산), 탄산칼슘",
+      "extracted_ingredients_text": "쌀가루(백미/국내산) 48.55%, 팜올레인유(말레이시아산), 인절미맛시즈닝JM-0920{백설탕, 볶음대두분말(미국산) 38%, 포도당, 유당(우유/미국산), 탈지분유(우유/미국산)} 19%, 백태분말(국내산) 5.78%, 옥수수가루(콘그리스5호/호주산), 탄산칼슘",
+      "extracted_ingredients": [
+        "쌀가루",
+        "팜올레인유",
+        "백설탕",
+        "볶음대두분말",
+        "포도당",
+        "유당",
+        "우유",
+        "탈지분유",
+        "백태분말",
+        "옥수수가루",
+        "탄산칼슘"
+      ],
+      "normalized_ingredients": [
+        "쌀가루",
+        "팜올레인유",
+        "백설탕",
+        "볶음대두분말",
+        "포도당",
+        "유당",
+        "우유",
+        "탈지분유",
+        "백태분말",
+        "옥수수가루",
+        "탄산칼슘"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [
+        "함량·원산지·괄호 표현을 제거하고 주요 성분만 추출했습니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 12,
+      "product_id": 112,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_112_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.86,
+      "detected_product_name": "미소지움물티슈",
+      "detected_barcode": "880100000112",
+      "raw_text": "소듐벤조에이트, 라우릴피리디늄클로라이드, 합성향료(Levulinic acid), 정제수",
+      "extracted_ingredients_text": "소듐벤조에이트, 라우릴피리디늄클로라이드, 합성향료(Levulinic acid), 정제수",
+      "extracted_ingredients": [
+        "소듐벤조에이트",
+        "라우릴피리디늄클로라이드",
+        "합성향료",
+        "Levulinic acid",
+        "정제수"
+      ],
+      "normalized_ingredients": [
+        "소듐벤조에이트",
+        "라우릴피리디늄클로라이드",
+        "합성향료",
+        "Levulinic acid",
+        "정제수"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": true,
+      "notes": [
+        "함량·원산지·괄호 표현을 제거하고 주요 성분만 추출했습니다.",
+        "생활화학제품 성분명 일부는 교사용 확인이 필요합니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 13,
+      "product_id": 113,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_113_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.86,
+      "detected_product_name": "식기세척기 린스",
+      "detected_barcode": "880100000113",
+      "raw_text": "레몬향, (에틸렌-프로필렌)폴리알킬렌글리콜, 구연산, 에탄올, 키실렌설폰산나트륨, 정제수",
+      "extracted_ingredients_text": "레몬향, (에틸렌-프로필렌)폴리알킬렌글리콜, 구연산, 에탄올, 키실렌설폰산나트륨, 정제수",
+      "extracted_ingredients": [
+        "레몬향",
+        "향료",
+        "폴리알킬렌글리콜",
+        "구연산",
+        "에탄올",
+        "키실렌설폰산나트륨",
+        "정제수"
+      ],
+      "normalized_ingredients": [
+        "레몬향",
+        "향료",
+        "폴리알킬렌글리콜",
+        "구연산",
+        "에탄올",
+        "키실렌설폰산나트륨",
+        "정제수"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": true,
+      "notes": [
+        "함량·원산지·괄호 표현을 제거하고 주요 성분만 추출했습니다.",
+        "생활화학제품 성분명 일부는 교사용 확인이 필요합니다."
+      ],
+      "created_at": "2026-06-10T09:00:00+09:00"
+    },
+    {
+      "id": 14,
+      "product_id": 114,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_114_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "종이컵",
+      "detected_barcode": "880100000114",
+      "raw_text": "종이제, 폴리에틸렌",
+      "extracted_ingredients_text": "종이제, 폴리에틸렌",
+      "extracted_ingredients": [
+        "종이제",
+        "폴리에틸렌"
+      ],
+      "normalized_ingredients": [
+        "종이제",
+        "폴리에틸렌"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-10T09:00:00+09:00"
     }
   ]
 }
