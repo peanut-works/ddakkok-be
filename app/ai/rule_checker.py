@@ -25,9 +25,12 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from fastapi import Depends
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from app.ai.ner import NERResult
+from app.core.database import get_db
 
 logger = logging.getLogger(__name__)
 
@@ -100,27 +103,53 @@ class ProductSafetyReport(BaseModel):
     unknown_count: int = 0
 
 
-# ── 데이터 로딩 (모듈 수준, 1회 캐싱) ─────────────────────────────────────────
+# ── 데이터 로딩 ───────────────────────────────────────────────────────────────
 
 @lru_cache(maxsize=1)
-def _load_rules() -> list[dict[str, Any]]:
-    """07_safety_rules.json 로딩. 서버 수명 동안 캐시."""
+def _load_rules_from_json() -> list[dict[str, Any]]:
+    """07_safety_rules.json 로딩 (JSON fallback, @lru_cache로 1회 캐싱)."""
     path = _DATA_DIR / "07_safety_rules.json"
     with open(path, encoding="utf-8") as f:
         data: list[dict[str, Any]] = json.load(f)["safety_rules"]
-    logger.info("[RuleChecker] 안전 규칙 %d개 로딩 완료", len(data))
+    logger.info("[RuleChecker] 안전 규칙 %d개 로딩 (JSON)", len(data))
     return data
 
 
 @lru_cache(maxsize=1)
-def _load_aliases() -> dict[str, str]:
-    """06_ingredient_aliases.json 로딩. alias(소문자) → canonical_name 매핑."""
+def _load_aliases_from_json() -> dict[str, str]:
+    """06_ingredient_aliases.json 로딩 (JSON fallback, @lru_cache로 1회 캐싱)."""
     path = _DATA_DIR / "06_ingredient_aliases.json"
     with open(path, encoding="utf-8") as f:
         items: list[dict[str, str]] = json.load(f)["ingredient_aliases"]
     mapping = {item["alias"].lower().strip(): item["canonical_name"] for item in items}
-    logger.info("[RuleChecker] 성분 별칭 %d개 로딩 완료", len(mapping))
+    logger.info("[RuleChecker] 성분 별칭 %d개 로딩 (JSON)", len(mapping))
     return mapping
+
+
+def _rules_from_db(db: Session) -> list[dict[str, Any]]:
+    """safety_rules 테이블에서 활성 규칙 로딩."""
+    from app.models.safety_rule import SafetyRule
+
+    rows = db.query(SafetyRule).filter(SafetyRule.is_active.is_(True)).all()
+    return [
+        {
+            "rule_code": r.rule_code,
+            "target_type": r.target_type,
+            "trigger_name": r.trigger_name,
+            "ingredient_keywords": r.ingredient_keywords,
+            "severity": r.severity,
+            "reason": r.reason,
+        }
+        for r in rows
+    ]
+
+
+def _aliases_from_db(db: Session) -> dict[str, str]:
+    """ingredient_aliases 테이블에서 별칭 매핑 로딩."""
+    from app.models.product import IngredientAlias
+
+    rows = db.query(IngredientAlias).all()
+    return {row.alias.lower().strip(): row.canonical_name for row in rows}
 
 
 # ── Rule Checker ──────────────────────────────────────────────────────────────
@@ -136,9 +165,13 @@ class RuleChecker:
         # report.fail_count     → 2
     """
 
-    def __init__(self) -> None:
-        self._rules = _load_rules()
-        self._aliases = _load_aliases()
+    def __init__(
+        self,
+        rules: list[dict[str, Any]] | None = None,
+        aliases: dict[str, str] | None = None,
+    ) -> None:
+        self._rules = rules if rules is not None else _load_rules_from_json()
+        self._aliases = aliases if aliases is not None else _load_aliases_from_json()
 
     # ── Public ────────────────────────────────────────────────────────────────
 
@@ -351,15 +384,17 @@ class RuleChecker:
 
 # ── 팩토리 ───────────────────────────────────────────────────────────────────
 
-_checker_instance: RuleChecker | None = None
 
+def get_rule_checker(db: Session = Depends(get_db)) -> RuleChecker:
+    """FastAPI Depends 주입용 팩토리.
 
-def get_rule_checker() -> RuleChecker:
-    """FastAPI Depends 주입용 싱글톤 팩토리.
-
-    JSON 파일은 _load_rules() / _load_aliases()에서 @lru_cache로 1회 로딩.
+    DB에서 safety_rules / ingredient_aliases를 로딩한다.
+    DB가 비어있을 경우 JSON fallback으로 자동 전환.
     """
-    global _checker_instance
-    if _checker_instance is None:
-        _checker_instance = RuleChecker()
-    return _checker_instance
+    rules = _rules_from_db(db)
+    aliases = _aliases_from_db(db)
+    if not rules:
+        logger.warning("[RuleChecker] DB 규칙 없음 — JSON fallback 사용")
+        return RuleChecker()
+    logger.debug("[RuleChecker] DB에서 규칙 %d개, 별칭 %d개 로딩", len(rules), len(aliases))
+    return RuleChecker(rules=rules, aliases=aliases)

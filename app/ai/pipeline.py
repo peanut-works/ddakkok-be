@@ -324,17 +324,19 @@ def get_analysis_pipeline(
     ai_provider: AIProvider = Depends(get_ai_provider),
     db: Session = Depends(get_db),
     embed_provider: EmbeddingProvider = Depends(get_embedding_provider),
+    checker: RuleChecker = Depends(get_rule_checker),
 ) -> AnalysisPipeline:
     """FastAPI Depends 주입용 파이프라인 팩토리.
 
     AIProvider 하나를 NER(LabelParser)과 설명 생성(ExplanationGenerator) 모두에 공유.
+    RuleChecker는 DB safety_rules / ingredient_aliases를 사용한다.
     KnowledgeLoader는 FAIL/WARN 판정 시 RAG 컨텍스트 검색에 사용한다.
     """
     return AnalysisPipeline(
         preprocessor=preprocessor,
         ocr=ocr,
         parser=LabelParser(provider=ai_provider),
-        checker=get_rule_checker(),
+        checker=checker,
         explainer=ExplanationGenerator(provider=ai_provider),
         knowledge_loader=KnowledgeLoader(db=db, embed_provider=embed_provider),
     )

@@ -157,7 +157,7 @@ def run_safety_check(
     ner_result = _build_ner_result(product)
     rule_checker_children = _build_rule_checker_children(children)
 
-    checker = get_rule_checker()
+    checker = get_rule_checker(db)
     report = checker.check(
         ner_result=ner_result,
         children=rule_checker_children,
