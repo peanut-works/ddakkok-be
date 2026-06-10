@@ -76,6 +76,15 @@ if "numpy" not in sys.modules:
 if "torch" not in sys.modules:
     sys.modules["torch"] = _make_torch_stub()
 
+if "app.core.database" not in sys.modules:
+    # database.py는 모듈 로드 시 create_engine()을 실행해 psycopg를 임포트한다.
+    # 단위 테스트는 실제 DB 연결이 불필요하므로 get_db만 stub으로 제공한다.
+    _db_stub = types.ModuleType("app.core.database")
+    _db_stub.get_db = MagicMock()        # type: ignore[attr-defined]
+    _db_stub.engine = MagicMock()        # type: ignore[attr-defined]
+    _db_stub.SessionLocal = MagicMock()  # type: ignore[attr-defined]
+    sys.modules["app.core.database"] = _db_stub
+
 if "pgvector" not in sys.modules:
     import sqlalchemy.types as _sa_types
 

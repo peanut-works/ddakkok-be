@@ -20,9 +20,12 @@ from typing import Literal
 
 from fastapi import Depends
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from app.ai.base import AIProvider
+from app.ai.embedding import EmbeddingProvider, get_embedding_provider
 from app.ai.factory import get_ai_provider
+from app.ai.knowledge_loader import KnowledgeLoader
 from app.ai.llm import ExplanationGenerator, ExplanationInput
 from app.ai.ner import LabelParser, NERResult
 from app.ai.ocr import OCRProvider, get_ocr_provider
@@ -35,6 +38,7 @@ from app.ai.rule_checker import (
     RuleChecker,
     get_rule_checker,
 )
+from app.core.database import get_db
 from app.services.image_processing import ImagePreprocessor, get_image_preprocessor
 
 logger = logging.getLogger(__name__)
@@ -95,12 +99,14 @@ class AnalysisPipeline:
         parser: LabelParser,
         checker: RuleChecker,
         explainer: ExplanationGenerator,
+        knowledge_loader: KnowledgeLoader | None = None,
     ) -> None:
         self._preprocessor = preprocessor
         self._ocr = ocr
         self._parser = parser
         self._checker = checker
         self._explainer = explainer
+        self._knowledge_loader = knowledge_loader
 
     # ── Public ────────────────────────────────────────────────────────────────
 
@@ -207,7 +213,10 @@ class AnalysisPipeline:
         ner_result: NERResult,
         report: ProductSafetyReport,
     ) -> str:
-        """판정 상태에 따라 LLM 설명 생성 또는 고정 문자열 반환."""
+        """판정 상태에 따라 LLM 설명 생성 또는 고정 문자열 반환.
+
+        FAIL/WARN이고 knowledge_loader가 주입된 경우 RAG 컨텍스트를 LLM에 함께 전달한다.
+        """
         status = report.overall_status
 
         if status == CheckStatus.EXPIRED:
@@ -215,14 +224,37 @@ class AnalysisPipeline:
         if status == CheckStatus.UNKNOWN:
             return _EXPLANATION_UNKNOWN
 
-        # PASS / WARN / FAIL → LLM 호출
+        # FAIL / WARN → RAG 검색 후 LLM 호출, PASS → RAG 생략
+        rag_context: list[str] | None = None
+        if self._knowledge_loader and status in (CheckStatus.FAIL, CheckStatus.WARN):
+            rag_context = await self._fetch_rag_context(ner_result, report)
+
         explanation_input = ExplanationInput(
             status=_to_verdict(status),
             product=ner_result.product,
             ingredient=ner_result.ingredient,
             matched_rules=_collect_rule_descriptions(report),
         )
-        return await self._explainer.generate(explanation_input)
+        return await self._explainer.generate(explanation_input, context=rag_context)
+
+    async def _fetch_rag_context(
+        self,
+        ner_result: NERResult,
+        report: ProductSafetyReport,
+    ) -> list[str]:
+        """성분명 + 규칙 설명으로 지식베이스를 검색해 관련 청크 텍스트를 반환한다.
+
+        검색 실패 시 예외 없이 빈 리스트를 반환해 파이프라인이 중단되지 않도록 한다.
+        """
+        rule_descs = _collect_rule_descriptions(report)
+        query = " ".join(ner_result.ingredient[:5] + rule_descs[:3])
+        try:
+            assert self._knowledge_loader is not None
+            chunks = await self._knowledge_loader.search(query, top_k=3)
+            return [f"[출처: {c.source}]\n{c.content}" for c in chunks]
+        except Exception as exc:
+            logger.warning("[Pipeline] RAG 검색 실패 — context 없이 진행: %s", exc)
+            return []
 
 
 # ── 헬퍼 ─────────────────────────────────────────────────────────────────────
@@ -290,10 +322,13 @@ def get_analysis_pipeline(
     preprocessor: ImagePreprocessor = Depends(get_image_preprocessor),
     ocr: OCRProvider = Depends(get_ocr_provider),
     ai_provider: AIProvider = Depends(get_ai_provider),
+    db: Session = Depends(get_db),
+    embed_provider: EmbeddingProvider = Depends(get_embedding_provider),
 ) -> AnalysisPipeline:
     """FastAPI Depends 주입용 파이프라인 팩토리.
 
     AIProvider 하나를 NER(LabelParser)과 설명 생성(ExplanationGenerator) 모두에 공유.
+    KnowledgeLoader는 FAIL/WARN 판정 시 RAG 컨텍스트 검색에 사용한다.
     """
     return AnalysisPipeline(
         preprocessor=preprocessor,
@@ -301,4 +336,5 @@ def get_analysis_pipeline(
         parser=LabelParser(provider=ai_provider),
         checker=get_rule_checker(),
         explainer=ExplanationGenerator(provider=ai_provider),
+        knowledge_loader=KnowledgeLoader(db=db, embed_provider=embed_provider),
     )

@@ -42,6 +42,16 @@ _SYSTEM_PROMPT = """\
 4. 교사가 비전문가임을 고려해 쉬운 언어를 사용합니다.\
 """
 
+
+def _build_system_prompt(context: list[str] | None) -> str:
+    """RAG 컨텍스트가 있으면 시스템 프롬프트에 참고 자료 섹션을 추가한다."""
+    if not context:
+        return _SYSTEM_PROMPT
+    context_section = "\n\n참고 규정 및 안전 정보 (아래 내용을 근거로 설명을 보강하세요):"
+    for i, chunk in enumerate(context, 1):
+        context_section += f"\n\n[참고 {i}]\n{chunk}"
+    return _SYSTEM_PROMPT + context_section
+
 # ── Input / Output models ─────────────────────────────────────────────────────
 
 Verdict = Literal["PASS", "WARN", "FAIL"]
@@ -108,13 +118,21 @@ class ExplanationGenerator:
     def __init__(self, provider: AIProvider) -> None:
         self._provider = provider
 
-    async def generate(self, inp: ExplanationInput) -> str:
+    async def generate(
+        self,
+        inp: ExplanationInput,
+        context: list[str] | None = None,
+    ) -> str:
         """ExplanationInput을 받아 교사용 설명 문자열을 반환한다.
 
-        chat_complete 실패 시 예외 없이 빈 문자열 반환.
+        Args:
+            inp:     Rule Checker 결과 (status, product, ingredients, matched_rules)
+            context: RAG로 검색한 관련 규정 청크 텍스트 목록. None이면 기본 프롬프트 사용.
+
+        chat_complete 실패 시 예외 없이 mock 설명 반환.
         """
         messages = [
-            ChatMessage(role="system", content=_SYSTEM_PROMPT),
+            ChatMessage(role="system", content=_build_system_prompt(context)),
             ChatMessage(role="user", content=_build_user_message(inp)),
         ]
         try:

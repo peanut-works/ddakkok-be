@@ -459,3 +459,141 @@ def test_make_unknown_report_empty_children() -> None:
 
     assert report.unknown_count == 0
     assert report.child_results == []
+
+
+# ── 9. RAG 통합 ───────────────────────────────────────────────────────────────
+
+
+def _make_pipeline_with_rag(
+    *,
+    report: ProductSafetyReport = REPORT_FAIL,
+    explanation: str = "RAG 설명입니다.",
+    search_result: list[object] | None = None,
+) -> AnalysisPipeline:
+    """KnowledgeLoader mock이 주입된 파이프라인."""
+    from unittest.mock import AsyncMock, MagicMock
+
+    from app.ai.knowledge_loader import KnowledgeLoader
+
+    pipeline = _make_pipeline(report=report, explanation=explanation)
+    pipeline._explainer.generate = AsyncMock(return_value=explanation)
+
+    mock_loader = MagicMock(spec=KnowledgeLoader)
+    mock_loader.search = AsyncMock(return_value=search_result or [])
+    pipeline._knowledge_loader = mock_loader
+    return pipeline
+
+
+@pytest.mark.asyncio
+async def test_rag_search_called_on_fail() -> None:
+    """FAIL 판정 시 KnowledgeLoader.search() 가 호출된다."""
+    pipeline = _make_pipeline_with_rag(report=REPORT_FAIL)
+    await pipeline.analyze(IMAGE_BYTES, [CHILD_A])
+
+    pipeline._knowledge_loader.search.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_rag_search_called_on_warn() -> None:
+    """WARN 판정 시 KnowledgeLoader.search() 가 호출된다."""
+    pipeline = _make_pipeline_with_rag(report=REPORT_WARN)
+    await pipeline.analyze(IMAGE_BYTES, [CHILD_A])
+
+    pipeline._knowledge_loader.search.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_rag_search_not_called_on_pass() -> None:
+    """PASS 판정 시 KnowledgeLoader.search() 는 호출되지 않는다."""
+    pipeline = _make_pipeline_with_rag(report=REPORT_PASS)
+    await pipeline.analyze(IMAGE_BYTES, [CHILD_A])
+
+    pipeline._knowledge_loader.search.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_rag_search_not_called_on_expired() -> None:
+    """EXPIRED 판정 시 KnowledgeLoader.search() 는 호출되지 않는다 (고정 설명)."""
+    pipeline = _make_pipeline_with_rag(report=REPORT_EXPIRED)
+    await pipeline.analyze(IMAGE_BYTES, [CHILD_A])
+
+    pipeline._knowledge_loader.search.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_rag_search_not_called_on_unknown() -> None:
+    """UNKNOWN 판정 시 KnowledgeLoader.search() 는 호출되지 않는다 (고정 설명)."""
+    pipeline = _make_pipeline_with_rag(report=REPORT_UNKNOWN)
+    await pipeline.analyze(IMAGE_BYTES, [CHILD_A])
+
+    pipeline._knowledge_loader.search.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_rag_context_passed_to_explainer() -> None:
+    """검색된 청크가 generate(context=...) 로 전달된다."""
+    from app.models.knowledge_chunk import KnowledgeChunk
+
+    chunk = KnowledgeChunk(
+        title="우유 알레르기",
+        content="우유는 13대 알레르기 성분입니다.",
+        category="allergen_food",
+        source="식약처 고시",
+    )
+    pipeline = _make_pipeline_with_rag(report=REPORT_FAIL, search_result=[chunk])
+    await pipeline.analyze(IMAGE_BYTES, [CHILD_A])
+
+    call_args = pipeline._explainer.generate.call_args
+    context = call_args.kwargs.get("context") or call_args[1].get("context") or call_args[0][1]
+    assert context is not None
+    assert len(context) == 1
+    assert "식약처 고시" in context[0]
+    assert "우유는 13대 알레르기 성분입니다." in context[0]
+
+
+@pytest.mark.asyncio
+async def test_rag_search_failure_does_not_abort_pipeline() -> None:
+    """RAG 검색 중 예외가 발생해도 파이프라인이 중단되지 않는다."""
+    from unittest.mock import AsyncMock
+
+
+    pipeline = _make_pipeline_with_rag(report=REPORT_FAIL)
+    pipeline._knowledge_loader.search = AsyncMock(side_effect=RuntimeError("DB 오류"))
+
+    result = await pipeline.analyze(IMAGE_BYTES, [CHILD_A])
+    assert result.explanation == "RAG 설명입니다."
+
+
+@pytest.mark.asyncio
+async def test_rag_empty_knowledge_base_uses_no_context() -> None:
+    """지식베이스가 비어있어 검색 결과가 없으면 context=[] 로 generate 호출."""
+    pipeline = _make_pipeline_with_rag(report=REPORT_FAIL, search_result=[])
+    await pipeline.analyze(IMAGE_BYTES, [CHILD_A])
+
+    call_args = pipeline._explainer.generate.call_args
+    # context=[] 는 falsy이므로 explicit key lookup으로 확인
+    if "context" in call_args.kwargs:
+        context = call_args.kwargs["context"]
+    else:
+        context = call_args[0][1]
+    assert context == []
+
+
+def test_build_system_prompt_with_context() -> None:
+    """RAG 컨텍스트가 있으면 시스템 프롬프트에 참고 자료 섹션이 추가된다."""
+    from app.ai.llm import _SYSTEM_PROMPT, _build_system_prompt
+
+    context = ["[출처: 식약처]\n우유는 알레르기 유발 성분입니다."]
+    prompt = _build_system_prompt(context)
+
+    assert _SYSTEM_PROMPT in prompt
+    assert "참고 규정" in prompt
+    assert "식약처" in prompt
+
+
+def test_build_system_prompt_without_context() -> None:
+    """RAG 컨텍스트가 없으면 기본 시스템 프롬프트 그대로 반환."""
+    from app.ai.llm import _SYSTEM_PROMPT, _build_system_prompt
+
+    assert _build_system_prompt(None) == _SYSTEM_PROMPT
+    assert _build_system_prompt([]) == _SYSTEM_PROMPT
