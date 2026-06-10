@@ -9,6 +9,7 @@ from app.api.routes.ai import router as ai_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.children import router as children_router
 from app.api.routes.classrooms import router as classrooms_router
+from app.api.routes.dashboard import router as dashboard_router
 from app.api.routes.health import router as health_router
 from app.api.routes.products import router as products_router
 from app.api.routes.safety_checks import router as safety_checks_router
@@ -73,6 +74,7 @@ app.include_router(classrooms_router)
 app.include_router(products_router)
 app.include_router(children_router)
 app.include_router(safety_checks_router)
+app.include_router(dashboard_router)
 
 
 @app.get(

@@ -21,6 +21,7 @@ from app.models import (  # noqa: E402
     Facility,
     IngredientAlias,
     Product,
+    RecallNotice,
     SafetyCheck,
     SafetyCheckResult,
     SafetyRule,
@@ -56,6 +57,7 @@ def reset_seed_tables(db: Session) -> None:
     for model in (
         SafetyCheckResult,
         SafetyCheck,
+        RecallNotice,
         ChildHealthProfile,
         Product,
         Child,
@@ -78,6 +80,7 @@ def reset_sequences(db: Session) -> None:
         "products",
         "ingredient_aliases",
         "safety_rules",
+        "recall_notices",
     ):
         db.execute(
             text(
@@ -245,6 +248,36 @@ def seed_safety_rules(db: Session) -> int:
     return len(items)
 
 
+def seed_recall_notices(db: Session) -> int:
+    items = load_collection("09_recall_notices.json", "recall_notices")
+    notices = []
+
+    for item in items:
+        notice_data = pick(
+            item,
+            {
+                "id",
+                "facility_id",
+                "product_name",
+                "manufacturer",
+                "category",
+                "recall_date",
+                "reason",
+                "action_guide",
+                "source",
+                "source_url",
+                "external_id",
+                "menu_id",
+                "is_active",
+            },
+        )
+        notice_data["recall_date"] = parse_date(notice_data.get("recall_date"))
+        notices.append(RecallNotice(**notice_data))
+
+    db.add_all(notices)
+    return len(items)
+
+
 def seed(db: Session) -> dict[str, int]:
     reset_seed_tables(db)
 
@@ -256,6 +289,7 @@ def seed(db: Session) -> dict[str, int]:
         "child_health_profiles": seed_child_health_profiles(db),
         "ingredient_aliases": seed_ingredient_aliases(db),
         "safety_rules": seed_safety_rules(db),
+        "recall_notices": seed_recall_notices(db),
         "products": seed_products(db),
     }
 
