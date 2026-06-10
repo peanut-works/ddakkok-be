@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     gms_api_url: str = ""
     gms_model: str = ""
 
+    embedding_provider: str = "mock"  # mock | openai | gms
+    openai_embedding_model: str = "text-embedding-3-small"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

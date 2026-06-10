@@ -76,6 +76,37 @@ if "numpy" not in sys.modules:
 if "torch" not in sys.modules:
     sys.modules["torch"] = _make_torch_stub()
 
+if "pgvector" not in sys.modules:
+    import sqlalchemy.types as _sa_types
+
+    _pgvector_stub = types.ModuleType("pgvector")
+    _pgvector_sqlalchemy = types.ModuleType("pgvector.sqlalchemy")
+
+    import sqlalchemy.sql as _sql
+
+    class _Vector(_sa_types.UserDefinedType):  # type: ignore[misc]
+        """pgvector Vector SQLAlchemy 타입 stub."""
+        cache_ok = True
+
+        class Comparator(_sa_types.UserDefinedType.Comparator):  # type: ignore[misc]
+            def cosine_distance(self, other: object) -> object:
+                return _sql.func.cosine_distance(self.expr, other)
+
+            def l2_distance(self, other: object) -> object:
+                return _sql.func.l2_distance(self.expr, other)
+
+        comparator_factory = Comparator
+
+        def __init__(self, dim: int) -> None:
+            self.dim = dim
+
+        def get_col_spec(self, **kw: object) -> str:
+            return f"vector({self.dim})"
+
+    _pgvector_sqlalchemy.Vector = _Vector  # type: ignore[attr-defined]
+    sys.modules["pgvector"] = _pgvector_stub
+    sys.modules["pgvector.sqlalchemy"] = _pgvector_sqlalchemy
+
 if "app.services._doctr" not in sys.modules:
     _doctr_stub = types.ModuleType("app.services._doctr")
 
