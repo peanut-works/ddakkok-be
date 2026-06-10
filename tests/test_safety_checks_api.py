@@ -50,8 +50,11 @@ def test_create_safety_check_success():
     assert "child_id" in first_result
     assert "child_name" in first_result
     assert "status" in first_result
+    assert "status_label" in first_result
     assert "matched_rules" in first_result
+    assert "matched_ingredients" in first_result
     assert "reason" in first_result
+    assert "teacher_sentence" in first_result
 
 
 def test_create_safety_check_deduplicates_matched_rules():
@@ -297,8 +300,11 @@ def test_get_safety_check_detail_success():
     assert "child_id" in first_result
     assert "child_name" in first_result
     assert "status" in first_result
+    assert "status_label" in first_result
+    assert "matched_ingredients" in first_result
     assert "matched_ingredient" in first_result
     assert "reason" in first_result
+    assert "teacher_sentence" in first_result
     assert "explanation" in first_result
 
     assert "overall_explanation" in data
@@ -361,6 +367,106 @@ def test_generate_safety_check_explanations_success():
 
     for result in data["results"]:
         assert result["explanation"]
+
+
+def test_generate_safety_check_explanations_match_child_result_status():
+    create_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 102,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    check_id = create_response.json()["id"]
+
+    response = client.post(
+        f"/api/safety-checks/{check_id}/explanations",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+    results_by_status = {result["status"]: result for result in data["results"]}
+
+    fail_result = results_by_status["FAIL"]
+    warn_result = results_by_status["WARN"]
+
+    assert fail_result["matched_ingredient"] == "카제인나트륨"
+    assert fail_result["matched_ingredient"] in fail_result["explanation"]
+
+    assert warn_result["matched_ingredient"] == "페녹시에탄올"
+    assert warn_result["explanation"] != fail_result["explanation"]
+    assert "우유 알레르기" not in warn_result["explanation"]
+    assert (
+        "주의" in warn_result["explanation"]
+        or warn_result["matched_ingredient"] in warn_result["explanation"]
+    )
+
+
+def test_safety_check_overall_explanation_is_summary_not_joined_results():
+    create_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 102,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    check_id = create_response.json()["id"]
+
+    response = client.post(
+        f"/api/safety-checks/{check_id}/explanations",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+    joined_child_explanations = "\n".join(
+        result["explanation"]
+        for result in data["results"]
+        if result["explanation"]
+    )
+
+    assert data["overall_explanation"] != joined_child_explanations
+    assert "밀크 프로틴 보습 물티슈" in data["overall_explanation"]
+    assert "2명" in data["overall_explanation"]
+    assert "1명은 사용을 보류" in data["overall_explanation"]
+    assert "1명은 주의가 필요" in data["overall_explanation"]
+    assert "강민준" in data["overall_explanation"]
+    assert "김서아" in data["overall_explanation"]
+    assert "ALLERGY_" not in data["overall_explanation"]
+    assert "SKIN_" not in data["overall_explanation"]
+    assert "EXPIRY_" not in data["overall_explanation"]
+    assert "OCR_" not in data["overall_explanation"]
+    assert "사용 가능 0명" not in data["overall_explanation"]
+    assert "유통기한 만료 0명" not in data["overall_explanation"]
+    assert "확인 불가 0명" not in data["overall_explanation"]
+    assert "대체 제품" in data["overall_explanation"] or "사용을 보류" in data["overall_explanation"]
+    assert "주의" in data["overall_explanation"] or "상태 확인" in data["overall_explanation"]
+
+    get_response = client.get(
+        f"/api/safety-checks/{check_id}",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert get_response.status_code == 200
+    get_data = get_response.json()
+    assert get_data["overall_explanation"] == data["overall_explanation"]
+    for result in get_data["results"]:
+        assert "status_label" in result
+        assert "matched_ingredients" in result
+        assert "teacher_sentence" in result
 
 
 def test_generate_safety_check_explanations_without_token():

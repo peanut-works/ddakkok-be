@@ -20,13 +20,16 @@ class SafetyCheckChildResultResponse(BaseModel):
     child_id: int
     child_name: str
     status: str
+    status_label: str
     matched_rules: list[MatchedRuleResponse]
+    matched_ingredients: list[str] = Field(default_factory=list)
 
     # 기존 응답 호환용 대표 매칭값
     matched_rule_code: str | None = None
     matched_profile: str | None = None
     matched_ingredient: str | None = None
     reason: str
+    teacher_sentence: str
 
 
 class SafetyCheckResponse(BaseModel):
@@ -68,10 +71,13 @@ class SafetyCheckDetailChildResultResponse(BaseModel):
     child_id: int
     child_name: str
     status: str
+    status_label: str
+    matched_ingredients: list[str] = Field(default_factory=list)
     matched_rule_code: str | None = None
     matched_profile: str | None = None
     matched_ingredient: str | None = None
     reason: str | None = None
+    teacher_sentence: str
     explanation: str | None = None
 
 

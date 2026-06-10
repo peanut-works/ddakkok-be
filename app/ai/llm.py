@@ -85,6 +85,7 @@ _STATUS_LABEL: dict[Verdict, str] = {
 
 def _build_user_message(inp: ExplanationInput) -> str:
     lines = [
+        f"판정 코드: {inp.status}",
         f"판정 결과: {_STATUS_LABEL[inp.status]}",
         f"제품명: {inp.product or '(알 수 없음)'}",
     ]

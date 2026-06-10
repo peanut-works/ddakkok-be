@@ -89,6 +89,181 @@ def _build_explanation_input(
     )
 
 
+def _status_label(status: str) -> str:
+    labels = {
+        "PASS": "사용 가능",
+        "WARN": "주의 필요",
+        "FAIL": "사용 보류",
+        "EXPIRED": "사용 불가",
+        "UNKNOWN": "확인 필요",
+    }
+    return labels.get(status, status)
+
+
+def _display_rule_text(
+    *,
+    rule_code: str | None,
+    matched_ingredient: str | None,
+    reason: str | None,
+) -> str:
+    rule_labels = {
+        "ALLERGY_MILK_001": "우유 관련 성분",
+        "ALLERGY_EGG_001": "계란 관련 성분",
+        "ALLERGY_PEANUT_001": "땅콩 관련 성분",
+        "ALLERGY_NUT_001": "견과류 관련 성분",
+        "SKIN_SENSITIVE_001": "민감성 피부에 자극이 될 수 있는 성분",
+        "SKIN_ATOPY_001": "아토피 피부에 자극이 될 수 있는 성분",
+        "EXPIRY_DATE_001": "유통기한이 지난 제품",
+        "OCR_UNKNOWN_001": "성분표 확인이 필요한 제품",
+        "SENSITIVE_DIRECT": "개인 주의 성분",
+    }
+
+    if rule_code in rule_labels:
+        return rule_labels[rule_code]
+    if matched_ingredient:
+        return f"{matched_ingredient} 성분"
+    if reason:
+        return reason.rstrip(".")
+    return "주의가 필요한 항목"
+
+
+def _count_phrase(summary: dict[str, int]) -> str:
+    if (
+        summary["pass_count"] == summary["total_count"]
+        and summary["warn_count"] == 0
+        and summary["fail_count"] == 0
+        and summary["expired_count"] == 0
+        and summary["unknown_count"] == 0
+    ):
+        return "모두 사용 가능"
+
+    parts = []
+    if summary["fail_count"] > 0:
+        parts.append(f"{summary['fail_count']}명은 사용을 보류")
+    if summary["warn_count"] > 0:
+        parts.append(f"{summary['warn_count']}명은 주의가 필요")
+    if summary["expired_count"] > 0:
+        parts.append(f"{summary['expired_count']}명은 사용 불가")
+    if summary["unknown_count"] > 0:
+        parts.append(f"{summary['unknown_count']}명은 확인이 필요")
+    if summary["pass_count"] > 0:
+        parts.append(f"{summary['pass_count']}명은 사용 가능")
+
+    if len(parts) == 1:
+        return parts[0]
+    return "하고 ".join([", ".join(parts[:-1]), parts[-1]]) if len(parts) > 1 else "결과 없음"
+
+
+def _matched_ingredients_from_rules(
+    matched_rules: list[dict[str, Any]],
+    matched_ingredient: str | None,
+) -> list[str]:
+    ingredients = [
+        rule["matched_ingredient"]
+        for rule in matched_rules
+        if rule.get("matched_ingredient")
+    ]
+    if matched_ingredient:
+        ingredients.append(matched_ingredient)
+    return list(dict.fromkeys(ingredients))
+
+
+def _teacher_sentence(result: dict[str, Any]) -> str:
+    child_name = result["child_name"]
+    status = result["status"]
+
+    if status == "FAIL":
+        return f"{child_name} 아동에게는 해당 제품 사용을 보류하고 대체 제품을 확인해 주세요."
+    if status == "WARN":
+        return f"{child_name} 아동은 주의가 필요하므로 사용 후 상태를 확인해 주세요."
+    if status == "EXPIRED":
+        return f"{child_name} 아동에게는 유통기한이 지난 제품이므로 사용하지 않는 것을 권장합니다."
+    if status == "UNKNOWN":
+        return f"{child_name} 아동은 성분 정보를 확인할 수 없어 사용 전 추가 확인이 필요합니다."
+    return f"{child_name} 아동은 현재 등록된 정보 기준으로 사용 가능합니다."
+
+
+def _with_display_fields(result: dict[str, Any]) -> dict[str, Any]:
+    matched_rules = result.get("matched_rules", [])
+    enriched = {
+        **result,
+        "status_label": _status_label(result["status"]),
+        "matched_ingredients": _matched_ingredients_from_rules(
+            matched_rules=matched_rules,
+            matched_ingredient=result.get("matched_ingredient"),
+        ),
+    }
+    enriched["teacher_sentence"] = _teacher_sentence(enriched)
+    return enriched
+
+
+def _build_child_summary(result: dict[str, Any]) -> str:
+    child_name = result["child_name"]
+    status = result["status"]
+    display_text = _display_rule_text(
+        rule_code=result.get("matched_rule_code"),
+        matched_ingredient=result.get("matched_ingredient"),
+        reason=result.get("reason"),
+    )
+
+    if status == "FAIL":
+        return (
+            f"{child_name} 아동은 {display_text}이 확인되어 "
+            "대체 제품 사용을 권장합니다."
+        )
+    if status == "WARN":
+        return (
+            f"{child_name} 아동은 {display_text}이 있어 "
+            "사용 후 상태 확인이 필요합니다."
+        )
+    if status == "EXPIRED":
+        return (
+            f"{child_name} 아동에게는 유통기한이 지난 제품이므로 사용하지 않는 것을 권장합니다."
+        )
+    if status == "UNKNOWN":
+        return (
+            f"{child_name} 아동은 성분 정보를 확인할 수 없어 사용 전 추가 확인이 필요합니다."
+        )
+
+    return f"{child_name} 아동은 등록된 건강 정보와 충돌하는 성분이 확인되지 않았습니다."
+
+
+def _build_overall_explanation(
+    product: Product,
+    summary: dict[str, int],
+    results: list[dict[str, Any]],
+) -> str:
+    total_count = summary["total_count"]
+    risk_results = [
+        result
+        for result in results
+        if result["status"] in {"FAIL", "WARN", "EXPIRED", "UNKNOWN"}
+    ]
+
+    intro = (
+        f"{product.name} 검사 결과, 선택한 아동 {total_count}명 중 "
+        f"{_count_phrase(summary)}합니다."
+    )
+
+    if not risk_results:
+        return f"{product.name} 검사 결과, 선택한 아동 {total_count}명 모두 사용 가능합니다."
+
+    child_summaries = " ".join(_build_child_summary(result) for result in risk_results)
+
+    worst_status = max(
+        (result["status"] for result in risk_results),
+        key=lambda status: STATUS_PRIORITY.get(status, 0),
+    )
+    recommendations = {
+        "FAIL": "사용 보류 대상 아동에게는 대체 제품 사용을 권장합니다.",
+        "EXPIRED": "유통기한 만료 제품은 사용하지 않는 것을 권장합니다.",
+        "WARN": "주의 대상 아동은 교사 판단 하에 사용하고 사용 후 상태를 확인해 주세요.",
+        "UNKNOWN": "성분 확인이 어려운 제품은 관리자 확인 전까지 사용을 보류해 주세요.",
+    }
+
+    return f"{intro} {child_summaries} {recommendations[worst_status]}"
+
+
 def _build_ner_result(product: Product) -> NERResult:
     ingredients = _to_string_list(
         product.normalized_ingredients or product.ingredients
@@ -247,7 +422,8 @@ def run_safety_check(
         db.add(safety_check_result)
 
         response_results.append(
-            {
+            _with_display_fields(
+                {
                 "child_id": child.id,
                 "child_name": child.name,
                 "status": _status_value(child_result.status),
@@ -256,7 +432,8 @@ def run_safety_check(
                 "matched_profile": None,
                 "matched_ingredient": matched_ingredient,
                 "reason": child_result.reason,
-            }
+                }
+            )
         )
 
     db.commit()
@@ -328,16 +505,19 @@ def get_safety_check_detail(
         child = children_by_id.get(result.child_id)
 
         results.append(
-            {
+            _with_display_fields(
+                {
                 "child_id": result.child_id,
                 "child_name": child.name if child else "알 수 없는 아동",
                 "status": result.status,
+                "matched_rules": [],
                 "matched_rule_code": result.matched_rule_code,
                 "matched_profile": result.matched_profile,
                 "matched_ingredient": result.matched_ingredient,
                 "reason": result.reason,
                 "explanation": result.explanation,
-            }
+                }
+            )
         )
 
     total_count = (
@@ -348,11 +528,15 @@ def get_safety_check_detail(
         + safety_check.unknown_count
     )
 
-    explanations = [
-        result.explanation
-        for result in check_results
-        if result.explanation
-    ]
+    summary = {
+        "overall_status": safety_check.overall_status,
+        "pass_count": safety_check.pass_count,
+        "warn_count": safety_check.warn_count,
+        "fail_count": safety_check.fail_count,
+        "expired_count": safety_check.expired_count,
+        "unknown_count": safety_check.unknown_count,
+        "total_count": total_count,
+    }
 
     return {
         "id": safety_check.id,
@@ -367,17 +551,13 @@ def get_safety_check_detail(
             "normalized_ingredients": product.normalized_ingredients or [],
         },
         "classroom_id": safety_check.classroom_id,
-        "summary": {
-            "overall_status": safety_check.overall_status,
-            "pass_count": safety_check.pass_count,
-            "warn_count": safety_check.warn_count,
-            "fail_count": safety_check.fail_count,
-            "expired_count": safety_check.expired_count,
-            "unknown_count": safety_check.unknown_count,
-            "total_count": total_count,
-        },
+        "summary": summary,
         "results": results,
-        "overall_explanation": "\n".join(explanations) if explanations else None,
+        "overall_explanation": _build_overall_explanation(
+            product=product,
+            summary=summary,
+            results=results,
+        ),
     }
 
 

@@ -6,7 +6,7 @@ from app.ai.mock_data import MOCK_EXPLANATIONS, MOCK_FUNCTION_CALL_RESULT
 
 def _detect_status(messages: list[ChatMessage]) -> str:
     """메시지 내용에서 판정 키워드를 감지해 시나리오를 결정한다."""
-    combined = " ".join(m.content for m in messages).upper()
+    combined = " ".join(m.content for m in messages if m.role == "user").upper()
     if "FAIL" in combined:
         return "FAIL"
     if "EXPIRED" in combined:
