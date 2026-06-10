@@ -1,3 +1,6 @@
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
@@ -13,12 +16,43 @@ from app.core.config import get_settings
 from app.core.exceptions import register_exception_handlers
 from app.schemas.common import RootResponse
 
+logger = logging.getLogger(__name__)
 settings = get_settings()
+
+
+async def _seed_knowledge_if_empty() -> None:
+    """서버 시작 시 knowledge_chunks 테이블이 비어있으면 27개 청크를 자동 적재한다."""
+    from app.ai.embedding import get_embedding_provider
+    from app.ai.knowledge_loader import KnowledgeLoader
+    from app.core.database import SessionLocal
+    from app.models.knowledge_chunk import KnowledgeChunk
+
+    db = SessionLocal()
+    try:
+        count = db.query(KnowledgeChunk).count()
+        if count > 0:
+            logger.info("[Startup] knowledge_chunks %d개 이미 존재 — 스킵", count)
+            return
+        embed = get_embedding_provider(settings)
+        n = await KnowledgeLoader(db=db, embed_provider=embed).load_all()
+        logger.info("[Startup] knowledge_chunks %d개 적재 완료", n)
+    except Exception as exc:
+        logger.warning("[Startup] 지식베이스 적재 실패 (서버는 계속 구동): %s", exc)
+    finally:
+        db.close()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await _seed_knowledge_if_empty()
+    yield
+
 
 app = FastAPI(
     title=settings.app_name,
     description="영유아 맞춤 제품 안전관리 서비스 딱콕 API",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
