@@ -22,6 +22,12 @@ from app.schemas.child import (
     ChildHealthProfileResponse,
     ChildListItemResponse,
 )
+from app.schemas.safety_check import (
+    MatchedRuleResponse,
+    SafetyCheckChildResultResponse,
+    SafetyCheckCreateRequest,
+    SafetyCheckResponse,
+)
 
 __all__ = [
     "AuthResponse",
@@ -47,4 +53,8 @@ __all__ = [
     "ChildListItemResponse",
     "ProductCreateRequest",
     "ProductResponse",
+    "MatchedRuleResponse",
+    "SafetyCheckChildResultResponse",
+    "SafetyCheckCreateRequest",
+    "SafetyCheckResponse",
 ]
