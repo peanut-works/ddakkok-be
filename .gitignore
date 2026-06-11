@@ -43,3 +43,6 @@ models/*.onnx
 
 # Harness starter kit (읽기 전용 참조 자료 — 커밋하지 않음)
 harness-starter-kit/
+# Local OCR/LLM test artifacts
+test_images/
+test_results/
