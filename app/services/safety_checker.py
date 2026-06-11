@@ -631,6 +631,80 @@ def get_safety_check_detail(
     }
 
 
+def list_safety_checks(
+    db: Session,
+    current_user: User,
+    classroom_id: int | None = None,
+    status: str | None = None,
+    limit: int = 20,
+    offset: int = 0,
+) -> list[dict[str, Any]]:
+    capped_limit = min(limit, 30)
+    query = (
+        select(SafetyCheck)
+        .options(
+            selectinload(SafetyCheck.product),
+            selectinload(SafetyCheck.results).selectinload(SafetyCheckResult.child),
+        )
+        .where(SafetyCheck.facility_id == current_user.facility_id)
+        .order_by(SafetyCheck.created_at.desc(), SafetyCheck.id.desc())
+        .offset(offset)
+        .limit(capped_limit)
+    )
+
+    if classroom_id is not None:
+        query = query.where(SafetyCheck.classroom_id == classroom_id)
+
+    if status is not None:
+        query = query.where(SafetyCheck.overall_status == status)
+
+    checks = db.scalars(query).all()
+
+    items = []
+    for check in checks:
+        product = check.product
+        children = []
+        for result in sorted(check.results, key=lambda item: item.id):
+            child = result.child
+            children.append(
+                {
+                    "child_id": result.child_id,
+                    "child_name": child.name if child else "알 수 없는 아동",
+                    "status": result.status,
+                    "status_label": _status_label(result.status),
+                }
+            )
+
+        items.append(
+            {
+                "id": check.id,
+                "product": {
+                    "id": product.id,
+                    "name": product.name,
+                    "category": product.category,
+                },
+                "classroom_id": check.classroom_id,
+                "overall_status": check.overall_status,
+                "pass_count": check.pass_count,
+                "warn_count": check.warn_count,
+                "fail_count": check.fail_count,
+                "expired_count": check.expired_count,
+                "unknown_count": check.unknown_count,
+                "total_count": (
+                    check.pass_count
+                    + check.warn_count
+                    + check.fail_count
+                    + check.expired_count
+                    + check.unknown_count
+                ),
+                "children": children,
+                "created_at": check.created_at,
+            }
+        )
+
+    return items
+
+
 async def generate_safety_check_explanations(
     db: Session,
     check_id: int,
