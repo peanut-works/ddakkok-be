@@ -2,32 +2,6 @@ from datetime import date
 
 from pydantic import BaseModel, ConfigDict, Field
 
-PRODUCT_LIST_RESPONSE_EXAMPLE = [
-    {
-        "id": 101,
-        "facility_id": 1,
-        "name": "세이프 데일리 핸드워시",
-        "category": "CLEANSER",
-        "manufacturer": "해커톤생활건강",
-        "barcode": "880100000101",
-        "expiry_date": "2027-12-31",
-        "raw_ingredients_text": "정제수, 글리세린, 코코베타인, 구연산",
-        "ingredients": ["정제수", "글리세린", "코코베타인", "구연산"],
-        "normalized_ingredients": ["정제수", "글리세린", "코코베타인", "구연산"],
-        "image_url": None,
-        "ocr_raw_text": None,
-        "created_by_id": 1,
-    }
-]
-
-EMPTY_BARCODE_ERROR_EXAMPLE = {
-    "error": {
-        "code": "BAD_REQUEST",
-        "message": "Barcode must not be empty",
-        "details": None,
-    }
-}
-
 
 class ProductLabelTextParseRequest(BaseModel):
     text: str = Field(

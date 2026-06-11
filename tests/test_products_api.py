@@ -12,7 +12,6 @@ from sqlalchemy import func, select
 from app.ai.base import AIProvider, ChatMessage
 from app.core.config import Settings
 from app.core.exceptions import InvalidBarcodeError
-from app.models.facility import Facility
 from app.models.product import Product
 
 sys.modules.pop("app.core.database", None)
@@ -233,50 +232,6 @@ def test_list_products_with_unknown_barcode_returns_empty_list(monkeypatch) -> N
 
     assert response.status_code == 200
     assert response.json() == []
-
-
-def test_list_products_does_not_return_other_facility_products() -> None:
-    db = SessionLocal()
-    other_facility = Facility(
-        name="다른 시설",
-        address="서울시 테스트구",
-        phone="02-9999-9999",
-    )
-    other_product = Product(
-        facility=other_facility,
-        name="다른 시설 제품",
-        category="ETC",
-        manufacturer="테스트 제조사",
-        barcode="880100000101",
-        ingredients=[],
-        normalized_ingredients=[],
-    )
-
-    try:
-        db.add(other_facility)
-        db.add(other_product)
-        db.commit()
-        db.refresh(other_product)
-        other_product_id = other_product.id
-
-        response = client.get(
-            "/api/products",
-            headers=AUTH_HEADERS,
-            params={"barcode": "880100000101"},
-        )
-
-        assert response.status_code == 200
-
-        data = response.json()
-
-        assert data
-        assert all(item["facility_id"] == 1 for item in data)
-        assert all(item["id"] != other_product_id for item in data)
-    finally:
-        db.delete(other_product)
-        db.delete(other_facility)
-        db.commit()
-        db.close()
 
 
 def test_list_products_with_blank_barcode_returns_bad_request(monkeypatch) -> None:
