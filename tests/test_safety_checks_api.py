@@ -262,6 +262,214 @@ def test_create_safety_check_saves_result_to_database():
         db.close()
 
 
+def test_list_safety_checks_success_and_latest_first():
+    first_create_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 101,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+    second_create_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 102,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+
+    assert first_create_response.status_code == 201
+    assert second_create_response.status_code == 201
+
+    first_check_id = first_create_response.json()["id"]
+    second_check_id = second_create_response.json()["id"]
+
+    response = client.get(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        params={"limit": 2},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert isinstance(data, list)
+    assert [item["id"] for item in data[:2]] == [second_check_id, first_check_id]
+
+    first_item = data[0]
+
+    assert first_item["product"]["id"] == 102
+    assert first_item["product"]["name"]
+    assert first_item["product"]["category"]
+    assert first_item["classroom_id"] == 1
+    assert "overall_status" in first_item
+    assert "pass_count" in first_item
+    assert "warn_count" in first_item
+    assert "fail_count" in first_item
+    assert "expired_count" in first_item
+    assert "unknown_count" in first_item
+    assert first_item["total_count"] == 2
+    assert "created_at" in first_item
+
+    assert isinstance(first_item["children"], list)
+    assert len(first_item["children"]) == 2
+
+    child = first_item["children"][0]
+
+    assert "child_id" in child
+    assert "child_name" in child
+    assert "status" in child
+    assert "status_label" in child
+
+    assert "matched_rules" not in child
+    assert "matched_ingredients" not in child
+    assert "reason" not in child
+    assert "explanation" not in child
+
+
+def test_list_safety_checks_without_query_params_returns_recent_items():
+    create_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 101,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    check_id = create_response.json()["id"]
+
+    response = client.get(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert isinstance(data, list)
+    assert len(data) <= 10
+    assert data[0]["id"] == check_id
+
+
+def test_list_safety_checks_filters_by_classroom_id():
+    class_one_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 101,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+    class_two_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 101,
+            "classroom_id": 2,
+            "child_ids": [5, 6],
+        },
+    )
+
+    assert class_one_response.status_code == 201
+    assert class_two_response.status_code == 201
+
+    class_one_check_id = class_one_response.json()["id"]
+    class_two_check_id = class_two_response.json()["id"]
+
+    response = client.get(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        params={"classroom_id": 2},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+    ids = [item["id"] for item in data]
+
+    assert class_two_check_id in ids
+    assert class_one_check_id not in ids
+    assert all(item["classroom_id"] == 2 for item in data)
+
+
+def test_list_safety_checks_supports_limit_offset_and_status_filter():
+    pass_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 101,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+    fail_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 102,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+
+    assert pass_response.status_code == 201
+    assert fail_response.status_code == 201
+
+    pass_check_id = pass_response.json()["id"]
+    fail_check_id = fail_response.json()["id"]
+
+    paged_response = client.get(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        params={"limit": 1, "offset": 1},
+    )
+
+    assert paged_response.status_code == 200
+    assert [item["id"] for item in paged_response.json()] == [pass_check_id]
+
+    status_response = client.get(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        params={"status": "FAIL", "limit": 10},
+    )
+
+    assert status_response.status_code == 200
+
+    status_data = status_response.json()
+    status_ids = [item["id"] for item in status_data]
+
+    assert fail_check_id in status_ids
+    assert pass_check_id not in status_ids
+    assert all(item["overall_status"] == "FAIL" for item in status_data)
+
+
+def test_list_safety_checks_rejects_limit_over_30():
+    response = client.get(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        params={"limit": 31},
+    )
+
+    assert response.status_code == 422
+
+
+def test_list_safety_checks_without_token():
+    response = client.get("/api/safety-checks")
+
+    assert response.status_code == 401
+
+
 def test_get_safety_check_detail_success():
     create_response = client.post(
         "/api/safety-checks",

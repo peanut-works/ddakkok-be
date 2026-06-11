@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.ai.base import AIProvider
@@ -12,6 +12,7 @@ from app.models.user import User
 from app.schemas.safety_check import (
     SafetyCheckCreateRequest,
     SafetyCheckDetailResponse,
+    SafetyCheckListItemResponse,
     SafetyCheckResponse,
 )
 from app.services.auth import get_user_by_id, parse_mock_access_token
@@ -20,10 +21,45 @@ from app.services.safety_checker import (
     SafetyCheckValidationError,
     generate_safety_check_explanations,
     get_safety_check_detail,
+    list_safety_checks,
     run_safety_check,
 )
 
 router = APIRouter(prefix="/api/safety-checks", tags=["safety-checks"])
+
+SAFETY_CHECK_LIST_RESPONSE_EXAMPLE = [
+    {
+        "id": 94,
+        "product": {
+            "id": 135,
+            "name": "판토모틴",
+            "category": "ETC",
+        },
+        "classroom_id": 1,
+        "overall_status": "PASS",
+        "pass_count": 2,
+        "warn_count": 0,
+        "fail_count": 0,
+        "expired_count": 0,
+        "unknown_count": 0,
+        "total_count": 2,
+        "children": [
+            {
+                "child_id": 1,
+                "child_name": "강민준",
+                "status": "PASS",
+                "status_label": "사용 가능",
+            },
+            {
+                "child_id": 2,
+                "child_name": "김서아",
+                "status": "PASS",
+                "status_label": "사용 가능",
+            },
+        ],
+        "created_at": "2026-06-11T17:30:00",
+    }
+]
 
 
 def get_current_user(
@@ -78,6 +114,47 @@ def create_safety_check(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),
         ) from exc
+
+
+@router.get(
+    "",
+    response_model=list[SafetyCheckListItemResponse],
+    summary="안전 검사 기록 목록 조회",
+    description=(
+        "로그인 사용자의 시설 기준 안전 검사 기록을 최신순으로 조회합니다. "
+        "classroom_id만 보내도 해당 반 기록을 기본 10개 조회하며, "
+        "limit은 최대 30개까지 허용합니다."
+    ),
+    responses={
+        200: {
+            "description": "검사 기록 목록입니다.",
+            "content": {
+                "application/json": {
+                    "example": SAFETY_CHECK_LIST_RESPONSE_EXAMPLE,
+                }
+            },
+        }
+    },
+)
+def get_safety_checks(
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+    classroom_id: Annotated[int | None, Query()] = None,
+    status_filter: Annotated[
+        str | None,
+        Query(alias="status", pattern="^(PASS|WARN|FAIL|EXPIRED|UNKNOWN)$"),
+    ] = None,
+    limit: Annotated[int, Query(ge=1, le=30)] = 10,
+    offset: Annotated[int, Query(ge=0)] = 0,
+) -> list[SafetyCheckListItemResponse]:
+    return list_safety_checks(
+        db=db,
+        current_user=current_user,
+        classroom_id=classroom_id,
+        status=status_filter,
+        limit=limit,
+        offset=offset,
+    )
 
 
 @router.get(

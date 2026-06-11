@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import BaseModel, Field
 
@@ -88,3 +88,31 @@ class SafetyCheckDetailResponse(BaseModel):
     summary: SafetyCheckSummaryResponse
     results: list[SafetyCheckDetailChildResultResponse]
     overall_explanation: str | None = None
+
+
+class SafetyCheckListProductResponse(BaseModel):
+    id: int
+    name: str
+    category: str
+
+
+class SafetyCheckListChildResponse(BaseModel):
+    child_id: int
+    child_name: str
+    status: str
+    status_label: str
+
+
+class SafetyCheckListItemResponse(BaseModel):
+    id: int
+    product: SafetyCheckListProductResponse
+    classroom_id: int | None = None
+    overall_status: str
+    pass_count: int
+    warn_count: int
+    fail_count: int
+    expired_count: int
+    unknown_count: int
+    total_count: int
+    children: list[SafetyCheckListChildResponse]
+    created_at: datetime
