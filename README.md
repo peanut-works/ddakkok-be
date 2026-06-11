@@ -1,5 +1,8 @@
 # 딱콕 Backend
 
+> SSAFY × Kakao Tech Bootcamp AI Hackathon 본선 출품작
+> 본선 기간: 2026.06.13 ~ 2026.06.14
+
 보육/영유아 교육 현장에서 제품 라벨의 성분 정보를 아동별 알러지 및 건강 프로필과 대조해 안전 사용 여부를 확인하는 FastAPI 백엔드입니다.
 
 딱콕은 클라이언트에서 추출한 제품 라벨 OCR text를 제품 정보로 구조화하고, 저장된 제품 성분과 아동 건강 프로필을 RuleChecker로 검사한 뒤 교사용 설명과 검사 기록을 제공합니다.
@@ -31,7 +34,7 @@ ML Kit OCR text 추출
 
 - mock token 기반 인증 및 API 테스트
 - 제품 등록/목록/상세 조회
-- `GET /api/products?barcode=...` 바코드 기반 제품 조회
+- 바코드 기반 제품 조회
 - 제품 라벨 텍스트 파싱: OCR text → 제품명/성분/제조사/유통기한
 - 반별 아동 목록 조회 및 건강 프로필 알러지 정보 포함
 - 안전 검사 생성, 목록 조회, 상세 조회
@@ -160,19 +163,3 @@ docker compose exec backend uv run --no-sync ruff check
 docker compose exec backend uv run --no-sync pytest
 ```
 
-주요 API 테스트만 실행할 수도 있습니다.
-
-```bash
-docker compose exec backend uv run --no-sync pytest tests/test_products_api.py -v
-docker compose exec backend uv run --no-sync pytest tests/test_safety_checks_api.py -v
-docker compose exec backend uv run --no-sync pytest tests/test_children_api.py -v
-```
-
-## 향후 고도화
-
-- 성분 출처 저장
-- 내부 성분 DB 우선 조회 및 외부 성분 API fallback
-- 성분 동의어 사전 확장
-- 검사 결과 캐싱
-- 대량 아동 검사 batch 처리
-- 사용자 수정 이력 기반 AI 파싱 품질 개선
