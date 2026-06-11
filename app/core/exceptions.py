@@ -17,10 +17,6 @@ class ProductLookupError(Exception):
     """Base error for product lookup services."""
 
 
-class ProductByBarcodeNotFoundError(ProductLookupError):
-    """Raised when a product cannot be found by barcode."""
-
-
 class InvalidBarcodeError(ProductLookupError):
     """Raised when a barcode input is empty after normalization."""
 

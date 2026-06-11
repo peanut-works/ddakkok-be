@@ -16,6 +16,8 @@ from app.models.product import Product
 from app.models.user import User
 from app.schemas.error import ErrorResponse
 from app.schemas.product import (
+    EMPTY_BARCODE_ERROR_EXAMPLE,
+    PRODUCT_LIST_RESPONSE_EXAMPLE,
     ProductCreateRequest,
     ProductLabelTextParseRequest,
     ProductLabelTextParseResponse,
@@ -217,17 +219,20 @@ def get_current_user(
     "",
     response_model=list[ProductResponse],
     summary="제품 목록 조회",
+    description=(
+        "로그인 사용자의 시설 기준 제품 목록을 조회합니다. "
+        "barcode query parameter를 보내면 해당 바코드 제품만 필터링합니다. "
+    ),
     responses={
         200: {
             "description": "시설 제품 목록입니다. barcode 쿼리를 함께 보내면 해당 바코드로 필터링합니다.",
             "content": {
                 "application/json": {
-                    "example": FILTERED_PRODUCTS_RESPONSE_EXAMPLE,
+                    "example": PRODUCT_LIST_RESPONSE_EXAMPLE,
                 }
             },
         },
         400: {
-            "model": ErrorResponse,
             "description": "barcode 쿼리에서 공백을 제거한 뒤 빈 값이 된 경우",
             "content": {
                 "application/json": {
