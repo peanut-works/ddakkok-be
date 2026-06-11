@@ -69,7 +69,6 @@ def _build_explanation_matched_rules(result: SafetyCheckResult) -> list[str]:
     parts = [
         value
         for value in (
-            result.matched_rule_code,
             result.matched_ingredient,
             result.reason,
         )
@@ -91,6 +90,32 @@ def _build_explanation_input(
         ingredient=ingredients,
         matched_rules=_build_explanation_matched_rules(result),
     )
+
+
+def _build_pass_explanation(child_name: str) -> str:
+    return (
+        f"{child_name} 아동은 현재 등록된 건강 정보 기준으로 "
+        "이 제품과 매칭되는 위험 성분이 없습니다."
+    )
+
+
+def _ensure_rulechecker_context(
+    explanation: str,
+    result: SafetyCheckResult,
+) -> str:
+    if result.status not in {"WARN", "FAIL"}:
+        return explanation
+
+    additions = []
+    if result.matched_ingredient and result.matched_ingredient not in explanation:
+        additions.append(f"매칭 성분은 {result.matched_ingredient}입니다.")
+    if result.reason and result.reason not in explanation:
+        additions.append(f"판정 사유는 {result.reason}")
+
+    if not additions:
+        return explanation
+
+    return f"{explanation.rstrip()} {' '.join(additions)}"
 
 
 def _build_rag_query(result: SafetyCheckResult) -> str:
@@ -267,7 +292,7 @@ def _build_child_summary(result: dict[str, Any]) -> str:
             f"{child_name} 아동은 성분 정보를 확인할 수 없어 사용 전 추가 확인이 필요합니다."
         )
 
-    return f"{child_name} 아동은 등록된 건강 정보와 충돌하는 성분이 확인되지 않았습니다."
+        return _build_pass_explanation(child_name)
 
 
 def _build_overall_explanation(
@@ -288,7 +313,10 @@ def _build_overall_explanation(
     )
 
     if not risk_results:
-        return f"{product.name} 검사 결과, 선택한 아동 {total_count}명 모두 사용 가능합니다."
+        return (
+            f"{product.name} 검사 결과, 선택한 아동 {total_count}명 모두 "
+            "현재 등록된 건강 정보 기준으로 사용 가능합니다."
+        )
 
     child_summaries = " ".join(_build_child_summary(result) for result in risk_results)
 
@@ -637,10 +665,28 @@ async def generate_safety_check_explanations(
     ).all()
 
     generator = ExplanationGenerator(provider)
+    child_ids = [result.child_id for result in check_results]
+    children_by_id = {}
+
+    if child_ids:
+        children = db.scalars(
+            select(Child).where(
+                Child.id.in_(child_ids),
+                Child.facility_id == current_user.facility_id,
+            )
+        ).all()
+        children_by_id = {child.id: child for child in children}
 
     generated_explanations: list[tuple[SafetyCheckResult, str]] = []
 
     for result in check_results:
+        child = children_by_id.get(result.child_id)
+        child_name = child.name if child else "해당"
+
+        if result.status == "PASS":
+            generated_explanations.append((result, _build_pass_explanation(child_name)))
+            continue
+
         context = await _fetch_explanation_context(
             db=db,
             knowledge_loader=knowledge_loader,
@@ -649,6 +695,7 @@ async def generate_safety_check_explanations(
         explanation = await generator.generate(
             _build_explanation_input(result, product), context=context
         )
+        explanation = _ensure_rulechecker_context(explanation, result)
         generated_explanations.append((result, explanation))
 
     for result, explanation in generated_explanations:
