@@ -1,6 +1,6 @@
 # 딱콕 Backend
 
-> SSAFY × Kakao Tech Bootcamp AI Hackathon 본선 출품작
+> SSAFY × Kakao Tech Bootcamp AI Hackathon 본선 출품작<br>
 > 본선 기간: 2026.06.13 ~ 2026.06.14
 
 보육/영유아 교육 현장에서 제품 라벨의 성분 정보를 아동별 알러지 및 건강 프로필과 대조해 안전 사용 여부를 확인하는 FastAPI 백엔드입니다.
