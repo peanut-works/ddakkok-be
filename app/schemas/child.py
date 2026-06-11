@@ -21,13 +21,12 @@ class ChildListItemResponse(BaseModel):
     gender: str | None = Field(default=None, examples=["M"])
     memo: str | None = Field(default=None, examples=["우유 알레르기 주의"])
     is_active: bool = Field(default=True, examples=[True])
+    health_profile: ChildHealthProfileResponse | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class ChildDetailResponse(ChildListItemResponse):
-    health_profile: ChildHealthProfileResponse | None = None
-
     model_config = ConfigDict(
         from_attributes=True,
         json_schema_extra={
