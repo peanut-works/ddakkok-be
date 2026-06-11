@@ -11,6 +11,7 @@ from app.schemas.child import (
     ChildDetailResponse,
     ChildHealthProfileResponse,
     ChildListItemResponse,
+    ClassroomChildrenResponse,
 )
 from app.schemas.classroom import ClassroomResponse
 from app.schemas.common import RootResponse
@@ -66,6 +67,7 @@ __all__ = [
     "ChildDetailResponse",
     "ChildHealthProfileResponse",
     "ChildListItemResponse",
+    "ClassroomChildrenResponse",
     "ProductCreateRequest",
     "ProductResponse",
     "RecallAlertResponse",

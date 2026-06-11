@@ -1,15 +1,22 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
-from sqlalchemy import select
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.models.child import Child
-from app.models.classroom import Classroom
 from app.models.user import User
-from app.schemas.child import ChildDetailResponse, ChildListItemResponse
+from app.schemas.child import (
+    ChildDetailResponse,
+    ChildListItemResponse,
+    ClassroomChildrenResponse,
+)
 from app.services.auth import get_user_by_id, parse_mock_access_token
+from app.services.children import (
+    ChildNotFoundError,
+    ClassroomNotFoundError,
+    get_classroom_children,
+)
+from app.services.children import get_child_detail as get_child_detail_service
 
 router = APIRouter(prefix="/api", tags=["children"])
 
@@ -47,25 +54,48 @@ def list_children_by_classroom(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> list[ChildListItemResponse]:
-    classroom = db.get(Classroom, classroom_id)
-
-    if classroom is None or classroom.facility_id != current_user.facility_id:
+    try:
+        _, children = get_classroom_children(
+            db=db,
+            current_user=current_user,
+            classroom_id=classroom_id,
+        )
+    except ClassroomNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Classroom not found",
-        )
-
-    children = db.scalars(
-        select(Child)
-        .where(
-            Child.classroom_id == classroom_id,
-            Child.facility_id == current_user.facility_id,
-            Child.is_active.is_(True),
-        )
-        .order_by(Child.id.asc())
-    ).all()
+            detail=str(exc),
+        ) from exc
 
     return children
+
+
+@router.get(
+    "/classrooms/{classroom_id}/children/summary",
+    response_model=ClassroomChildrenResponse,
+    summary="반별 아동 목록 요약 조회",
+)
+def get_classroom_children_summary(
+    classroom_id: int,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> ClassroomChildrenResponse:
+    try:
+        classroom, children = get_classroom_children(
+            db=db,
+            current_user=current_user,
+            classroom_id=classroom_id,
+        )
+    except ClassroomNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+
+    return ClassroomChildrenResponse(
+        classroom=classroom,
+        total_count=len(children),
+        children=children,
+    )
 
 
 @router.get(
@@ -78,20 +108,16 @@ def get_child_detail(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> ChildDetailResponse:
-    child = db.scalar(
-        select(Child)
-        .options(selectinload(Child.health_profile))
-        .where(
-            Child.id == child_id,
-            Child.facility_id == current_user.facility_id,
-            Child.is_active.is_(True),
+    try:
+        child = get_child_detail_service(
+            db=db,
+            current_user=current_user,
+            child_id=child_id,
         )
-    )
-
-    if child is None:
+    except ChildNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Child not found",
-        )
+            detail=str(exc),
+        ) from exc
 
     return child

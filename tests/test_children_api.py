@@ -33,6 +33,37 @@ def test_list_children_by_classroom_success():
     assert first_child["classroom_id"] == 1
 
 
+def test_get_classroom_children_summary_success():
+    response = client.get(
+        "/api/classrooms/1/children/summary",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "classroom" in data
+    assert "total_count" in data
+    assert "children" in data
+
+    assert data["classroom"]["id"] == 1
+    assert data["classroom"]["facility_id"] == 1
+    assert data["total_count"] > 0
+    assert len(data["children"]) == data["total_count"]
+
+    first_child = data["children"][0]
+
+    assert "id" in first_child
+    assert "facility_id" in first_child
+    assert "classroom_id" in first_child
+    assert "name" in first_child
+    assert "birth_date" in first_child
+    assert "gender" in first_child
+    assert "memo" in first_child
+    assert "is_active" in first_child
+
+
 def test_list_children_by_classroom_without_token():
     response = client.get("/api/classrooms/1/children")
 
