@@ -1,17 +1,163 @@
+import re
+from datetime import date, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.ai.base import AIProvider
+from app.ai.factory import get_ai_provider
+from app.ai.ner import LabelParser, ProductLabelParseResult
+from app.core.config import Settings, get_settings
 from app.core.database import get_db
 from app.models.product import Product
 from app.models.user import User
-from app.schemas.product import ProductCreateRequest, ProductResponse
+from app.schemas.product import (
+    ProductCreateRequest,
+    ProductLabelTextParseRequest,
+    ProductLabelTextParseResponse,
+    ProductResponse,
+)
 from app.services.auth import get_user_by_id, parse_mock_access_token
 from app.services.ingredient_normalizer import normalize_ingredients
 
 router = APIRouter(prefix="/api/products", tags=["products"])
+
+_INGREDIENT_STOP_KEYWORDS = (
+    "유형:",
+    "용량:",
+    "품번:",
+    "품명:",
+    "사용상의 주의사항",
+    "주의사항",
+    "사용기한",
+    "유통기한",
+)
+
+
+def _parse_expiry_date(value: str) -> date | None:
+    clean_value = value.strip().replace(".", "-")
+    if not clean_value:
+        return None
+
+    try:
+        return datetime.strptime(clean_value, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+def _normalize_expiry_date(value: str | None) -> date | None:
+    if not value:
+        return None
+
+    date_match = re.search(r"\d{4}[.\-/]\d{1,2}[.\-/]\d{1,2}", value)
+    if date_match is None:
+        return None
+
+    return _parse_expiry_date(date_match.group(0))
+
+
+def _extract_line_value(text: str, labels: tuple[str, ...]) -> str | None:
+    for label in labels:
+        match = re.search(rf"{re.escape(label)}\s*([^\n]+)", text)
+        if match:
+            value = match.group(1).strip()
+            return value or None
+    return None
+
+
+def _extract_product_name(text: str) -> str | None:
+    return _extract_line_value(text, ("품명:", "제품명:"))
+
+
+def _extract_manufacturer(text: str) -> str | None:
+    return _extract_line_value(
+        text,
+        ("화장품책임판매업자:", "화장품제조업자:", "제조사:"),
+    )
+
+
+def _extract_ingredient_text(text: str) -> str | None:
+    match = re.search(r"(전성분|성분)\s*:\s*", text)
+    if not match:
+        return None
+
+    start = match.end()
+    end = len(text)
+
+    for keyword in _INGREDIENT_STOP_KEYWORDS:
+        keyword_index = text.find(keyword, start)
+        if keyword_index != -1:
+            end = min(end, keyword_index)
+
+    ingredient_text = text[start:end].strip()
+    return ingredient_text or None
+
+
+def _extract_ingredients(text: str) -> list[str]:
+    ingredient_text = _extract_ingredient_text(text)
+    if ingredient_text is None:
+        return []
+
+    return [
+        ingredient.strip()
+        for ingredient in ingredient_text.replace("\n", " ").split(",")
+        if ingredient.strip()
+    ]
+
+
+def _extract_expiry_date(text: str) -> date | None:
+    match = re.search(r"(사용기한|유통기한)[^\n:：]*[:：]?\s*([^\n]+)", text)
+    if not match:
+        return None
+
+    return _normalize_expiry_date(match.group(2))
+
+
+def _parse_label_text_with_regex(text: str) -> ProductLabelParseResult:
+    ingredient_text = _extract_ingredient_text(text)
+    ingredients = _extract_ingredients(text)
+
+    return ProductLabelParseResult(
+        name=_extract_product_name(text),
+        manufacturer=_extract_manufacturer(text),
+        expiry_date=None,
+        raw_ingredients_text=ingredient_text,
+        ingredients=ingredients,
+    )
+
+
+def _unwrap_primary_provider(provider: AIProvider) -> AIProvider:
+    current = provider
+    seen_ids: set[int] = set()
+
+    while hasattr(current, "_primary") and id(current) not in seen_ids:
+        seen_ids.add(id(current))
+        current = current._primary  # type: ignore[attr-defined]
+
+    return current
+
+
+async def _parse_label_text(
+    *,
+    text: str,
+    provider: AIProvider,
+    settings: Settings,
+) -> ProductLabelParseResult:
+    if not text.strip():
+        return ProductLabelParseResult()
+
+    if settings.ai_provider not in {"openai", "gms"}:
+        return _parse_label_text_with_regex(text)
+
+    try:
+        # FallbackAIProvider는 실패 시 mock_data.py를 반환하므로,
+        # 이 엔드포인트에서는 primary provider만 사용하고 실패 시 regex로 복구한다.
+        primary_provider = _unwrap_primary_provider(provider)
+        return await LabelParser(primary_provider).parse_product_label(text)
+    except Exception:
+        return _parse_label_text_with_regex(text)
 
 
 def get_current_user(
@@ -79,6 +225,37 @@ def get_product(
         )
 
     return product
+
+
+@router.post(
+    "/parse-label-text",
+    response_model=ProductLabelTextParseResponse,
+    summary="제품 라벨 텍스트 파싱",
+)
+async def parse_product_label_text(
+    payload: ProductLabelTextParseRequest,
+    db: Annotated[Session, Depends(get_db)],
+    _current_user: Annotated[User, Depends(get_current_user)],
+    provider: Annotated[AIProvider, Depends(get_ai_provider)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> ProductLabelTextParseResponse:
+    parsed = await _parse_label_text(
+        text=payload.text,
+        provider=provider,
+        settings=settings,
+    )
+    ingredients = parsed.ingredients
+
+    return ProductLabelTextParseResponse(
+        name=parsed.name,
+        category=payload.category,
+        manufacturer=parsed.manufacturer,
+        expiry_date=_normalize_expiry_date(parsed.expiry_date) or _extract_expiry_date(payload.text),
+        raw_ingredients_text=parsed.raw_ingredients_text,
+        ingredients=ingredients,
+        normalized_ingredients=normalize_ingredients(db, ingredients),
+        ocr_raw_text=payload.text,
+    )
 
 
 @router.post(

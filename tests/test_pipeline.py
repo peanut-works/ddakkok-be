@@ -269,7 +269,7 @@ async def test_expired_no_llm_call() -> None:
     pipeline._explainer.generate.assert_not_awaited()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_expired_returns_fixed_explanation() -> None:
     """EXPIRED 판정 시 고정 설명 문자열 반환."""
     pipeline = _make_pipeline(report=REPORT_EXPIRED)
@@ -290,7 +290,7 @@ async def test_unknown_no_llm_call() -> None:
     pipeline._explainer.generate.assert_not_awaited()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_unknown_returns_fixed_explanation() -> None:
     """UNKNOWN 판정 시 고정 설명 문자열 반환."""
     pipeline = _make_pipeline(report=REPORT_UNKNOWN)
@@ -580,14 +580,14 @@ async def test_rag_empty_knowledge_base_uses_no_context() -> None:
 
 
 def test_build_system_prompt_with_context() -> None:
-    """RAG 컨텍스트가 있으면 시스템 프롬프트에 참고 자료 섹션이 추가된다."""
+    """RAG 컨텍스트가 있으면 시스템 프롬프트에 보조 정보 섹션이 추가된다."""
     from app.ai.llm import _SYSTEM_PROMPT, _build_system_prompt
 
     context = ["[출처: 식약처]\n우유는 알레르기 유발 성분입니다."]
     prompt = _build_system_prompt(context)
 
     assert _SYSTEM_PROMPT in prompt
-    assert "참고 규정" in prompt
+    assert "보조 정보" in prompt
     assert "식약처" in prompt
 
 
