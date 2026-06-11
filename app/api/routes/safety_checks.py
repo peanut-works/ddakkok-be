@@ -4,7 +4,9 @@ from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.ai.base import AIProvider
+from app.ai.embedding import EmbeddingProvider, get_embedding_provider
 from app.ai.factory import get_ai_provider
+from app.ai.knowledge_loader import KnowledgeLoader
 from app.core.database import get_db
 from app.models.user import User
 from app.schemas.safety_check import (
@@ -111,6 +113,7 @@ async def create_safety_check_explanations(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
     provider: Annotated[AIProvider, Depends(get_ai_provider)],
+    embed_provider: Annotated[EmbeddingProvider, Depends(get_embedding_provider)],
 ) -> SafetyCheckDetailResponse:
     try:
         return await generate_safety_check_explanations(
@@ -118,6 +121,7 @@ async def create_safety_check_explanations(
             check_id=check_id,
             current_user=current_user,
             provider=provider,
+            knowledge_loader=KnowledgeLoader(db=db, embed_provider=embed_provider),
         )
     except SafetyCheckNotFoundError as exc:
         raise HTTPException(
