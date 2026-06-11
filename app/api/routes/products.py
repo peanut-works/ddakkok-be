@@ -10,6 +10,11 @@ from app.models.user import User
 from app.schemas.product import ProductCreateRequest, ProductResponse
 from app.services.auth import get_user_by_id, parse_mock_access_token
 from app.services.ingredient_normalizer import normalize_ingredients
+from app.services.product_lookup import (
+    InvalidBarcodeError,
+    ProductByBarcodeNotFoundError,
+    get_product_by_barcode,
+)
 
 router = APIRouter(prefix="/api/products", tags=["products"])
 
@@ -53,6 +58,34 @@ def list_products(
     ).all()
 
     return products
+
+
+@router.get(
+    "/barcode/{barcode}",
+    response_model=ProductResponse,
+    summary="바코드로 제품 조회",
+)
+def get_product_by_barcode_route(
+    barcode: str,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> ProductResponse:
+    try:
+        return get_product_by_barcode(
+            db,
+            facility_id=current_user.facility_id,
+            barcode=barcode,
+        )
+    except InvalidBarcodeError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Barcode must not be empty",
+        ) from exc
+    except ProductByBarcodeNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Product not found",
+        ) from exc
 
 
 @router.get(
