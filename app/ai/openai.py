@@ -9,15 +9,19 @@ _DEFAULT_TIMEOUT = 15.0  # 초. 시연 중 hang 방지용
 
 
 class OpenAIProvider(AIProvider):
-    """OpenAI GPT-4o-mini 기반 provider."""
+    """OpenAI 호환 chat completions provider.
+
+    base_url을 지정하면 Groq 등 OpenAI 호환 API에도 그대로 사용할 수 있다.
+    """
 
     def __init__(
         self,
         api_key: str,
         model: str = "gpt-4o-mini",
         timeout: float = _DEFAULT_TIMEOUT,
+        base_url: str | None = None,
     ) -> None:
-        self._client = AsyncOpenAI(api_key=api_key, timeout=timeout)
+        self._client = AsyncOpenAI(api_key=api_key, timeout=timeout, base_url=base_url)
         self._model = model
 
     async def chat_complete(

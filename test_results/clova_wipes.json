@@ -1,0 +1,70 @@
+{
+  "ran_at": "2026-06-11T15:39:27",
+  "scenario": "wipes",
+  "input_image": "label_wipes.png",
+  "mode": "synthetic_label",
+  "ocr_provider": "clova",
+  "ocr_elapsed_sec": 1.51,
+  "original_label_text": "A브랜드 순한아기 물티슈\n제조사: ㅇㅇ화학\n내용물: 72매\n\n전성분: 정제수, 글리세린, 카제인나트륨, 페녹시에탄올,\n        알로에베라잎추출물, 소르빈산칼륨, 구연산\n\n유통기한: 2027.03.15\n제조일자: 2025.03.15\n원산지: 대한민국\n\n주의: 만 3세 미만 영아에게는 보호자 지도하에 사용하세요.",
+  "clova_ocr_text": "A브랜드 순한아기 물티슈\n제조사: ◯ ◯ 화학\n내용물: 72매\n전성분: 정제수, 글리세린, 카제인나트륨, 페녹시에탄올,\n알로에베라잎추출물, 소르 빈산칼륨, 구연산\n유통기한: 2027.03.15\n제조일자: 2025.03.15\n원산지: 대한민국\n주의: 만 3세 미만 영아에게는 보호자 지도하에 사용하세요.",
+  "ner_result": {
+    "product": "A브랜드 순한아기 물티슈",
+    "ingredient": [
+      "정제수",
+      "글리세린",
+      "카제인나트륨",
+      "페녹시에탄올",
+      "알로에베라잎추출물",
+      "소르빈산칼륨",
+      "구연산"
+    ],
+    "expiry": "2027-03-15",
+    "maker": "◯ ◯ 화학"
+  },
+  "safety_report": {
+    "product_name": "A브랜드 순한아기 물티슈",
+    "overall_status": "FAIL",
+    "child_results": [
+      {
+        "child_id": 1,
+        "status": "FAIL",
+        "matched_rules": [
+          {
+            "rule_code": "ALLERGY_MILK_001",
+            "status": "FAIL",
+            "matched_ingredient": "카제인나트륨",
+            "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
+          }
+        ],
+        "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
+      },
+      {
+        "child_id": 2,
+        "status": "WARN",
+        "matched_rules": [
+          {
+            "rule_code": "SKIN_SENSITIVE_001",
+            "status": "WARN",
+            "matched_ingredient": "페녹시에탄올",
+            "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+          }
+        ],
+        "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+      },
+      {
+        "child_id": 3,
+        "status": "PASS",
+        "matched_rules": [],
+        "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+      }
+    ],
+    "pass_count": 1,
+    "warn_count": 1,
+    "fail_count": 1,
+    "expired_count": 0,
+    "unknown_count": 0
+  },
+  "explanation": "A브랜드 순한아기 물티슈의 경우, 위험 성분이 확인되어 사용에 주의가 필요합니다. 이 제품에는 우유 관련 성분인 카제인나트륨과 민감성 피부에 자극을 줄 수 있는 페녹시에탄올이 포함되어 있습니다. 따라서, 충돌 성분이 확인되었으며 주의가 필요한 성분이 포함되어 있습니다. \n\n이러한 성분은 일부 아동에게 문제를 일으킬 수 있으므로, 보호자 또는 관리자 확인 후 대체 제품 사용을 권장합니다. 이는 \"카제인나트륨 — 우유 알레르기 관련 성분이 포함되어 있습니다\"와 \"페녹시에탄올 — 민감성 피부 아동에게 자극이 될 수 있는 성분입니다\"라는 규칙에 근거합니다. \n\n따라서, 보호자 또는 관리자 확인 후 대체 제품 사용을 권장합니다.",
+  "llm_model": "llama-3.3-70b-versatile",
+  "llm_elapsed_sec": 1.95
+}

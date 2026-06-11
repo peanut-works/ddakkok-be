@@ -19,6 +19,9 @@ def _build_provider(
     gms_api_key: str,
     gms_api_url: str,
     gms_model: str,
+    groq_api_key: str,
+    groq_api_url: str,
+    groq_model: str,
     ai_cache_enabled: bool,
     ai_cache_maxsize: int,
 ) -> AIProvider:
@@ -29,6 +32,15 @@ def _build_provider(
     elif ai_provider == "gms":
         provider = FallbackAIProvider(
             primary=GMSProvider(api_key=gms_api_key, api_url=gms_api_url, model=gms_model)
+        )
+    elif ai_provider == "groq":
+        # Groq는 OpenAI 호환 API — base_url만 바꿔 OpenAIProvider 재사용
+        provider = FallbackAIProvider(
+            primary=OpenAIProvider(
+                api_key=groq_api_key,
+                model=groq_model,
+                base_url=groq_api_url,
+            )
         )
     else:
         return MockAIProvider()  # mock은 캐시 불필요 (비용 없음)
@@ -52,6 +64,9 @@ def get_ai_provider(settings: Settings = Depends(get_settings)) -> AIProvider:
         gms_api_key=settings.gms_api_key,
         gms_api_url=settings.gms_api_url,
         gms_model=settings.gms_model,
+        groq_api_key=settings.groq_api_key,
+        groq_api_url=settings.groq_api_url,
+        groq_model=settings.groq_model,
         ai_cache_enabled=settings.ai_cache_enabled,
         ai_cache_maxsize=settings.ai_cache_maxsize,
     )
