@@ -1,12 +1,13 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Path, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models.product import Product
 from app.models.user import User
+from app.schemas.error import ErrorResponse
 from app.schemas.product import ProductCreateRequest, ProductResponse
 from app.services.auth import get_user_by_id, parse_mock_access_token
 from app.services.ingredient_normalizer import normalize_ingredients
@@ -17,6 +18,38 @@ from app.services.product_lookup import (
 )
 
 router = APIRouter(prefix="/api/products", tags=["products"])
+
+BARCODE_PRODUCT_RESPONSE_EXAMPLE = {
+    "id": 101,
+    "facility_id": 1,
+    "name": "하기스 퓨어 물티슈",
+    "category": "WET_TISSUE",
+    "manufacturer": "유한킴벌리",
+    "barcode": "880000000101",
+    "expiry_date": "2027-03-15",
+    "raw_ingredients_text": "정제수, 글리세린, 페녹시에탄올",
+    "ingredients": ["정제수", "글리세린", "페녹시에탄올"],
+    "normalized_ingredients": ["정제수", "글리세린", "페녹시에탄올"],
+    "image_url": None,
+    "ocr_raw_text": None,
+    "created_by_id": 1,
+}
+
+EMPTY_BARCODE_ERROR_EXAMPLE = {
+    "error": {
+        "code": "BAD_REQUEST",
+        "message": "Barcode must not be empty",
+        "details": None,
+    }
+}
+
+PRODUCT_NOT_FOUND_ERROR_EXAMPLE = {
+    "error": {
+        "code": "NOT_FOUND",
+        "message": "Product not found",
+        "details": None,
+    }
+}
 
 
 def get_current_user(
@@ -64,9 +97,43 @@ def list_products(
     "/barcode/{barcode}",
     response_model=ProductResponse,
     summary="바코드로 제품 조회",
+    responses={
+        200: {
+            "description": "Barcode matched a product in the current facility",
+            "content": {
+                "application/json": {
+                    "example": BARCODE_PRODUCT_RESPONSE_EXAMPLE,
+                }
+            },
+        },
+        400: {
+            "model": ErrorResponse,
+            "description": "Barcode is blank after trimming whitespace",
+            "content": {
+                "application/json": {
+                    "example": EMPTY_BARCODE_ERROR_EXAMPLE,
+                }
+            },
+        },
+        404: {
+            "model": ErrorResponse,
+            "description": "No product with the barcode exists in the current facility",
+            "content": {
+                "application/json": {
+                    "example": PRODUCT_NOT_FOUND_ERROR_EXAMPLE,
+                }
+            },
+        },
+    },
 )
 def get_product_by_barcode_route(
-    barcode: str,
+    barcode: Annotated[
+        str,
+        Path(
+            description="Scan result barcode value",
+            examples=["880000000101"],
+        ),
+    ],
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> ProductResponse:
