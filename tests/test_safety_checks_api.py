@@ -6,6 +6,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 
 sys.modules.pop("app.core.database", None)
+sys.modules.pop("app.api.routes.safety_checks", None)
+sys.modules.pop("main", None)
 database = importlib.import_module("app.core.database")
 SessionLocal = database.SessionLocal
 
@@ -400,14 +402,85 @@ def test_generate_safety_check_explanations_match_child_result_status():
 
     assert fail_result["matched_ingredient"] == "카제인나트륨"
     assert fail_result["matched_ingredient"] in fail_result["explanation"]
+    assert fail_result["reason"] in fail_result["explanation"]
 
     assert warn_result["matched_ingredient"] == "페녹시에탄올"
     assert warn_result["explanation"] != fail_result["explanation"]
+    assert warn_result["reason"] in warn_result["explanation"]
     assert "우유 알레르기" not in warn_result["explanation"]
     assert (
         "주의" in warn_result["explanation"]
         or warn_result["matched_ingredient"] in warn_result["explanation"]
     )
+    assert "13대 알레르기" not in fail_result["explanation"]
+    assert "별표" not in fail_result["explanation"]
+    assert "ALLERGY_" not in fail_result["explanation"]
+    assert "SKIN_" not in fail_result["explanation"]
+    assert "참고 1" not in fail_result["explanation"]
+    assert "참고 2" not in fail_result["explanation"]
+    assert "참고 3" not in fail_result["explanation"]
+    assert "필요하시면" not in fail_result["explanation"]
+    assert "도와드리겠습니다" not in fail_result["explanation"]
+    assert "ALLERGY_" not in warn_result["explanation"]
+    assert "SKIN_" not in warn_result["explanation"]
+
+
+def test_generate_safety_check_explanations_all_pass_uses_short_template(monkeypatch):
+    calls = []
+
+    async def fail_if_called(self, inp, context=None):
+        calls.append(inp)
+        raise AssertionError("PASS explanation must not call LLM provider")
+
+    safety_checker_service = importlib.import_module("app.services.safety_checker")
+    monkeypatch.setattr(
+        safety_checker_service.ExplanationGenerator,
+        "generate",
+        fail_if_called,
+    )
+
+    create_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 101,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+
+    assert create_response.status_code == 201
+
+    check_id = create_response.json()["id"]
+
+    response = client.post(
+        f"/api/safety-checks/{check_id}/explanations",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert response.status_code == 200
+    assert calls == []
+
+    data = response.json()
+
+    assert data["overall_explanation"] == (
+        "세이프 데일리 핸드워시 검사 결과, 선택한 아동 2명 모두 "
+        "현재 등록된 건강 정보 기준으로 사용 가능합니다."
+    )
+
+    for result in data["results"]:
+        explanation = result["explanation"]
+        assert result["status"] == "PASS"
+        assert explanation
+        assert explanation.count(".") <= 1
+        assert "현재 등록된 건강 정보 기준" in explanation
+        assert "13대 알레르기" not in explanation
+        assert "별표" not in explanation
+        assert "참고 1" not in explanation
+        assert "참고 2" not in explanation
+        assert "참고 3" not in explanation
+        assert "필요하시면" not in explanation
+        assert "도와드리겠습니다" not in explanation
 
 
 def test_safety_check_overall_explanation_is_summary_not_joined_results():
