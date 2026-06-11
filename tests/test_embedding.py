@@ -8,12 +8,10 @@ from app.ai.embedding import (
     EMBEDDING_DIM,
     FallbackEmbeddingProvider,
     MockEmbeddingProvider,
-    OpenAIEmbeddingProvider,
 )
 from app.ai.knowledge import KnowledgeChunkData, load_all
 from app.ai.knowledge_loader import KnowledgeLoader
 from app.models.knowledge_chunk import KnowledgeChunk
-
 
 # ── MockEmbeddingProvider ──────────────────────────────────────────────────────
 

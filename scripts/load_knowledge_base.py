@@ -22,8 +22,8 @@ sys.path.insert(0, str(ROOT))
 
 from app.ai.embedding import get_embedding_provider  # noqa: E402
 from app.ai.knowledge_loader import KnowledgeLoader  # noqa: E402
-from app.core.database import SessionLocal  # noqa: E402
 from app.core.config import get_settings  # noqa: E402
+from app.core.database import SessionLocal  # noqa: E402
 
 
 async def main(replace: bool) -> None:

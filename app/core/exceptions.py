@@ -13,6 +13,18 @@ from app.schemas.error import ErrorDetail, ErrorResponse
 logger = logging.getLogger(__name__)
 
 
+class ProductLookupError(Exception):
+    """Base error for product lookup services."""
+
+
+class ProductByBarcodeNotFoundError(ProductLookupError):
+    """Raised when a product cannot be found by barcode."""
+
+
+class InvalidBarcodeError(ProductLookupError):
+    """Raised when a barcode input is empty after normalization."""
+
+
 def _status_code_to_error_code(status_code: int) -> str:
     try:
         phrase = HTTPStatus(status_code).phrase
