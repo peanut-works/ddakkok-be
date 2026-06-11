@@ -14,13 +14,15 @@ from app.core.database import get_db
 from app.core.exceptions import InvalidBarcodeError
 from app.models.product import Product
 from app.models.user import User
+from app.schemas.error import ErrorResponse
 from app.schemas.product import (
+    EMPTY_BARCODE_ERROR_EXAMPLE,
+    PRODUCT_LIST_RESPONSE_EXAMPLE,
     ProductCreateRequest,
     ProductLabelTextParseRequest,
     ProductLabelTextParseResponse,
     ProductResponse,
 )
-from app.schemas.error import ErrorResponse
 from app.services.auth import get_user_by_id, parse_mock_access_token
 from app.services.ingredient_normalizer import normalize_ingredients
 from app.services.product_lookup import get_products
@@ -161,18 +163,20 @@ async def _parse_label_text(
         return await LabelParser(primary_provider).parse_product_label(text)
     except Exception:
         return _parse_label_text_with_regex(text)
+
+
 FILTERED_PRODUCTS_RESPONSE_EXAMPLE = [
     {
         "id": 101,
         "facility_id": 1,
-        "name": "키즈 퓨어 물티슈",
-        "category": "WET_TISSUE",
-        "manufacturer": "샘플케어",
-        "barcode": "8808739000207",
-        "expiry_date": "2027-03-15",
-        "raw_ingredients_text": "정제수, 글리세린, 페녹시에탄올",
-        "ingredients": ["정제수", "글리세린", "페녹시에탄올"],
-        "normalized_ingredients": ["정제수", "글리세린", "페녹시에탄올"],
+        "name": "세이프 데일리 핸드워시",
+        "category": "CLEANSER",
+        "manufacturer": "해커톤생활건강",
+        "barcode": "880100000101",
+        "expiry_date": "2027-12-31",
+        "raw_ingredients_text": "정제수, 글리세린, 코코베타인, 구연산",
+        "ingredients": ["정제수", "글리세린", "코코베타인", "구연산"],
+        "normalized_ingredients": ["정제수", "글리세린", "코코베타인", "구연산"],
         "image_url": None,
         "ocr_raw_text": None,
         "created_by_id": 1,
@@ -215,17 +219,20 @@ def get_current_user(
     "",
     response_model=list[ProductResponse],
     summary="제품 목록 조회",
+    description=(
+        "로그인 사용자의 시설 기준 제품 목록을 조회합니다. "
+        "barcode query parameter를 보내면 해당 바코드 제품만 필터링합니다. "
+    ),
     responses={
         200: {
             "description": "시설 제품 목록입니다. barcode 쿼리를 함께 보내면 해당 바코드로 필터링합니다.",
             "content": {
                 "application/json": {
-                    "example": FILTERED_PRODUCTS_RESPONSE_EXAMPLE,
+                    "example": PRODUCT_LIST_RESPONSE_EXAMPLE,
                 }
             },
         },
         400: {
-            "model": ErrorResponse,
             "description": "barcode 쿼리에서 공백을 제거한 뒤 빈 값이 된 경우",
             "content": {
                 "application/json": {
@@ -242,7 +249,7 @@ def list_products(
         str | None,
         Query(
             description="제품 조회용 바코드 필터",
-            examples=["8808739000207"],
+            examples=["880100000101"],
         ),
     ] = None,
 ) -> list[ProductResponse]:
