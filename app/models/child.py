@@ -50,6 +50,12 @@ class Child(Base, TimestampMixin):
         back_populates="child",
     )
 
+    @property
+    def allergies(self) -> list[str]:
+        if self.health_profile is None:
+            return []
+        return self.health_profile.allergies
+
 
 class ChildHealthProfile(Base, TimestampMixin):
     __tablename__ = "child_health_profiles"
