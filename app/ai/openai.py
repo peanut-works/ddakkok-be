@@ -16,8 +16,9 @@ class OpenAIProvider(AIProvider):
         api_key: str,
         model: str = "gpt-4o-mini",
         timeout: float = _DEFAULT_TIMEOUT,
+        base_url: str | None = None,
     ) -> None:
-        self._client = AsyncOpenAI(api_key=api_key, timeout=timeout)
+        self._client = AsyncOpenAI(api_key=api_key, timeout=timeout, base_url=base_url)
         self._model = model
 
     async def chat_complete(

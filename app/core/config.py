@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     gms_api_url: str = ""
     gms_model: str = ""
 
+    groq_api_key: str = ""
+    groq_api_url: str = "https://api.groq.com/openai/v1"
+    groq_model: str = "llama-3.3-70b-versatile"
+
     embedding_provider: str = "mock"  # mock | openai | gms
     openai_embedding_model: str = "text-embedding-3-small"
 

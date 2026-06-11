@@ -12,6 +12,12 @@
     한 계층에서 예외 발생 시 해당 계층만 건너뛰고 다음 계층으로 진행.
     전체 실패 시 원본 이미지 bytes를 그대로 반환.
 
+각 계층은 품질 가드 적용:
+    보정 결과의 텍스트 가독성 지표(에지 밀도, 대비)가 입력 대비 절반 이하로
+    떨어지면 보정이 이미지를 파괴한 것으로 보고 해당 계층 결과를 버린다.
+    (예: 주름진 포장에서 TPS 제어점이 퇴화하면 출력 전체가 단색이 되어
+    OCR이 NO_TEXT를 반환하는 사례 — test_images/test3.jpg)
+
 TPS (Layer 3) 요구 사항:
     opencv-contrib-python-headless 패키지 필요.
     (createThinPlateSplineShapeTransformer가 contrib의 shape 모듈에 포함)
@@ -89,18 +95,50 @@ class ImagePreprocessor:
         _, buffer = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 95])
         return buffer.tobytes()
 
+    # 품질 가드 임계 비율 — 보정 후 지표가 입력의 이 비율 미만이면 결과 폐기
+    _GUARD_EDGE_RATIO = 0.5
+    _GUARD_CONTRAST_RATIO = 0.5
+
     def _safe_apply(
         self,
         img: "np.ndarray",
         fn: "Callable[[np.ndarray], np.ndarray]",
         step_name: str,
     ) -> "np.ndarray":
-        """각 계층을 예외 안전하게 실행. 실패 시 이전 단계 이미지 유지."""
+        """각 계층을 예외 안전하게 실행. 실패 시 이전 단계 이미지 유지.
+
+        실행 후 품질 가드 적용: 보정 결과의 에지 밀도/대비가 입력 대비
+        절반 이하로 떨어지면 텍스트가 파괴된 것으로 판단하고 결과를 버린다.
+        """
         try:
-            return fn(img)
+            result = fn(img)
         except Exception as exc:
             logger.warning("[ImagePreprocessor] %s 실패 — 건너뜀: %s", step_name, exc)
             return img
+
+        if result is img:
+            return img
+
+        edge_before, contrast_before = self._readability(img)
+        edge_after, contrast_after = self._readability(result)
+        if (
+            edge_after < edge_before * self._GUARD_EDGE_RATIO
+            or contrast_after < contrast_before * self._GUARD_CONTRAST_RATIO
+        ):
+            logger.warning(
+                "[ImagePreprocessor] %s 품질 저하 감지 — 결과 폐기 "
+                "(에지밀도 %.4f→%.4f, 대비 %.1f→%.1f)",
+                step_name, edge_before, edge_after, contrast_before, contrast_after,
+            )
+            return img
+        return result
+
+    def _readability(self, img: "np.ndarray") -> tuple[float, float]:
+        """텍스트 가독성 지표: (Canny 에지 밀도, 명암 표준편차)."""
+        gray = self._to_gray(img)
+        edges = cv2.Canny(gray, 50, 150)
+        edge_density = float(np.count_nonzero(edges)) / edges.size
+        return edge_density, float(gray.std())
 
     def _to_gray(self, img: "np.ndarray") -> "np.ndarray":
         if len(img.shape) == 2:
@@ -249,14 +287,17 @@ class ImagePreprocessor:
         if len(src_list) < 4:
             return img
 
-        src = np.array(src_list, dtype=np.float32).reshape(-1, 1, 2)
-        dst = np.array(dst_list, dtype=np.float32).reshape(-1, 1, 2)
+        # OpenCV shape 모듈은 점 배열을 (1, N, 2) 형태로 요구한다.
+        # (N, 1, 2)로 넘기면 추정이 깨져 출력 전체가 단색으로 파괴된다.
+        src = np.array(src_list, dtype=np.float32).reshape(1, -1, 2)
+        dst = np.array(dst_list, dtype=np.float32).reshape(1, -1, 2)
         matches = [cv2.DMatch(i, i, 0) for i in range(len(src_list))]
 
         tps = cv2.createThinPlateSplineShapeTransformer()
-        # estimateTransformation(변환할 점, 목표 점, matches)
-        # src = 곡선 위치, dst = 직선 목표 → src → dst 방향으로 변환
-        tps.estimateTransformation(src, dst, matches)
+        # warpImage는 backward warping: 출력 픽셀 → 입력 픽셀 방향의 변환이
+        # 필요하므로 (직선 목표 dst, 곡선 위치 src) 순서로 추정해야
+        # 곡선이 직선으로 펴진다. (src, dst) 순서면 반대로 더 구부러진다.
+        tps.estimateTransformation(dst, src, matches)
         result = tps.warpImage(img)
         return result if result is not None else img
 
