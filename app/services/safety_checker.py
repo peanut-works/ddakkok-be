@@ -1,9 +1,11 @@
+import logging
 from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.ai.base import AIProvider
+from app.ai.knowledge_loader import KnowledgeLoader
 from app.ai.llm import ExplanationGenerator, ExplanationInput
 from app.ai.ner import NERResult
 from app.ai.rule_checker import (
@@ -15,6 +17,8 @@ from app.models.classroom import Classroom
 from app.models.product import Product
 from app.models.safety_check import SafetyCheck, SafetyCheckResult
 from app.models.user import User
+
+logger = logging.getLogger(__name__)
 
 
 class SafetyCheckNotFoundError(ValueError):
@@ -87,6 +91,44 @@ def _build_explanation_input(
         ingredient=ingredients,
         matched_rules=_build_explanation_matched_rules(result),
     )
+
+
+def _build_rag_query(result: SafetyCheckResult) -> str:
+    return " ".join(
+        value
+        for value in (
+            result.matched_ingredient,
+            result.matched_rule_code,
+            result.reason,
+        )
+        if value
+    )
+
+
+async def _fetch_explanation_context(
+    *,
+    db: Session,
+    knowledge_loader: KnowledgeLoader | None,
+    result: SafetyCheckResult,
+) -> list[str] | None:
+    if knowledge_loader is None:
+        return None
+
+    query = _build_rag_query(result)
+    if not query:
+        return None
+
+    try:
+        chunks = await knowledge_loader.search(query, top_k=3)
+    except Exception as exc:
+        logger.warning("[SafetyCheck] RAG 검색 실패 — context 없이 설명 생성: %s", exc)
+        db.rollback()
+        return None
+
+    if not chunks:
+        return None
+
+    return [f"[출처: {chunk.source}]\n{chunk.content}" for chunk in chunks]
 
 
 def _status_label(status: str) -> str:
@@ -566,6 +608,7 @@ async def generate_safety_check_explanations(
     check_id: int,
     current_user: User,
     provider: AIProvider,
+    knowledge_loader: KnowledgeLoader | None = None,
 ) -> dict:
     safety_check = db.scalar(
         select(SafetyCheck).where(
@@ -595,10 +638,21 @@ async def generate_safety_check_explanations(
 
     generator = ExplanationGenerator(provider)
 
+    generated_explanations: list[tuple[SafetyCheckResult, str]] = []
+
     for result in check_results:
-        result.explanation = await generator.generate(
-            _build_explanation_input(result, product)
+        context = await _fetch_explanation_context(
+            db=db,
+            knowledge_loader=knowledge_loader,
+            result=result,
         )
+        explanation = await generator.generate(
+            _build_explanation_input(result, product), context=context
+        )
+        generated_explanations.append((result, explanation))
+
+    for result, explanation in generated_explanations:
+        result.explanation = explanation
 
     db.commit()
 

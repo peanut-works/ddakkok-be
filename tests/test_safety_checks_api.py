@@ -1,5 +1,6 @@
 import importlib
 import sys
+from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 from sqlalchemy import select
@@ -537,3 +538,62 @@ def test_generate_safety_check_explanations_is_idempotent():
             assert result.explanation
     finally:
         db.close()
+
+
+def test_generate_safety_check_explanations_passes_rag_context(monkeypatch):
+    captured_contexts = []
+    captured_queries = []
+
+    async def fake_search(self, query, top_k=5, category=None):
+        captured_queries.append(query)
+        return [
+            SimpleNamespace(
+                source="테스트 지식",
+                content="우유 알레르기 관련 성분은 대체 제품 사용을 권장합니다.",
+            )
+        ]
+
+    async def fake_generate(self, inp, context=None):
+        captured_contexts.append(context)
+        return f"{inp.status} 설명"
+
+    safety_checker_service = importlib.import_module("app.services.safety_checker")
+
+    monkeypatch.setattr(
+        safety_checker_service.KnowledgeLoader,
+        "search",
+        fake_search,
+    )
+    monkeypatch.setattr(
+        safety_checker_service.ExplanationGenerator,
+        "generate",
+        fake_generate,
+    )
+
+    create_response = client.post(
+        "/api/safety-checks",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+        json={
+            "product_id": 102,
+            "classroom_id": 1,
+            "child_ids": [1, 2],
+        },
+    )
+
+    assert create_response.status_code == 201
+    check_id = create_response.json()["id"]
+
+    response = client.post(
+        f"/api/safety-checks/{check_id}/explanations",
+        headers={"Authorization": "Bearer mock-token:user:1"},
+    )
+
+    assert response.status_code == 200
+    assert captured_queries
+    assert any("카제인나트륨" in query for query in captured_queries)
+    assert any("ALLERGY_MILK_001" in query for query in captured_queries)
+    assert any(
+        context
+        and "우유 알레르기 관련 성분" in context[0]
+        for context in captured_contexts
+    )
