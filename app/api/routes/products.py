@@ -1,52 +1,43 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Path, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.exceptions import InvalidBarcodeError
 from app.models.product import Product
 from app.models.user import User
 from app.schemas.error import ErrorResponse
 from app.schemas.product import ProductCreateRequest, ProductResponse
 from app.services.auth import get_user_by_id, parse_mock_access_token
 from app.services.ingredient_normalizer import normalize_ingredients
-from app.services.product_lookup import (
-    InvalidBarcodeError,
-    ProductByBarcodeNotFoundError,
-    get_product_by_barcode,
-)
+from app.services.product_lookup import get_products
 
 router = APIRouter(prefix="/api/products", tags=["products"])
 
-BARCODE_PRODUCT_RESPONSE_EXAMPLE = {
-    "id": 101,
-    "facility_id": 1,
-    "name": "하기스 퓨어 물티슈",
-    "category": "WET_TISSUE",
-    "manufacturer": "유한킴벌리",
-    "barcode": "880000000101",
-    "expiry_date": "2027-03-15",
-    "raw_ingredients_text": "정제수, 글리세린, 페녹시에탄올",
-    "ingredients": ["정제수", "글리세린", "페녹시에탄올"],
-    "normalized_ingredients": ["정제수", "글리세린", "페녹시에탄올"],
-    "image_url": None,
-    "ocr_raw_text": None,
-    "created_by_id": 1,
-}
+FILTERED_PRODUCTS_RESPONSE_EXAMPLE = [
+    {
+        "id": 101,
+        "facility_id": 1,
+        "name": "키즈 퓨어 물티슈",
+        "category": "WET_TISSUE",
+        "manufacturer": "샘플케어",
+        "barcode": "8808739000207",
+        "expiry_date": "2027-03-15",
+        "raw_ingredients_text": "정제수, 글리세린, 페녹시에탄올",
+        "ingredients": ["정제수", "글리세린", "페녹시에탄올"],
+        "normalized_ingredients": ["정제수", "글리세린", "페녹시에탄올"],
+        "image_url": None,
+        "ocr_raw_text": None,
+        "created_by_id": 1,
+    }
+]
 
 EMPTY_BARCODE_ERROR_EXAMPLE = {
     "error": {
         "code": "BAD_REQUEST",
         "message": "Barcode must not be empty",
-        "details": None,
-    }
-}
-
-PRODUCT_NOT_FOUND_ERROR_EXAMPLE = {
-    "error": {
-        "code": "NOT_FOUND",
-        "message": "Product not found",
         "details": None,
     }
 }
@@ -79,66 +70,39 @@ def get_current_user(
     "",
     response_model=list[ProductResponse],
     summary="제품 목록 조회",
-)
-def list_products(
-    db: Annotated[Session, Depends(get_db)],
-    current_user: Annotated[User, Depends(get_current_user)],
-) -> list[ProductResponse]:
-    products = db.scalars(
-        select(Product)
-        .where(Product.facility_id == current_user.facility_id)
-        .order_by(Product.id.asc())
-    ).all()
-
-    return products
-
-
-@router.get(
-    "/barcode/{barcode}",
-    response_model=ProductResponse,
-    summary="바코드로 제품 조회",
     responses={
         200: {
-            "description": "Barcode matched a product in the current facility",
+            "description": "시설 제품 목록입니다. barcode 쿼리를 함께 보내면 해당 바코드로 필터링합니다.",
             "content": {
                 "application/json": {
-                    "example": BARCODE_PRODUCT_RESPONSE_EXAMPLE,
+                    "example": FILTERED_PRODUCTS_RESPONSE_EXAMPLE,
                 }
             },
         },
         400: {
             "model": ErrorResponse,
-            "description": "Barcode is blank after trimming whitespace",
+            "description": "barcode 쿼리에서 공백을 제거한 뒤 빈 값이 된 경우",
             "content": {
                 "application/json": {
                     "example": EMPTY_BARCODE_ERROR_EXAMPLE,
                 }
             },
         },
-        404: {
-            "model": ErrorResponse,
-            "description": "No product with the barcode exists in the current facility",
-            "content": {
-                "application/json": {
-                    "example": PRODUCT_NOT_FOUND_ERROR_EXAMPLE,
-                }
-            },
-        },
     },
 )
-def get_product_by_barcode_route(
-    barcode: Annotated[
-        str,
-        Path(
-            description="Scan result barcode value",
-            examples=["880000000101"],
-        ),
-    ],
+def list_products(
     db: Annotated[Session, Depends(get_db)],
     current_user: Annotated[User, Depends(get_current_user)],
-) -> ProductResponse:
+    barcode: Annotated[
+        str | None,
+        Query(
+            description="제품 조회용 바코드 필터",
+            examples=["8808739000207"],
+        ),
+    ] = None,
+) -> list[ProductResponse]:
     try:
-        return get_product_by_barcode(
+        return get_products(
             db,
             facility_id=current_user.facility_id,
             barcode=barcode,
@@ -147,11 +111,6 @@ def get_product_by_barcode_route(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Barcode must not be empty",
-        ) from exc
-    except ProductByBarcodeNotFoundError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found",
         ) from exc
 
 

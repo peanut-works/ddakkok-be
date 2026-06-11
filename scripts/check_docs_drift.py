@@ -3,12 +3,11 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import re
 import shlex
+from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
-
 
 DOC_FILES = (
     "AGENTS.md",

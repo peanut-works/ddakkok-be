@@ -1,41 +1,25 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.exceptions import InvalidBarcodeError
 from app.models.product import Product
 
 
-class ProductLookupError(Exception):
-    """Base error for product lookup service."""
-
-
-class ProductByBarcodeNotFoundError(ProductLookupError):
-    """Raised when a product cannot be found by barcode."""
-
-
-class InvalidBarcodeError(ProductLookupError):
-    """Raised when a barcode input is empty after normalization."""
-
-
-def get_product_by_barcode(
+def get_products(
     db: Session,
     *,
     facility_id: int,
-    barcode: str,
-) -> Product:
-    """Look up a product by barcode within the current facility."""
-    normalized_barcode = barcode.strip()
+    barcode: str | None = None,
+) -> list[Product]:
+    """Return facility products, optionally filtered by barcode."""
+    query = select(Product).where(Product.facility_id == facility_id)
 
-    if not normalized_barcode:
-        raise InvalidBarcodeError("Barcode must not be empty")
+    if barcode is not None:
+        normalized_barcode = barcode.strip()
 
-    product = db.scalar(
-        select(Product).where(
-            Product.facility_id == facility_id,
-            Product.barcode == normalized_barcode,
-        )
-    )
+        if not normalized_barcode:
+            raise InvalidBarcodeError("Barcode must not be empty")
 
-    if product is None:
-        raise ProductByBarcodeNotFoundError("Product not found")
+        query = query.where(Product.barcode == normalized_barcode)
 
-    return product
+    return db.scalars(query.order_by(Product.id.asc())).all()

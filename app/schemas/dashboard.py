@@ -68,7 +68,8 @@ class DashboardSummaryResponse(BaseModel):
                         "category": "유아용 섬유제품",
                         "recall_date": "2026-05-21",
                         "reason": "폼알데하이드 기준치 초과",
-                        "action_guide": "해당 제품은 사용을 중단하고 판매처 또는 사업자 안내에 따라 교환·환불 절차를 확인하세요.",
+                        "action_guide": "해당 제품은 사용을 중단하고 판매처 또는 사업자 안내에 따라 "
+                        "교환·환불 절차를 확인하세요.",
                         "is_new": True,
                         "severity": "HIGH",
                     },
