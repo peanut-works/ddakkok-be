@@ -50,16 +50,13 @@ paths:
       description: 'AI provider 연결 테스트.
 
 
-        - AI_PROVIDER=openai: OpenAI API 실제 호출 (15초 timeout)
+        - AI_PROVIDER=openai/gms: 실제 API 호출 (15초 timeout)
 
-        - AI_PROVIDER=mock  : mock 응답 즉시 반환
+        - AI_PROVIDER=mock       : mock 응답 즉시 반환
 
-        - 호출 실패 시       : FallbackAIProvider가 mock으로 자동 전환
+        - 호출 실패 시            : FallbackAIProvider가 mock으로 자동 전환
 
-        - 어떤 경우에도 200 + 정상 JSON 형식으로 응답 (시연 중단 없음)
-
-
-        API key는 서버 환경변수에서만 읽으며 응답에 포함되지 않는다.'
+        - 어떤 경우에도 200 + 정상 JSON 형식으로 응답 (시연 중단 없음)'
       operationId: ai_ping_api_ai_ping_get
       responses:
         '200':
@@ -74,6 +71,674 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/ai/analyze:
+    post:
+      tags:
+      - ai
+      summary: Analyze Product
+      description: "제품 라벨 이미지를 분석해 반 전체 아동의 안전카드를 반환한다.\n\n파이프라인:\n    이미지 → 전처리 →\
+        \ OCR → NER → Rule Checker → LLM 설명 → DB 저장\n\n- classroom_id 반의 활성 아동 전원을\
+        \ 대조 대상으로 삼는다.\n- 어떤 단계가 실패해도 fallback으로 자동 전환되어 200 응답을 유지한다.\n- 결과는 SafetyCheck\
+        \ + SafetyCheckResult 테이블에 저장된다."
+      operationId: analyze_product_api_ai_analyze_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_analyze_product_api_ai_analyze_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafetyCardResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/ai/analyze/demo:
+    get:
+      tags:
+      - ai
+      summary: Analyze Demo
+      description: '이미지 없이 시나리오 OCR 텍스트로 전체 파이프라인을 실행한다. DB 저장 없음.
+
+
+        현장 시연 시 이미지 촬영 없이 안전카드 흐름을 빠르게 보여줄 때 사용.
+
+        classroom_id 반의 실제 아동 데이터를 그대로 사용하므로 시연 현실감이 높다.'
+      operationId: analyze_demo_api_ai_analyze_demo_get
+      parameters:
+      - name: scenario
+        in: query
+        required: false
+        schema:
+          type: string
+          description: '시나리오: wipes (FAIL) / lotion (WARN) / sunscreen (PASS)'
+          default: wipes
+          title: Scenario
+        description: '시나리오: wipes (FAIL) / lotion (WARN) / sunscreen (PASS)'
+      - name: classroom_id
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: 분석 대상 반 ID (DB에 존재해야 함)
+          default: 1
+          title: Classroom Id
+        description: 분석 대상 반 ID (DB에 존재해야 함)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafetyCardResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/auth/login:
+    post:
+      tags:
+      - auth
+      summary: Login
+      operationId: login_api_auth_login_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/auth/demo:
+    post:
+      tags:
+      - auth
+      summary: Demo Login
+      operationId: demo_login_api_auth_demo_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/auth/me:
+    get:
+      tags:
+      - auth
+      summary: Get Me
+      operationId: get_me_api_auth_me_get
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserContext'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/auth/kakao:
+    post:
+      tags:
+      - auth
+      summary: Kakao Login
+      operationId: kakao_login_api_auth_kakao_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KakaoLoginRequest'
+        required: true
+      responses:
+        '501':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/classrooms:
+    get:
+      tags:
+      - classrooms
+      summary: List Classrooms
+      operationId: list_classrooms_api_classrooms_get
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassroomResponse'
+                title: Response List Classrooms Api Classrooms Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/classrooms/{classroom_id}/children:
+    get:
+      tags:
+      - classrooms
+      summary: 반별 아동 목록 조회
+      operationId: list_children_by_classroom_api_classrooms__classroom_id__children_get
+      parameters:
+      - name: classroom_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Classroom Id
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChildListItemResponse'
+                title: Response List Children By Classroom Api Classrooms  Classroom
+                  Id  Children Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/products:
+    get:
+      tags:
+      - products
+      summary: 제품 목록 조회
+      description: 로그인 사용자의 시설 기준 제품 목록을 조회합니다. barcode query parameter를 보내면 해당 바코드
+        제품만 필터링합니다.
+      operationId: list_products_api_products_get
+      parameters:
+      - name: barcode
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: 제품 조회용 바코드 필터
+          examples:
+          - '880100000101'
+          title: Barcode
+        description: 제품 조회용 바코드 필터
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: 시설 제품 목록입니다. barcode 쿼리를 함께 보내면 해당 바코드로 필터링합니다.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductResponse'
+                title: Response List Products Api Products Get
+              example:
+              - id: 101
+                facility_id: 1
+                name: 세이프 데일리 핸드워시
+                category: CLEANSER
+                manufacturer: 해커톤생활건강
+                barcode: '880100000101'
+                expiry_date: '2027-12-31'
+                raw_ingredients_text: 정제수, 글리세린, 코코베타인, 구연산
+                ingredients:
+                - 정제수
+                - 글리세린
+                - 코코베타인
+                - 구연산
+                normalized_ingredients:
+                - 정제수
+                - 글리세린
+                - 코코베타인
+                - 구연산
+                created_by_id: 1
+        '400':
+          description: barcode 쿼리에서 공백을 제거한 뒤 빈 값이 된 경우
+          content:
+            application/json:
+              example:
+                error:
+                  code: BAD_REQUEST
+                  message: Barcode must not be empty
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - products
+      summary: 제품 등록
+      operationId: create_product_api_products_post
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductCreateRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/products/{product_id}:
+    get:
+      tags:
+      - products
+      summary: 제품 상세 조회
+      operationId: get_product_api_products__product_id__get
+      parameters:
+      - name: product_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Product Id
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/products/parse-label-text:
+    post:
+      tags:
+      - products
+      summary: 제품 라벨 텍스트 파싱
+      operationId: parse_product_label_text_api_products_parse_label_text_post
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductLabelTextParseRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductLabelTextParseResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/children/{child_id}:
+    get:
+      tags:
+      - children
+      summary: 아동 상세 정보 조회
+      operationId: get_child_detail_api_children__child_id__get
+      parameters:
+      - name: child_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Child Id
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildDetailResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/safety-checks:
+    post:
+      tags:
+      - safety-checks
+      summary: 제품 안전 검사 실행
+      operationId: create_safety_check_api_safety_checks_post
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SafetyCheckCreateRequest'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafetyCheckResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - safety-checks
+      summary: 안전 검사 기록 목록 조회
+      description: 로그인 사용자의 시설 기준 안전 검사 기록을 최신순으로 조회합니다. classroom_id만 보내도 해당 반 기록을
+        기본 10개 조회하며, limit은 최대 30개까지 허용합니다.
+      operationId: get_safety_checks_api_safety_checks_get
+      parameters:
+      - name: classroom_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Classroom Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            pattern: ^(PASS|WARN|FAIL|EXPIRED|UNKNOWN)$
+          - type: 'null'
+          title: Status
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 30
+          minimum: 1
+          default: 10
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: 검사 기록 목록입니다.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SafetyCheckListItemResponse'
+                title: Response Get Safety Checks Api Safety Checks Get
+              example:
+              - id: 94
+                product:
+                  id: 135
+                  name: 판토모틴
+                  category: ETC
+                classroom_id: 1
+                overall_status: PASS
+                pass_count: 2
+                warn_count: 0
+                fail_count: 0
+                expired_count: 0
+                unknown_count: 0
+                total_count: 2
+                children:
+                - child_id: 1
+                  child_name: 강민준
+                  status: PASS
+                  status_label: 사용 가능
+                - child_id: 2
+                  child_name: 김서아
+                  status: PASS
+                  status_label: 사용 가능
+                created_at: '2026-06-11T17:30:00'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/safety-checks/{check_id}:
+    get:
+      tags:
+      - safety-checks
+      summary: 저장된 안전 검사 결과 조회
+      operationId: get_safety_check_api_safety_checks__check_id__get
+      parameters:
+      - name: check_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Check Id
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafetyCheckDetailResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/safety-checks/{check_id}/explanations:
+    post:
+      tags:
+      - safety-checks
+      summary: 저장된 안전 검사 결과 설명 생성
+      operationId: create_safety_check_explanations_api_safety_checks__check_id__explanations_post
+      parameters:
+      - name: check_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Check Id
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafetyCheckDetailResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/dashboard/summary:
+    get:
+      tags:
+      - dashboard
+      summary: 홈 대시보드 요약 조회
+      operationId: dashboard_summary_api_dashboard_summary_get
+      parameters:
+      - name: classroom_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Classroom Id
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummaryResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /:
     get:
       summary: API root
@@ -111,6 +776,454 @@ components:
       - provider: openai
         response: AI 연결에 실패했습니다. Mock 응답으로 대체됩니다.
         status: fallback
+    AttentionChildResponse:
+      properties:
+        child_id:
+          type: integer
+          title: Child Id
+        child_name:
+          type: string
+          title: Child Name
+        status:
+          type: string
+          title: Status
+        status_label:
+          type: string
+          title: Status Label
+      type: object
+      required:
+      - child_id
+      - child_name
+      - status
+      - status_label
+      title: AttentionChildResponse
+    AttentionProductResponse:
+      properties:
+        check_id:
+          type: integer
+          title: Check Id
+        product_id:
+          type: integer
+          title: Product Id
+        product_name:
+          type: string
+          title: Product Name
+        overall_status:
+          type: string
+          title: Overall Status
+        status_label:
+          type: string
+          title: Status Label
+        summary:
+          type: string
+          title: Summary
+        children:
+          items:
+            $ref: '#/components/schemas/AttentionChildResponse'
+          type: array
+          title: Children
+      type: object
+      required:
+      - check_id
+      - product_id
+      - product_name
+      - overall_status
+      - status_label
+      - summary
+      - children
+      title: AttentionProductResponse
+    AuthResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+          examples:
+          - mock-token:user:1
+        token_type:
+          type: string
+          title: Token Type
+          default: bearer
+          examples:
+          - bearer
+        login_method:
+          type: string
+          enum:
+          - FACILITY
+          - EMAIL
+          - DEMO
+          title: Login Method
+          examples:
+          - FACILITY
+        user:
+          $ref: '#/components/schemas/UserContext'
+      type: object
+      required:
+      - access_token
+      - login_method
+      - user
+      title: AuthResponse
+      example:
+        access_token: mock-token:user:1
+        login_method: FACILITY
+        token_type: bearer
+        user:
+          classroom:
+            age_group: 만 3세
+            id: 1
+            name: 햇님반
+          email: teacher@ddakkok.com
+          facility:
+            facility_type: DAYCARE
+            id: 1
+            name: 땅콩어린이집
+          id: 1
+          name: 김하늘
+          role: TEACHER
+    Body_analyze_product_api_ai_analyze_post:
+      properties:
+        image:
+          type: string
+          contentMediaType: application/octet-stream
+          title: Image
+          description: 제품 라벨 이미지 (JPEG/PNG)
+        classroom_id:
+          type: integer
+          title: Classroom Id
+          description: 분석 대상 반 ID
+      type: object
+      required:
+      - image
+      - classroom_id
+      title: Body_analyze_product_api_ai_analyze_post
+    ChildDetailResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+          examples:
+          - 1
+        facility_id:
+          type: integer
+          title: Facility Id
+          examples:
+          - 1
+        classroom_id:
+          type: integer
+          title: Classroom Id
+          examples:
+          - 1
+        name:
+          type: string
+          title: Name
+          examples:
+          - 강민준
+        birth_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Birth Date
+          examples:
+          - '2022-03-15'
+        gender:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gender
+          examples:
+          - M
+        memo:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Memo
+          examples:
+          - 우유 알레르기 주의
+        is_active:
+          type: boolean
+          title: Is Active
+          default: true
+          examples:
+          - true
+        health_profile:
+          anyOf:
+          - $ref: '#/components/schemas/ChildHealthProfileResponse'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - facility_id
+      - classroom_id
+      - name
+      title: ChildDetailResponse
+      example:
+        birth_date: '2022-03-15'
+        classroom_id: 1
+        facility_id: 1
+        gender: M
+        health_profile:
+          allergies:
+          - 우유
+          notes: 우유 및 우유 유래 성분 섭취·접촉 주의
+          sensitive_ingredients: []
+          skin_conditions: []
+        id: 1
+        is_active: true
+        memo: 우유 알레르기 주의
+        name: 강민준
+    ChildHealthProfileResponse:
+      properties:
+        allergies:
+          items:
+            type: string
+          type: array
+          title: Allergies
+          examples:
+          - - 우유
+        skin_conditions:
+          items:
+            type: string
+          type: array
+          title: Skin Conditions
+          examples:
+          - - 민감성 피부
+        sensitive_ingredients:
+          items:
+            type: string
+          type: array
+          title: Sensitive Ingredients
+          examples:
+          - - 향료
+            - 에탄올
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          examples:
+          - 우유 및 우유 유래 성분 섭취·접촉 주의
+      type: object
+      title: ChildHealthProfileResponse
+    ChildListItemResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+          examples:
+          - 1
+        facility_id:
+          type: integer
+          title: Facility Id
+          examples:
+          - 1
+        classroom_id:
+          type: integer
+          title: Classroom Id
+          examples:
+          - 1
+        name:
+          type: string
+          title: Name
+          examples:
+          - 강민준
+        birth_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Birth Date
+          examples:
+          - '2022-03-15'
+        gender:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gender
+          examples:
+          - M
+        memo:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Memo
+          examples:
+          - 우유 알레르기 주의
+        is_active:
+          type: boolean
+          title: Is Active
+          default: true
+          examples:
+          - true
+        health_profile:
+          anyOf:
+          - $ref: '#/components/schemas/ChildHealthProfileResponse'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - facility_id
+      - classroom_id
+      - name
+      title: ChildListItemResponse
+    ChildSafetyResult:
+      properties:
+        child_id:
+          type: integer
+          title: Child Id
+        child_name:
+          type: string
+          title: Child Name
+        status:
+          type: string
+          title: Status
+        matched_rules:
+          items:
+            $ref: '#/components/schemas/MatchedRuleSummary'
+          type: array
+          title: Matched Rules
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - child_id
+      - child_name
+      - status
+      - matched_rules
+      - reason
+      title: ChildSafetyResult
+      description: 아동 1명의 안전 판정 결과.
+    ClassroomContext:
+      properties:
+        id:
+          type: integer
+          title: Id
+          examples:
+          - 1
+        name:
+          type: string
+          title: Name
+          examples:
+          - 햇님반
+        age_group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Age Group
+          examples:
+          - 만 3세
+      type: object
+      required:
+      - id
+      - name
+      title: ClassroomContext
+    ClassroomResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+          examples:
+          - 1
+        facility_id:
+          type: integer
+          title: Facility Id
+          examples:
+          - 1
+        name:
+          type: string
+          title: Name
+          examples:
+          - 햇님반
+        age_group:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Age Group
+          examples:
+          - 만 3세
+      type: object
+      required:
+      - id
+      - facility_id
+      - name
+      title: ClassroomResponse
+      example:
+        age_group: 만 3세
+        facility_id: 1
+        id: 1
+        name: 햇님반
+    DashboardSummaryResponse:
+      properties:
+        recall_alerts:
+          items:
+            $ref: '#/components/schemas/RecallAlertResponse'
+          type: array
+          title: Recall Alerts
+        expiry_alerts:
+          items:
+            $ref: '#/components/schemas/ExpiryAlertResponse'
+          type: array
+          title: Expiry Alerts
+        attention_products:
+          items:
+            $ref: '#/components/schemas/AttentionProductResponse'
+          type: array
+          title: Attention Products
+      type: object
+      required:
+      - recall_alerts
+      - expiry_alerts
+      - attention_products
+      title: DashboardSummaryResponse
+      example:
+        attention_products:
+        - check_id: 35
+          children:
+          - child_id: 1
+            child_name: 강민준
+            status: FAIL
+            status_label: 사용 보류
+          - child_id: 2
+            child_name: 김서아
+            status: WARN
+            status_label: 주의 필요
+          overall_status: FAIL
+          product_id: 102
+          product_name: 밀크 프로틴 보습 물티슈
+          status_label: 사용 보류
+          summary: 사용 보류 1명, 주의 필요 1명
+        expiry_alerts:
+        - alert_type: EXPIRED
+          expiry_date: '2025-06-01'
+          message: 유통기한이 만료된 제품입니다.
+          product_id: 108
+          product_name: 유통기한 지난 물티슈
+          severity: HIGH
+        - alert_type: EXPIRING
+          expiry_date: '2026-06-30'
+          message: 30일 이내 유통기한이 만료되는 제품입니다.
+          product_id: 109
+          product_name: 임박한 베이비 로션
+          severity: MEDIUM
+        recall_alerts:
+        - action_guide: 해당 제품은 섭취를 중단하고 구입처 또는 판매처에 반품하세요.
+          category: 식품
+          id: 1
+          is_new: true
+          manufacturer: 주식회사 피비에이치
+          product_name: 마이디데이 브로멜라인
+          reason: 표시대상 알레르기 유발 원료성분(우유, 대두) 미표시
+          recall_date: '2026-04-23'
+          severity: HIGH
+        - action_guide: 해당 제품은 사용을 중단하고 판매처 또는 사업자 안내에 따라 교환·환불 절차를 확인하세요.
+          category: 유아용 섬유제품
+          id: 4
+          is_new: true
+          manufacturer: ㈜올포홈리빙
+          product_name: 올포홈 구르미 낮잠패드(쿠앤크)
+          reason: 폼알데하이드 기준치 초과
+          recall_date: '2026-05-21'
+          severity: HIGH
     DatabaseHealthResponse:
       properties:
         status:
@@ -157,6 +1270,68 @@ components:
       required:
       - error
       title: ErrorResponse
+    ExpiryAlertResponse:
+      properties:
+        product_id:
+          type: integer
+          title: Product Id
+        product_name:
+          type: string
+          title: Product Name
+        expiry_date:
+          type: string
+          format: date
+          title: Expiry Date
+        alert_type:
+          type: string
+          title: Alert Type
+        message:
+          type: string
+          title: Message
+        severity:
+          type: string
+          title: Severity
+      type: object
+      required:
+      - product_id
+      - product_name
+      - expiry_date
+      - alert_type
+      - message
+      - severity
+      title: ExpiryAlertResponse
+    FacilityContext:
+      properties:
+        id:
+          type: integer
+          title: Id
+          examples:
+          - 1
+        name:
+          type: string
+          title: Name
+          examples:
+          - 땅콩어린이집
+        facility_type:
+          type: string
+          title: Facility Type
+          examples:
+          - DAYCARE
+      type: object
+      required:
+      - id
+      - name
+      - facility_type
+      title: FacilityContext
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     HealthResponse:
       properties:
         status:
@@ -173,6 +1348,394 @@ components:
       example:
         message: Ddakkok API is running
         status: ok
+    KakaoLoginRequest:
+      properties:
+        code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Code
+          description: Kakao OAuth authorization code. Callback server setup 후 사용합니다.
+          examples:
+          - sample-kakao-authorization-code
+      type: object
+      title: KakaoLoginRequest
+      example:
+        code: sample-kakao-authorization-code
+    LoginRequest:
+      properties:
+        email:
+          type: string
+          title: Email
+          examples:
+          - teacher@ddakkok.com
+        password:
+          type: string
+          minLength: 1
+          title: Password
+          examples:
+          - ddakkok1234
+        login_method:
+          type: string
+          enum:
+          - FACILITY
+          - EMAIL
+          title: Login Method
+          default: EMAIL
+          examples:
+          - FACILITY
+      type: object
+      required:
+      - email
+      - password
+      title: LoginRequest
+      example:
+        email: teacher@ddakkok.com
+        login_method: FACILITY
+        password: ddakkok1234
+    MatchedRuleResponse:
+      properties:
+        rule_code:
+          type: string
+          title: Rule Code
+        status:
+          type: string
+          title: Status
+        matched_ingredient:
+          type: string
+          title: Matched Ingredient
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - rule_code
+      - status
+      - matched_ingredient
+      - reason
+      title: MatchedRuleResponse
+    MatchedRuleSummary:
+      properties:
+        rule_code:
+          type: string
+          title: Rule Code
+        status:
+          type: string
+          title: Status
+        matched_ingredient:
+          type: string
+          title: Matched Ingredient
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - rule_code
+      - status
+      - matched_ingredient
+      - reason
+      title: MatchedRuleSummary
+      description: 아동 1명에게 매칭된 규칙 1건 요약.
+    ProductCreateRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+          examples:
+          - A 브랜드 물티슈
+        category:
+          type: string
+          title: Category
+          examples:
+          - WET_TISSUE
+        manufacturer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Manufacturer
+          examples:
+          - A제조사
+        barcode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Barcode
+          examples:
+          - '880000000001'
+        expiry_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expiry Date
+          examples:
+          - '2027-03-15'
+        raw_ingredients_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Raw Ingredients Text
+          examples:
+          - 정제수, 글리세린, 카제인나트륨, 페녹시에탄올
+        ingredients:
+          items:
+            type: string
+          type: array
+          title: Ingredients
+          examples:
+          - - 정제수
+            - 글리세린
+            - 카제인나트륨
+            - 페녹시에탄올
+        normalized_ingredients:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Normalized Ingredients
+          examples:
+          - - 정제수
+            - 글리세린
+            - 카제인나트륨
+            - 페녹시에탄올
+        image_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Image Url
+        ocr_raw_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ocr Raw Text
+      type: object
+      required:
+      - name
+      - category
+      title: ProductCreateRequest
+    ProductLabelTextParseRequest:
+      properties:
+        text:
+          type: string
+          title: Text
+          examples:
+          - '제품명: 밀크 프로틴 보습 물티슈
+
+            제조사: 해커톤생활건강
+
+            성분: 정제수, 글리세린, 카제인Na, 페녹시에탄올
+
+            유통기한: 2027.08.31'
+        category:
+          type: string
+          title: Category
+          examples:
+          - WET_TISSUE
+      type: object
+      required:
+      - text
+      - category
+      title: ProductLabelTextParseRequest
+    ProductLabelTextParseResponse:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        category:
+          type: string
+          title: Category
+        manufacturer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Manufacturer
+        expiry_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expiry Date
+        raw_ingredients_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Raw Ingredients Text
+        ingredients:
+          items:
+            type: string
+          type: array
+          title: Ingredients
+        normalized_ingredients:
+          items:
+            type: string
+          type: array
+          title: Normalized Ingredients
+        ocr_raw_text:
+          type: string
+          title: Ocr Raw Text
+      type: object
+      required:
+      - category
+      - ocr_raw_text
+      title: ProductLabelTextParseResponse
+      example:
+        category: WET_TISSUE
+        expiry_date: '2027-08-31'
+        ingredients:
+        - 정제수
+        - 글리세린
+        - 카제인Na
+        - 페녹시에탄올
+        manufacturer: 해커톤생활건강
+        name: 밀크 프로틴 보습 물티슈
+        normalized_ingredients:
+        - 정제수
+        - 글리세린
+        - 카제인나트륨
+        - 페녹시에탄올
+        ocr_raw_text: '제품명: 밀크 프로틴 보습 물티슈
+
+          제조사: 해커톤생활건강
+
+          성분: 정제수, 글리세린, 카제인Na, 페녹시에탄올
+
+          유통기한: 2027.08.31'
+        raw_ingredients_text: 정제수, 글리세린, 카제인Na, 페녹시에탄올
+    ProductResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        facility_id:
+          type: integer
+          title: Facility Id
+        name:
+          type: string
+          title: Name
+        category:
+          type: string
+          title: Category
+        manufacturer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Manufacturer
+        barcode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Barcode
+        expiry_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expiry Date
+        raw_ingredients_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Raw Ingredients Text
+        ingredients:
+          items:
+            type: string
+          type: array
+          title: Ingredients
+        normalized_ingredients:
+          items:
+            type: string
+          type: array
+          title: Normalized Ingredients
+        image_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Image Url
+        ocr_raw_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ocr Raw Text
+        created_by_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Created By Id
+      type: object
+      required:
+      - id
+      - facility_id
+      - name
+      - category
+      title: ProductResponse
+      example:
+        barcode: '880000000001'
+        category: WET_TISSUE
+        created_by_id: 1
+        expiry_date: '2027-03-15'
+        facility_id: 1
+        id: 1
+        ingredients:
+        - 정제수
+        - 글리세린
+        - 카제인나트륨
+        - 페녹시에탄올
+        manufacturer: A제조사
+        name: A 브랜드 물티슈
+        normalized_ingredients:
+        - 정제수
+        - 글리세린
+        - 카제인나트륨
+        - 페녹시에탄올
+        raw_ingredients_text: 정제수, 글리세린, 카제인나트륨, 페녹시에탄올
+    RecallAlertResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        product_name:
+          type: string
+          title: Product Name
+        manufacturer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Manufacturer
+        category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category
+        recall_date:
+          type: string
+          format: date
+          title: Recall Date
+        reason:
+          type: string
+          title: Reason
+        action_guide:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Action Guide
+        is_new:
+          type: boolean
+          title: Is New
+        severity:
+          type: string
+          title: Severity
+      type: object
+      required:
+      - id
+      - product_name
+      - recall_date
+      - reason
+      - is_new
+      - severity
+      title: RecallAlertResponse
     RootResponse:
       properties:
         message:
@@ -194,3 +1757,522 @@ components:
         docs: /docs
         health: /api/health
         message: Ddakkok API
+    SafetyCardResponse:
+      properties:
+        check_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Check Id
+        product_name:
+          type: string
+          title: Product Name
+        overall_status:
+          type: string
+          title: Overall Status
+        pass_count:
+          type: integer
+          title: Pass Count
+          default: 0
+        warn_count:
+          type: integer
+          title: Warn Count
+          default: 0
+        fail_count:
+          type: integer
+          title: Fail Count
+          default: 0
+        expired_count:
+          type: integer
+          title: Expired Count
+          default: 0
+        unknown_count:
+          type: integer
+          title: Unknown Count
+          default: 0
+        child_results:
+          items:
+            $ref: '#/components/schemas/ChildSafetyResult'
+          type: array
+          title: Child Results
+        explanation:
+          type: string
+          title: Explanation
+        ocr_text:
+          type: string
+          title: Ocr Text
+      type: object
+      required:
+      - product_name
+      - overall_status
+      - child_results
+      - explanation
+      - ocr_text
+      title: SafetyCardResponse
+      description: "안전카드 API 전체 응답.\n\nAttributes:\n    check_id:       DB에 저장된 SafetyCheck\
+        \ ID. 데모 모드(GET /analyze/demo)는 None.\n    product_name:   NER로 추출된 제품명\n\
+        \    overall_status: 전체 판정 (PASS / WARN / FAIL / EXPIRED / UNKNOWN)\n    child_results:\
+        \  아동별 상세 판정\n    explanation:    교사용 설명 텍스트\n    ocr_text:       OCR 원문 (디버그·감사용)"
+    SafetyCheckChildResultResponse:
+      properties:
+        child_id:
+          type: integer
+          title: Child Id
+        child_name:
+          type: string
+          title: Child Name
+        status:
+          type: string
+          title: Status
+        status_label:
+          type: string
+          title: Status Label
+        matched_rules:
+          items:
+            $ref: '#/components/schemas/MatchedRuleResponse'
+          type: array
+          title: Matched Rules
+        matched_ingredients:
+          items:
+            type: string
+          type: array
+          title: Matched Ingredients
+        matched_rule_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Matched Rule Code
+        matched_profile:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Matched Profile
+        matched_ingredient:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Matched Ingredient
+        reason:
+          type: string
+          title: Reason
+        teacher_sentence:
+          type: string
+          title: Teacher Sentence
+      type: object
+      required:
+      - child_id
+      - child_name
+      - status
+      - status_label
+      - matched_rules
+      - reason
+      - teacher_sentence
+      title: SafetyCheckChildResultResponse
+    SafetyCheckCreateRequest:
+      properties:
+        product_id:
+          type: integer
+          title: Product Id
+          examples:
+          - 102
+        classroom_id:
+          type: integer
+          title: Classroom Id
+          examples:
+          - 1
+        child_ids:
+          items:
+            type: integer
+          type: array
+          minItems: 1
+          title: Child Ids
+          examples:
+          - - 1
+            - 3
+      type: object
+      required:
+      - product_id
+      - classroom_id
+      - child_ids
+      title: SafetyCheckCreateRequest
+    SafetyCheckDetailChildResultResponse:
+      properties:
+        child_id:
+          type: integer
+          title: Child Id
+        child_name:
+          type: string
+          title: Child Name
+        status:
+          type: string
+          title: Status
+        status_label:
+          type: string
+          title: Status Label
+        matched_ingredients:
+          items:
+            type: string
+          type: array
+          title: Matched Ingredients
+        matched_rule_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Matched Rule Code
+        matched_profile:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Matched Profile
+        matched_ingredient:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Matched Ingredient
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        teacher_sentence:
+          type: string
+          title: Teacher Sentence
+        explanation:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Explanation
+      type: object
+      required:
+      - child_id
+      - child_name
+      - status
+      - status_label
+      - teacher_sentence
+      title: SafetyCheckDetailChildResultResponse
+    SafetyCheckDetailResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        product:
+          $ref: '#/components/schemas/SafetyCheckProductResponse'
+        classroom_id:
+          type: integer
+          title: Classroom Id
+        summary:
+          $ref: '#/components/schemas/SafetyCheckSummaryResponse'
+        results:
+          items:
+            $ref: '#/components/schemas/SafetyCheckDetailChildResultResponse'
+          type: array
+          title: Results
+        overall_explanation:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Overall Explanation
+      type: object
+      required:
+      - id
+      - product
+      - classroom_id
+      - summary
+      - results
+      title: SafetyCheckDetailResponse
+    SafetyCheckListChildResponse:
+      properties:
+        child_id:
+          type: integer
+          title: Child Id
+        child_name:
+          type: string
+          title: Child Name
+        status:
+          type: string
+          title: Status
+        status_label:
+          type: string
+          title: Status Label
+      type: object
+      required:
+      - child_id
+      - child_name
+      - status
+      - status_label
+      title: SafetyCheckListChildResponse
+    SafetyCheckListItemResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        product:
+          $ref: '#/components/schemas/SafetyCheckListProductResponse'
+        classroom_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Classroom Id
+        overall_status:
+          type: string
+          title: Overall Status
+        pass_count:
+          type: integer
+          title: Pass Count
+        warn_count:
+          type: integer
+          title: Warn Count
+        fail_count:
+          type: integer
+          title: Fail Count
+        expired_count:
+          type: integer
+          title: Expired Count
+        unknown_count:
+          type: integer
+          title: Unknown Count
+        total_count:
+          type: integer
+          title: Total Count
+        children:
+          items:
+            $ref: '#/components/schemas/SafetyCheckListChildResponse'
+          type: array
+          title: Children
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - product
+      - overall_status
+      - pass_count
+      - warn_count
+      - fail_count
+      - expired_count
+      - unknown_count
+      - total_count
+      - children
+      - created_at
+      title: SafetyCheckListItemResponse
+    SafetyCheckListProductResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        category:
+          type: string
+          title: Category
+      type: object
+      required:
+      - id
+      - name
+      - category
+      title: SafetyCheckListProductResponse
+    SafetyCheckProductResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        category:
+          type: string
+          title: Category
+        manufacturer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Manufacturer
+        barcode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Barcode
+        expiry_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Expiry Date
+        ingredients:
+          items:
+            type: string
+          type: array
+          title: Ingredients
+        normalized_ingredients:
+          items:
+            type: string
+          type: array
+          title: Normalized Ingredients
+      type: object
+      required:
+      - id
+      - name
+      - category
+      title: SafetyCheckProductResponse
+    SafetyCheckResponse:
+      properties:
+        id:
+          type: integer
+          title: Id
+        product_id:
+          type: integer
+          title: Product Id
+        product_name:
+          type: string
+          title: Product Name
+        classroom_id:
+          type: integer
+          title: Classroom Id
+        overall_status:
+          type: string
+          title: Overall Status
+        pass_count:
+          type: integer
+          title: Pass Count
+        warn_count:
+          type: integer
+          title: Warn Count
+        fail_count:
+          type: integer
+          title: Fail Count
+        expired_count:
+          type: integer
+          title: Expired Count
+        unknown_count:
+          type: integer
+          title: Unknown Count
+        results:
+          items:
+            $ref: '#/components/schemas/SafetyCheckChildResultResponse'
+          type: array
+          title: Results
+      type: object
+      required:
+      - id
+      - product_id
+      - product_name
+      - classroom_id
+      - overall_status
+      - pass_count
+      - warn_count
+      - fail_count
+      - expired_count
+      - unknown_count
+      - results
+      title: SafetyCheckResponse
+    SafetyCheckSummaryResponse:
+      properties:
+        overall_status:
+          type: string
+          title: Overall Status
+        pass_count:
+          type: integer
+          title: Pass Count
+        warn_count:
+          type: integer
+          title: Warn Count
+        fail_count:
+          type: integer
+          title: Fail Count
+        expired_count:
+          type: integer
+          title: Expired Count
+        unknown_count:
+          type: integer
+          title: Unknown Count
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - overall_status
+      - pass_count
+      - warn_count
+      - fail_count
+      - expired_count
+      - unknown_count
+      - total_count
+      title: SafetyCheckSummaryResponse
+    UserContext:
+      properties:
+        id:
+          type: integer
+          title: Id
+          examples:
+          - 1
+        email:
+          type: string
+          title: Email
+          examples:
+          - teacher@ddakkok.com
+        name:
+          type: string
+          title: Name
+          examples:
+          - 김하늘
+        role:
+          type: string
+          title: Role
+          examples:
+          - TEACHER
+        facility:
+          $ref: '#/components/schemas/FacilityContext'
+        classroom:
+          anyOf:
+          - $ref: '#/components/schemas/ClassroomContext'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - email
+      - name
+      - role
+      - facility
+      title: UserContext
+      example:
+        classroom:
+          age_group: 만 3세
+          id: 1
+          name: 햇님반
+        email: teacher@ddakkok.com
+        facility:
+          facility_type: DAYCARE
+          id: 1
+          name: 땅콩어린이집
+        id: 1
+        name: 김하늘
+        role: TEACHER
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
