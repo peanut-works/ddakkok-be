@@ -10,7 +10,6 @@
 결과 이미지: test_results/tps_direction/  (한글 경로 → imencode+write_bytes로 저장)
 """
 
-import io
 import sys
 from pathlib import Path
 
