@@ -5,12 +5,80 @@
       "canonical_name": "카제인나트륨"
     },
     {
-      "alias": "우유단백",
+      "alias": "카제인",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "유제품",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "원유",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "분유",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "탈지분유",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "전지분유",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "혼합분유",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "유당",
       "canonical_name": "우유"
     },
     {
       "alias": "유청",
-      "canonical_name": "유청단백"
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "유청단백",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "우유단백",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "농축우유단백분말",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "버터",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "치즈",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "크림",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "요거트",
+      "canonical_name": "우유"
+    },
+    {
+      "alias": "알류",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "난류",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "달걀",
+      "canonical_name": "계란"
     },
     {
       "alias": "난백",
@@ -29,6 +97,18 @@
       "canonical_name": "계란"
     },
     {
+      "alias": "난백분말",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "난황분말",
+      "canonical_name": "계란"
+    },
+    {
+      "alias": "마요네즈",
+      "canonical_name": "계란"
+    },
+    {
       "alias": "피넛",
       "canonical_name": "땅콩"
     },
@@ -41,36 +121,216 @@
       "canonical_name": "땅콩"
     },
     {
+      "alias": "땅콩가루",
+      "canonical_name": "땅콩"
+    },
+    {
       "alias": "땅콩오일",
       "canonical_name": "땅콩"
+    },
+    {
+      "alias": "낙화생",
+      "canonical_name": "땅콩"
+    },
+    {
+      "alias": "콩",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "백태",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "검정콩",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "서리태",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "대두분말",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "콩가루",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "볶음대두분말",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "대두단백",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "분리대두단백",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "조직대두단백",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "두부",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "두유",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "된장",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "간장",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "대두유",
+      "canonical_name": "대두"
+    },
+    {
+      "alias": "밀가루",
+      "canonical_name": "밀"
+    },
+    {
+      "alias": "소맥",
+      "canonical_name": "밀"
+    },
+    {
+      "alias": "소맥분",
+      "canonical_name": "밀"
+    },
+    {
+      "alias": "강력분",
+      "canonical_name": "밀"
+    },
+    {
+      "alias": "중력분",
+      "canonical_name": "밀"
+    },
+    {
+      "alias": "박력분",
+      "canonical_name": "밀"
+    },
+    {
+      "alias": "글루텐",
+      "canonical_name": "밀"
+    },
+    {
+      "alias": "밀단백",
+      "canonical_name": "밀"
+    },
+    {
+      "alias": "통밀",
+      "canonical_name": "밀"
+    },
+    {
+      "alias": "빵가루",
+      "canonical_name": "밀"
+    },
+    {
+      "alias": "월넛",
+      "canonical_name": "호두"
+    },
+    {
+      "alias": "호두분태",
+      "canonical_name": "호두"
+    },
+    {
+      "alias": "호두분말",
+      "canonical_name": "호두"
+    },
+    {
+      "alias": "호두기름",
+      "canonical_name": "호두"
+    },
+    {
+      "alias": "잣가루",
+      "canonical_name": "잣"
+    },
+    {
+      "alias": "잣분말",
+      "canonical_name": "잣"
+    },
+    {
+      "alias": "잣기름",
+      "canonical_name": "잣"
+    },
+    {
+      "alias": "송자",
+      "canonical_name": "잣"
+    },
+    {
+      "alias": "pine nut",
+      "canonical_name": "잣"
     },
     {
       "alias": "알코올",
       "canonical_name": "에탄올"
     },
     {
-    "alias": "아몬드",
-    "canonical_name": "견과류"
+      "alias": "합성향료",
+      "canonical_name": "향료"
     },
     {
-      "alias": "호두",
-      "canonical_name": "견과류"
+      "alias": "레몬향",
+      "canonical_name": "향료"
     },
     {
-      "alias": "캐슈넛",
-      "canonical_name": "견과류"
+      "alias": "소듐 벤조에이트",
+      "canonical_name": "소듐벤조에이트"
     },
     {
-      "alias": "헤이즐넛",
-      "canonical_name": "견과류"
+      "alias": "돈육",
+      "canonical_name": "돼지고기"
     },
     {
-      "alias": "피스타치오",
-      "canonical_name": "견과류"
+      "alias": "포크",
+      "canonical_name": "돼지고기"
     },
     {
-      "alias": "마카다미아",
-      "canonical_name": "견과류"
+      "alias": "젤라틴",
+      "canonical_name": "돼지고기"
+    },
+    {
+      "alias": "소고기",
+      "canonical_name": "쇠고기"
+    },
+    {
+      "alias": "우육",
+      "canonical_name": "쇠고기"
+    },
+    {
+      "alias": "비프",
+      "canonical_name": "쇠고기"
+    },
+    {
+      "alias": "계육",
+      "canonical_name": "닭고기"
+    },
+    {
+      "alias": "치킨",
+      "canonical_name": "닭고기"
+    },
+    {
+      "alias": "새우젓",
+      "canonical_name": "새우"
+    },
+    {
+      "alias": "꽃게",
+      "canonical_name": "게"
+    },
+    {
+      "alias": "아황산염",
+      "canonical_name": "아황산류"
+    },
+    {
+      "alias": "이산화황",
+      "canonical_name": "아황산류"
     }
   ]
 }
