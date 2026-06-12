@@ -14,7 +14,6 @@ from app.core.database import get_db
 from app.core.exceptions import InvalidBarcodeError
 from app.models.product import Product
 from app.models.user import User
-from app.schemas.error import ErrorResponse
 from app.schemas.product import (
     EMPTY_BARCODE_ERROR_EXAMPLE,
     PRODUCT_LIST_RESPONSE_EXAMPLE,
@@ -182,14 +181,6 @@ FILTERED_PRODUCTS_RESPONSE_EXAMPLE = [
         "created_by_id": 1,
     }
 ]
-
-EMPTY_BARCODE_ERROR_EXAMPLE = {
-    "error": {
-        "code": "BAD_REQUEST",
-        "message": "Barcode must not be empty",
-        "details": None,
-    }
-}
 
 
 def get_current_user(
