@@ -67,7 +67,7 @@ async def check_1_2_3_chat(provider: GMSProvider, settings) -> bool:  # noqa: AN
         if code in (401, 403):
             print(f"  실패 — HTTP {code}: 인증 헤더 문제일 가능성. gms.py _build_headers 수정 필요")
         elif code == 404:
-            print(f"  실패 — HTTP 404: 경로 문제. gms.py _CHAT_PATH 수정 필요")
+            print("  실패 — HTTP 404: 경로 문제. gms.py _CHAT_PATH 수정 필요")
         else:
             print(f"  실패 — HTTP {code}")
         print(f"  응답 본문: {body}")

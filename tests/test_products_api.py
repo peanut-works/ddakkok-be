@@ -247,7 +247,7 @@ def test_list_products_does_not_return_other_facility_products() -> None:
         name="다른 시설 제품",
         category="ETC",
         manufacturer="테스트 제조사",
-        barcode="880100000101",
+        barcode="8801000001019",
         ingredients=[],
         normalized_ingredients=[],
     )
@@ -262,7 +262,7 @@ def test_list_products_does_not_return_other_facility_products() -> None:
         response = client.get(
             "/api/products",
             headers=AUTH_HEADERS,
-            params={"barcode": "880100000101"},
+            params={"barcode": "8801000001019"},
         )
 
         assert response.status_code == 200
