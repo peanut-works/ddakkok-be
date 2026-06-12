@@ -18,12 +18,14 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "세이프 데일리 핸드워시",
         "overall_status": "PASS",
-        "pass_count": 8,
+        "pass_count": 10,
         "warn_count": 0,
         "fail_count": 0,
         "expired_count": 0,
@@ -76,6 +78,18 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
           }
         ]
       }
@@ -98,13 +112,15 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "밀크 프로틴 보습 물티슈",
         "overall_status": "FAIL",
         "pass_count": 5,
-        "warn_count": 1,
+        "warn_count": 3,
         "fail_count": 2,
         "expired_count": 0,
         "unknown_count": 0,
@@ -155,9 +171,16 @@
           },
           {
             "child_id": 6,
-            "status": "PASS",
-            "matched_rules": [],
-            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+            "status": "WARN",
+            "matched_rules": [
+              {
+                "rule_code": "SKIN_ATOPY_001",
+                "status": "WARN",
+                "matched_ingredient": "페녹시에탄올",
+                "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
+              }
+            ],
+            "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
           },
           {
             "child_id": 7,
@@ -168,6 +191,12 @@
                 "status": "FAIL",
                 "matched_ingredient": "카제인나트륨",
                 "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
+              },
+              {
+                "rule_code": "SKIN_ATOPY_001",
+                "status": "WARN",
+                "matched_ingredient": "페녹시에탄올",
+                "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
               }
             ],
             "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
@@ -177,6 +206,25 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "WARN",
+            "matched_rules": [
+              {
+                "rule_code": "SKIN_SENSITIVE_001",
+                "status": "WARN",
+                "matched_ingredient": "페녹시에탄올",
+                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+              }
+            ],
+            "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
           }
         ]
       }
@@ -199,12 +247,14 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "에그 소프트 쿠키",
         "overall_status": "FAIL",
-        "pass_count": 7,
+        "pass_count": 9,
         "warn_count": 0,
         "fail_count": 1,
         "expired_count": 0,
@@ -232,12 +282,6 @@
             "child_id": 4,
             "status": "FAIL",
             "matched_rules": [
-              {
-                "rule_code": "ALLERGY_EGG_001",
-                "status": "FAIL",
-                "matched_ingredient": "계란",
-                "reason": "계란 알레르기 관련 성분이 포함되어 있습니다."
-              },
               {
                 "rule_code": "ALLERGY_EGG_001",
                 "status": "FAIL",
@@ -270,6 +314,18 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
           }
         ]
       }
@@ -292,14 +348,16 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "땅콩버터 크런치바",
         "overall_status": "FAIL",
-        "pass_count": 7,
+        "pass_count": 8,
         "warn_count": 0,
-        "fail_count": 1,
+        "fail_count": 2,
         "expired_count": 0,
         "unknown_count": 0,
         "child_results": [
@@ -338,18 +396,6 @@
                 "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다."
               },
               {
-                "rule_code": "ALLERGY_PEANUT_001",
-                "status": "FAIL",
-                "matched_ingredient": "땅콩",
-                "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다."
-              },
-              {
-                "rule_code": "ALLERGY_NUT_001",
-                "status": "FAIL",
-                "matched_ingredient": "견과류",
-                "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다."
-              },
-              {
                 "rule_code": "ALLERGY_NUT_001",
                 "status": "FAIL",
                 "matched_ingredient": "견과류",
@@ -375,6 +421,25 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "FAIL",
+            "matched_rules": [
+              {
+                "rule_code": "ALLERGY_NUT_001",
+                "status": "FAIL",
+                "matched_ingredient": "견과류",
+                "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다."
+              }
+            ],
+            "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다."
+          },
+          {
+            "child_id": 10,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
           }
         ]
       }
@@ -397,13 +462,15 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "향기 톡톡 키즈 로션",
         "overall_status": "WARN",
-        "pass_count": 5,
-        "warn_count": 3,
+        "pass_count": 6,
+        "warn_count": 4,
         "fail_count": 0,
         "expired_count": 0,
         "unknown_count": 0,
@@ -425,10 +492,10 @@
                 "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_SENSITIVE_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
@@ -462,10 +529,10 @@
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_ATOPY_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
@@ -481,10 +548,10 @@
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_ATOPY_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
@@ -494,6 +561,25 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "WARN",
+            "matched_rules": [
+              {
+                "rule_code": "SKIN_SENSITIVE_001",
+                "status": "WARN",
+                "matched_ingredient": "향료",
+                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+              }
+            ],
+            "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
           }
         ]
       }
@@ -516,13 +602,15 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "컬러 버블 클렌저",
         "overall_status": "WARN",
-        "pass_count": 6,
-        "warn_count": 2,
+        "pass_count": 7,
+        "warn_count": 3,
         "fail_count": 0,
         "expired_count": 0,
         "unknown_count": 0,
@@ -588,6 +676,25 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "WARN",
+            "matched_rules": [
+              {
+                "rule_code": "SENSITIVE_DIRECT",
+                "status": "WARN",
+                "matched_ingredient": "색소",
+                "reason": "아동 개인 주의 성분 '색소' 포함."
+              }
+            ],
+            "reason": "아동 개인 주의 성분 '색소' 포함."
           }
         ]
       }
@@ -610,13 +717,15 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "복합 주의 키즈 크림",
         "overall_status": "FAIL",
-        "pass_count": 4,
-        "warn_count": 2,
+        "pass_count": 5,
+        "warn_count": 3,
         "fail_count": 2,
         "expired_count": 0,
         "unknown_count": 0,
@@ -645,10 +754,10 @@
                 "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_SENSITIVE_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
@@ -682,10 +791,10 @@
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_ATOPY_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
@@ -707,10 +816,10 @@
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_ATOPY_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
@@ -720,6 +829,25 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "WARN",
+            "matched_rules": [
+              {
+                "rule_code": "SKIN_SENSITIVE_001",
+                "status": "WARN",
+                "matched_ingredient": "향료",
+                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+              }
+            ],
+            "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
           }
         ]
       }
@@ -742,7 +870,9 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "유통기한 지난 물티슈",
@@ -750,7 +880,7 @@
         "pass_count": 0,
         "warn_count": 0,
         "fail_count": 0,
-        "expired_count": 8,
+        "expired_count": 10,
         "unknown_count": 0,
         "child_results": [
           {
@@ -761,10 +891,10 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           },
           {
             "child_id": 2,
@@ -774,10 +904,10 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           },
           {
             "child_id": 3,
@@ -787,10 +917,10 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           },
           {
             "child_id": 4,
@@ -800,10 +930,10 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           },
           {
             "child_id": 5,
@@ -813,10 +943,10 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           },
           {
             "child_id": 6,
@@ -826,10 +956,10 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           },
           {
             "child_id": 7,
@@ -839,10 +969,10 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           },
           {
             "child_id": 8,
@@ -852,10 +982,36 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+          },
+          {
+            "child_id": 9,
+            "status": "EXPIRED",
+            "matched_rules": [
+              {
+                "rule_code": "EXPIRY_DATE_001",
+                "status": "EXPIRED",
+                "matched_ingredient": "",
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+              }
+            ],
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+          },
+          {
+            "child_id": 10,
+            "status": "EXPIRED",
+            "matched_rules": [
+              {
+                "rule_code": "EXPIRY_DATE_001",
+                "status": "EXPIRED",
+                "matched_ingredient": "",
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+              }
+            ],
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           }
         ]
       }
@@ -878,7 +1034,9 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "성분표 훼손 제품",
@@ -887,7 +1045,7 @@
         "warn_count": 0,
         "fail_count": 0,
         "expired_count": 0,
-        "unknown_count": 8,
+        "unknown_count": 10,
         "child_results": [
           {
             "child_id": 1,
@@ -982,6 +1140,32 @@
           },
           {
             "child_id": 8,
+            "status": "UNKNOWN",
+            "matched_rules": [
+              {
+                "rule_code": "OCR_UNKNOWN_001",
+                "status": "UNKNOWN",
+                "matched_ingredient": "",
+                "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다."
+              }
+            ],
+            "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다."
+          },
+          {
+            "child_id": 9,
+            "status": "UNKNOWN",
+            "matched_rules": [
+              {
+                "rule_code": "OCR_UNKNOWN_001",
+                "status": "UNKNOWN",
+                "matched_ingredient": "",
+                "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다."
+              }
+            ],
+            "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다."
+          },
+          {
+            "child_id": 10,
             "status": "UNKNOWN",
             "matched_rules": [
               {
@@ -1014,12 +1198,14 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "무가당 그릭 요거트",
         "overall_status": "FAIL",
-        "pass_count": 6,
+        "pass_count": 8,
         "warn_count": 0,
         "fail_count": 2,
         "expired_count": 0,
@@ -1083,6 +1269,18 @@
           },
           {
             "child_id": 8,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
@@ -1108,12 +1306,14 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "고소한인절미과자",
         "overall_status": "FAIL",
-        "pass_count": 6,
+        "pass_count": 8,
         "warn_count": 0,
         "fail_count": 2,
         "expired_count": 0,
@@ -1127,12 +1327,6 @@
                 "rule_code": "ALLERGY_MILK_001",
                 "status": "FAIL",
                 "matched_ingredient": "우유",
-                "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
-              },
-              {
-                "rule_code": "ALLERGY_MILK_001",
-                "status": "FAIL",
-                "matched_ingredient": "탈지분유",
                 "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
               }
             ],
@@ -1177,18 +1371,24 @@
                 "status": "FAIL",
                 "matched_ingredient": "우유",
                 "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
-              },
-              {
-                "rule_code": "ALLERGY_MILK_001",
-                "status": "FAIL",
-                "matched_ingredient": "탈지분유",
-                "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
               }
             ],
             "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
           },
           {
             "child_id": 8,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
@@ -1214,13 +1414,15 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "미소지움물티슈",
         "overall_status": "WARN",
-        "pass_count": 5,
-        "warn_count": 3,
+        "pass_count": 6,
+        "warn_count": 4,
         "fail_count": 0,
         "expired_count": 0,
         "unknown_count": 0,
@@ -1293,6 +1495,25 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "WARN",
+            "matched_rules": [
+              {
+                "rule_code": "SKIN_SENSITIVE_001",
+                "status": "WARN",
+                "matched_ingredient": "합성향료",
+                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+              }
+            ],
+            "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
           }
         ]
       }
@@ -1315,13 +1536,15 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "식기세척기 린스",
         "overall_status": "WARN",
-        "pass_count": 5,
-        "warn_count": 3,
+        "pass_count": 6,
+        "warn_count": 4,
         "fail_count": 0,
         "expired_count": 0,
         "unknown_count": 0,
@@ -1343,10 +1566,10 @@
                 "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_SENSITIVE_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
@@ -1380,10 +1603,10 @@
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_ATOPY_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
@@ -1399,10 +1622,10 @@
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_ATOPY_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
@@ -1412,6 +1635,25 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "WARN",
+            "matched_rules": [
+              {
+                "rule_code": "SKIN_SENSITIVE_001",
+                "status": "WARN",
+                "matched_ingredient": "향료",
+                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+              }
+            ],
+            "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
           }
         ]
       }
@@ -1434,12 +1676,14 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
       "expected_report": {
         "product_name": "종이컵",
         "overall_status": "PASS",
-        "pass_count": 8,
+        "pass_count": 10,
         "warn_count": 0,
         "fail_count": 0,
         "expired_count": 0,
@@ -1492,6 +1736,126 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          }
+        ]
+      }
+    },
+    {
+      "id": 115,
+      "scenario_code": "DEMO_PRODUCT_115_WARN",
+      "title": "에끌라도톰한엠보싱물티슈 - 민감성 피부 주의 시나리오",
+      "description": "소듐벤조에이트로 민감성 피부 WARN 확인",
+      "facility_id": 1,
+      "product_id": 115,
+      "ocr_result_id": 15,
+      "input_type": "OCR_RESULT",
+      "target_scope": "FACILITY_ALL_CHILDREN",
+      "target_child_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "expected_report": {
+        "product_name": "에끌라도톰한엠보싱물티슈",
+        "overall_status": "WARN",
+        "pass_count": 8,
+        "warn_count": 2,
+        "fail_count": 0,
+        "expired_count": 0,
+        "unknown_count": 0,
+        "child_results": [
+          {
+            "child_id": 1,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 2,
+            "status": "WARN",
+            "matched_rules": [
+              {
+                "rule_code": "SKIN_SENSITIVE_001",
+                "status": "WARN",
+                "matched_ingredient": "소듐벤조에이트",
+                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+              }
+            ],
+            "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+          },
+          {
+            "child_id": 3,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 4,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 5,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 6,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 7,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 8,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "WARN",
+            "matched_rules": [
+              {
+                "rule_code": "SKIN_SENSITIVE_001",
+                "status": "WARN",
+                "matched_ingredient": "소듐벤조에이트",
+                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+              }
+            ],
+            "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
           }
         ]
       }
@@ -1508,7 +1872,7 @@
       "expected_report": {
         "product_name": "밀크 프로틴 보습 물티슈",
         "overall_status": "FAIL",
-        "pass_count": 2,
+        "pass_count": 3,
         "warn_count": 1,
         "fail_count": 1,
         "expired_count": 0,
@@ -1551,6 +1915,12 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
           }
         ]
       }
@@ -1565,7 +1935,7 @@
       "expected_report": {
         "product_name": "에그 소프트 쿠키",
         "overall_status": "FAIL",
-        "pass_count": 3,
+        "pass_count": 4,
         "warn_count": 0,
         "fail_count": 1,
         "expired_count": 0,
@@ -1598,15 +1968,15 @@
                 "status": "FAIL",
                 "matched_ingredient": "계란",
                 "reason": "계란 알레르기 관련 성분이 포함되어 있습니다."
-              },
-              {
-                "rule_code": "ALLERGY_EGG_001",
-                "status": "FAIL",
-                "matched_ingredient": "계란",
-                "reason": "계란 알레르기 관련 성분이 포함되어 있습니다."
               }
             ],
             "reason": "계란 알레르기 관련 성분이 포함되어 있습니다."
+          },
+          {
+            "child_id": 9,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
           }
         ]
       }
@@ -1622,7 +1992,7 @@
         "product_name": "향기 톡톡 키즈 로션",
         "overall_status": "WARN",
         "pass_count": 2,
-        "warn_count": 2,
+        "warn_count": 3,
         "fail_count": 0,
         "expired_count": 0,
         "unknown_count": 0,
@@ -1644,10 +2014,10 @@
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_ATOPY_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
@@ -1663,10 +2033,10 @@
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
               },
               {
-                "rule_code": "SKIN_ATOPY_001",
+                "rule_code": "SENSITIVE_DIRECT",
                 "status": "WARN",
                 "matched_ingredient": "에탄올",
-                "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
+                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
@@ -1676,6 +2046,19 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "WARN",
+            "matched_rules": [
+              {
+                "rule_code": "SKIN_SENSITIVE_001",
+                "status": "WARN",
+                "matched_ingredient": "향료",
+                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
+              }
+            ],
+            "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
           }
         ]
       }
@@ -1690,7 +2073,7 @@
       "expected_report": {
         "product_name": "땅콩버터 크런치바",
         "overall_status": "FAIL",
-        "pass_count": 3,
+        "pass_count": 4,
         "warn_count": 0,
         "fail_count": 1,
         "expired_count": 0,
@@ -1705,18 +2088,6 @@
                 "status": "FAIL",
                 "matched_ingredient": "땅콩",
                 "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다."
-              },
-              {
-                "rule_code": "ALLERGY_PEANUT_001",
-                "status": "FAIL",
-                "matched_ingredient": "땅콩",
-                "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다."
-              },
-              {
-                "rule_code": "ALLERGY_NUT_001",
-                "status": "FAIL",
-                "matched_ingredient": "견과류",
-                "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다."
               },
               {
                 "rule_code": "ALLERGY_NUT_001",
@@ -1744,6 +2115,12 @@
             "status": "PASS",
             "matched_rules": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
+          },
+          {
+            "child_id": 10,
+            "status": "PASS",
+            "matched_rules": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음"
           }
         ]
       }
@@ -1761,7 +2138,7 @@
         "pass_count": 0,
         "warn_count": 0,
         "fail_count": 0,
-        "expired_count": 4,
+        "expired_count": 5,
         "unknown_count": 0,
         "child_results": [
           {
@@ -1772,10 +2149,10 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           },
           {
             "child_id": 2,
@@ -1785,10 +2162,10 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           },
           {
             "child_id": 3,
@@ -1798,10 +2175,10 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           },
           {
             "child_id": 4,
@@ -1811,10 +2188,23 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
               }
             ],
-            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+          },
+          {
+            "child_id": 9,
+            "status": "EXPIRED",
+            "matched_rules": [
+              {
+                "rule_code": "EXPIRY_DATE_001",
+                "status": "EXPIRED",
+                "matched_ingredient": "",
+                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+              }
+            ],
+            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
           }
         ]
       }

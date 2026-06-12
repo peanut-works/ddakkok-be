@@ -450,6 +450,48 @@
       "needs_manual_review": false,
       "notes": [],
       "created_at": "2026-06-10T09:00:00+09:00"
+    },
+      {
+      "id": 15,
+      "product_id": 115,
+      "facility_id": 1,
+      "ocr_source_type": "PRODUCT_LABEL_IMAGE",
+      "image_file_name": "ocr_product_115_label.jpg",
+      "ocr_status": "SUCCESS",
+      "confidence": 0.93,
+      "detected_product_name": "에끌라도톰한엠보싱물티슈",
+      "detected_barcode": "8808739000108",
+      "raw_text": "정제수, 알로에베라잎추출물, 케모마일꽃추출물, 부틸렌글라이콜, 소듐바이카보네이트, 에틸헥실글리세린, 카프릴릴글라이콜, 폴리솔베이트20, 소듐벤조에이트, 시트릭애씨드",
+      "extracted_ingredients_text": "정제수, 알로에베라잎추출물, 케모마일꽃추출물, 부틸렌글라이콜, 소듐바이카보네이트, 에틸헥실글리세린, 카프릴릴글라이콜, 폴리솔베이트20, 소듐벤조에이트, 시트릭애씨드",
+      "extracted_ingredients": [
+        "정제수",
+        "알로에베라잎추출물",
+        "케모마일꽃추출물",
+        "부틸렌글라이콜",
+        "소듐바이카보네이트",
+        "에틸헥실글리세린",
+        "카프릴릴글라이콜",
+        "폴리솔베이트20",
+        "소듐벤조에이트",
+        "시트릭애씨드"
+      ],
+      "normalized_ingredients": [
+        "정제수",
+        "알로에베라잎추출물",
+        "케모마일꽃추출물",
+        "부틸렌글라이콜",
+        "소듐바이카보네이트",
+        "에틸헥실글리세린",
+        "카프릴릴글라이콜",
+        "폴리솔베이트20",
+        "소듐벤조에이트",
+        "시트릭애씨드"
+      ],
+      "parsing_status": "SUCCESS",
+      "failure_reason": null,
+      "needs_manual_review": false,
+      "notes": [],
+      "created_at": "2026-06-11T15:28:50+09:00"
     }
   ]
 }
