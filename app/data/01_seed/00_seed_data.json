@@ -1,12 +1,12 @@
 {
   "meta": {
     "dataset_name": "child_product_safety_demo_seed",
-    "dataset_version": "0.1.0",
-    "created_at": "2026-06-09",
+    "dataset_version": "0.2.0",
+    "created_at": "2026-06-12",
     "language": "ko-KR",
     "data_type": "MOCK",
     "purpose": "해커톤 시연용 영유아 제품 안전성 룰체커 시드 데이터",
-    "description": "시설, 반, 아동 건강 프로필, 제품 성분, 성분 동의어, 안전 룰셋을 이용해 아동별 제품 사용 가능 여부를 PASS/WARN/FAIL/EXPIRED/UNKNOWN 상태로 확인하기 위한 목업 데이터입니다.",
+    "description": "시설, 반, 아동 건강 프로필, 제품 성분, 성분 동의어, 안전 룰셋 데이터를 묶어 아동별 제품 사용 가능 여부를 PASS/WARN/FAIL/EXPIRED/UNKNOWN 상태로 확인하기 위한 목업 데이터입니다.",
     "service_context": {
       "target_user": "어린이집, 유치원, 보육시설 교사 및 관리자",
       "main_flow": [
@@ -37,15 +37,21 @@
       ],
       "product_demo_cases": {
         "PASS": [
-          101
+          101,
+          114
         ],
         "WARN": [
           105,
-          106
+          106,
+          112,
+          113,
+          115
         ],
         "FAIL": [
           103,
-          104
+          104,
+          110,
+          111
         ],
         "FAIL_AND_WARN": [
           102,
@@ -62,9 +68,9 @@
     "counts": {
       "facilities": 1,
       "classrooms": 2,
-      "children": 8,
-      "child_health_profiles": 8,
-      "products": 9,
+      "children": 10,
+      "child_health_profiles": 10,
+      "products": 15,
       "ingredient_aliases": 18,
       "safety_rules": 8
     },
@@ -80,16 +86,18 @@
         "DAYCARE"
       ],
       "product_category": [
-        "WET_TISSUE",
-        "LOTION",
         "CLEANSER",
+        "ETC",
         "FOOD",
-        "ETC"
+        "LOTION",
+        "PAPER_CUP",
+        "WET_PAPER",
+        "WET_TISSUE"
       ],
       "target_type": [
         "ALLERGY",
-        "SKIN",
         "EXPIRY",
+        "SKIN",
         "UNKNOWN"
       ],
       "severity": [
@@ -215,6 +223,26 @@
       "gender": "F",
       "memo": "특이사항 없음",
       "is_active": true
+    },
+    {
+      "id": 9,
+      "facility_id": 1,
+      "classroom_id": 1,
+      "name": "서이준",
+      "birth_date": "2022-05-09",
+      "gender": "M",
+      "memo": "견과류 알레르기 주의",
+      "is_active": true
+    },
+    {
+      "id": 10,
+      "facility_id": 1,
+      "classroom_id": 2,
+      "name": "유나은",
+      "birth_date": "2021-08-17",
+      "gender": "F",
+      "memo": "민감성 피부 및 향료 주의",
+      "is_active": true
     }
   ],
   "child_health_profiles": [
@@ -300,6 +328,27 @@
       "skin_conditions": [],
       "sensitive_ingredients": [],
       "notes": "특이사항 없음"
+    },
+    {
+      "child_id": 9,
+      "allergies": [
+        "견과류"
+      ],
+      "skin_conditions": [],
+      "sensitive_ingredients": [],
+      "notes": "아몬드, 호두 등 견과류 성분 포함 식품 주의"
+    },
+    {
+      "child_id": 10,
+      "allergies": [],
+      "skin_conditions": [
+        "민감성 피부"
+      ],
+      "sensitive_ingredients": [
+        "향료",
+        "색소"
+      ],
+      "notes": "향료와 색소 포함 제품 사용 시 피부 반응 확인 필요"
     }
   ],
   "products": [
@@ -452,6 +501,119 @@
       "raw_ingredients_text": "성분표 훼손으로 판독 불가",
       "ingredients": [],
       "demo_purpose": "OCR/파싱 실패 시 UNKNOWN 확인. 백엔드가 ingredients empty 또는 OCR status failed를 UNKNOWN으로 처리해야 함"
+    },
+    {
+      "id": 110,
+      "facility_id": 1,
+      "name": "무가당 그릭 요거트",
+      "category": "FOOD",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000110",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "원유, 정제수, 혼합분유, 농축우유단백분말, 변성전분, 젤라틴",
+      "ingredients": [
+        "원유",
+        "정제수",
+        "혼합분유",
+        "농축우유단백분말",
+        "변성전분",
+        "젤라틴"
+      ]
+    },
+    {
+      "id": 111,
+      "facility_id": 1,
+      "name": "고소한인절미과자",
+      "category": "FOOD",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000111",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "쌀가루(백미/국내산) 48.55%, 팜올레인유(말레이시아산), 인절미맛시즈닝JM-0920{백설탕, 볶음대두분말(미국산) 38%, 포도당, 유당(우유/미국산), 탈지분유(우유/미국산)} 19%, 백태분말(국내산) 5.78%, 옥수수가루(콘그리스5호/호주산), 탄산칼슘",
+      "ingredients": [
+        "쌀가루",
+        "팜올레인유",
+        "백설탕",
+        "볶음대두분말",
+        "포도당",
+        "유당",
+        "우유",
+        "탈지분유",
+        "백태분말",
+        "옥수수가루",
+        "탄산칼슘"
+      ]
+    },
+    {
+      "id": 112,
+      "facility_id": 1,
+      "name": "미소지움물티슈",
+      "category": "WET_TISSUE",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000112",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "소듐벤조에이트, 라우릴피리디늄클로라이드, 합성향료(Levulinic acid), 정제수",
+      "ingredients": [
+        "소듐벤조에이트",
+        "라우릴피리디늄클로라이드",
+        "합성향료",
+        "Levulinic acid",
+        "정제수"
+      ]
+    },
+    {
+      "id": 113,
+      "facility_id": 1,
+      "name": "식기세척기 린스",
+      "category": "CLEANSER",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000113",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "레몬향, (에틸렌-프로필렌)폴리알킬렌글리콜, 구연산, 에탄올, 키실렌설폰산나트륨, 정제수",
+      "ingredients": [
+        "레몬향",
+        "향료",
+        "(에틸렌-프로필렌)폴리알킬렌글리콜",
+        "구연산",
+        "에탄올",
+        "키실렌설폰산나트륨",
+        "정제수"
+      ]
+    },
+    {
+      "id": 114,
+      "facility_id": 1,
+      "name": "종이컵",
+      "category": "PAPER_CUP",
+      "manufacturer": "해커톤생활건강",
+      "barcode": "880100000114",
+      "expiry_date": "2027-12-31",
+      "raw_ingredients_text": "종이제, 폴리에틸렌",
+      "ingredients": [
+        "종이제",
+        "폴리에틸렌"
+      ]
+    },
+    {
+      "id": 115,
+      "facility_id": 1,
+      "name": "에끌라도톰한엠보싱물티슈",
+      "category": "WET_PAPER",
+      "manufacturer": "(주)제이트로닉스",
+      "barcode": "8808739000108",
+      "expiry_date": "2028-05-28",
+      "raw_ingredients_text": "정제수, 알로에베라잎추출물, 케모마일꽃추출물, 부틸렌글라이콜, 소듐바이카보네이트, 에틸헥실글리세린, 카프릴릴글라이콜, 폴리솔베이트20, 소듐벤조에이트, 시트릭애씨드",
+      "ingredients": [
+        "정제수",
+        "알로에베라잎추출물",
+        "케모마일꽃추출물",
+        "부틸렌글라이콜",
+        "소듐바이카보네이트",
+        "에틸헥실글리세린",
+        "카프릴릴글라이콜",
+        "폴리솔베이트20",
+        "소듐벤조에이트",
+        "시트릭애씨드"
+      ]
     }
   ],
   "ingredient_aliases": [
@@ -504,8 +666,8 @@
       "canonical_name": "에탄올"
     },
     {
-    "alias": "아몬드",
-    "canonical_name": "견과류"
+      "alias": "아몬드",
+      "canonical_name": "견과류"
     },
     {
       "alias": "호두",

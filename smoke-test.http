@@ -1,0 +1,111 @@
+### 딱콕 백엔드 smoke test (VS Code REST Client 익스텐션용)
+### 사용법: 각 요청 위의 "Send Request" 클릭. 위에서부터 순서대로 실행 권장.
+### 인증 토큰: mock-token:user:1 (seed의 teacher@ddakkok.com 계정)
+
+@baseUrl = http://localhost:8000
+@token = mock-token:user:1
+
+###############################################
+# 1. Health check (인증 불필요)
+###############################################
+
+### API 헬스
+GET {{baseUrl}}/api/health
+
+### DB 연결 헬스
+GET {{baseUrl}}/api/health/db
+
+###############################################
+# 2. 제품 조회
+###############################################
+
+### 제품 목록 (시설 기준)
+GET {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
+
+### 바코드로 제품 조회 (102 밀크 프로틴 물티슈)
+GET {{baseUrl}}/api/products?barcode=8801000001026
+Authorization: Bearer {{token}}
+
+### 제품 상세 (id=102)
+GET {{baseUrl}}/api/products/102
+Authorization: Bearer {{token}}
+
+###############################################
+# 3. 반별 아동 목록
+###############################################
+
+### 햇님반(1) 아동 목록
+GET {{baseUrl}}/api/classrooms/1/children
+Authorization: Bearer {{token}}
+
+###############################################
+# 4. 라벨 텍스트 파싱
+#    주의: 현재 AI_PROVIDER=openai → 실제 OpenAI 호출(비용/네트워크 발생)
+#    regex 파싱만 보려면 .env에서 AI_PROVIDER=mock 으로 두고 컨테이너 재기동
+###############################################
+
+### OCR text → 제품 정보 구조화
+POST {{baseUrl}}/api/products/parse-label-text
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "text": "제품명: 밀크 프로틴 보습 물티슈\n제조사: 해커톤생활건강\n성분: 정제수, 글리세린, 카제인Na, 페녹시에탄올\n유통기한: 2027.08.31",
+  "category": "WET_TISSUE"
+}
+
+###############################################
+# 5. 제품 등록 (신규 생성 테스트)
+###############################################
+
+### 제품 저장
+POST {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "smoke test 물티슈",
+  "category": "WET_TISSUE",
+  "manufacturer": "테스트제조사",
+  "barcode": "8809999999999",
+  "expiry_date": "2027-12-31",
+  "raw_ingredients_text": "정제수, 글리세린, 카제인나트륨, 페녹시에탄올",
+  "ingredients": ["정제수", "글리세린", "카제인나트륨", "페녹시에탄올"],
+  "ocr_raw_text": null
+}
+
+###############################################
+# 6. 안전 검사 (핵심: RuleChecker, 외부 API 미사용)
+#    product 102(우유 단백 포함) x 햇님반 아동 1(우유 알레르기), 2(민감성 피부)
+#    기대: child 1 FAIL, child 2 WARN
+###############################################
+
+### 안전 검사 생성  --- 이 응답의 id가 아래 요청들에 자동 사용됨
+# @name createCheck
+POST {{baseUrl}}/api/safety-checks
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "product_id": 102,
+  "classroom_id": 1,
+  "child_ids": [1, 2]
+}
+
+### 안전 검사 기록 목록 (햇님반)
+GET {{baseUrl}}/api/safety-checks?classroom_id=1&limit=10
+Authorization: Bearer {{token}}
+
+### 안전 검사 상세 (위 생성 응답의 id 자동 참조)
+GET {{baseUrl}}/api/safety-checks/{{createCheck.response.body.id}}
+Authorization: Bearer {{token}}
+
+###############################################
+# 7. 교사용 설명 생성
+#    주의: AI_PROVIDER=openai → 실제 OpenAI 호출(비용/네트워크 발생)
+###############################################
+
+### 저장된 검사 결과에 대한 설명 생성
+POST {{baseUrl}}/api/safety-checks/{{createCheck.response.body.id}}/explanations
+Authorization: Bearer {{token}}
