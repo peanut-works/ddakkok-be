@@ -13,7 +13,7 @@
 ## AI 파이프라인 컴포넌트
 
 **OCR (Optical Character Recognition)**
-제품 라벨 이미지에서 텍스트를 추출하는 단계. ML Kit(온디바이스 1차) → 이미지 보정 5계층 → CLOVA OCR(서버 2차) 순으로 처리.
+제품 라벨 이미지에서 텍스트를 추출하는 단계. ML Kit(온디바이스 1차) → 이미지 보정 4계층 → CLOVA OCR(서버 2차) 순으로 처리.
 
 **NER (Named Entity Recognition) / 구조화 파싱**
 OCR로 추출된 텍스트를 `{product, ingredient[], expiry, maker}` JSON으로 구조화하는 단계. GPT-4o-mini Function Calling 사용.
