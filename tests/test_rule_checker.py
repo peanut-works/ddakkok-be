@@ -395,3 +395,20 @@ def test_negation_prefix_not_matched(checker: RuleChecker) -> None:
     report = checker.check(ner, [CHILD_SENSITIVE_SKIN], today=TODAY)
 
     assert report.overall_status == CheckStatus.PASS
+
+
+# ── 12. 출처(source_name) 노출 ──────────────────────────────────────────────────
+
+def test_matched_rule_includes_source_name(checker: RuleChecker) -> None:
+    """매칭된 규칙에 출처(source_name)가 함께 실린다."""
+    ner = NERResult(
+        product="밀크 물티슈",
+        ingredient=["정제수", "카제인나트륨"],
+        expiry="2027-12-31",
+    )
+    report = checker.check(ner, [CHILD_MILK_ALLERGY], today=TODAY)
+
+    milk_rule = next(
+        r for r in report.child_results[0].matched_rules if r.rule_code == "ALLERGY_MILK_001"
+    )
+    assert milk_rule.source_name == "식품의약품안전처 알레르기 유발물질 표시대상"
