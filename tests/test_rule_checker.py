@@ -141,10 +141,14 @@ def test_fail_peanut_allergy(checker: RuleChecker) -> None:
 # ── 3. WARN: 민감성 피부 성분 매칭 ──────────────────────────────────────────────
 
 def test_warn_sensitive_skin(checker: RuleChecker) -> None:
-    """향료/에탄올 포함 로션 → 민감성 피부 아동 WARN."""
+    """아동 개인 민감 성분(페녹시에탄올) 포함 로션 → 해당 아동 WARN.
+
+    safety_rules가 알레르기 22종 룰셋으로 재구성되며 피부 조건 규칙은 제거됨.
+    민감성 피부 아동의 주의는 아동별 sensitive_ingredients 직접 매칭으로 처리된다.
+    """
     ner = NERResult(
         product="향기 톡톡 키즈 로션",
-        ingredient=["정제수", "글리세린", "향료", "에탄올"],
+        ingredient=["정제수", "글리세린", "향료", "페녹시에탄올"],
         expiry="2027-11-30",
     )
     report = checker.check(ner, [CHILD_SENSITIVE_SKIN], today=TODAY)
@@ -153,7 +157,7 @@ def test_warn_sensitive_skin(checker: RuleChecker) -> None:
     assert report.warn_count == 1
     result = report.child_results[0]
     assert result.status == CheckStatus.WARN
-    assert any(r.rule_code == "SKIN_SENSITIVE_001" for r in result.matched_rules)
+    assert any(r.matched_ingredient == "페녹시에탄올" for r in result.matched_rules)
 
 
 def test_warn_atopy(checker: RuleChecker) -> None:

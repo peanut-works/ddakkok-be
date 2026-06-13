@@ -46,3 +46,6 @@ harness-starter-kit/
 # Local OCR/LLM test artifacts
 test_images/
 test_results/
+
+# Local REST Client smoke test (로컬 전용, 커밋 제외)
+smoke-test.http

@@ -19,6 +19,7 @@ from app.models.knowledge_chunk import KnowledgeChunk
 logger = logging.getLogger(__name__)
 
 _BATCH_SIZE = 50  # 임베딩 API 단일 호출당 최대 텍스트 수
+_MAX_COSINE_DISTANCE = 0.6  # 코사인 거리(0=동일, 2=정반대). 이 값보다 먼 청크는 관련성 낮음으로 제외.
 
 
 class KnowledgeLoader:
@@ -82,16 +83,19 @@ class KnowledgeLoader:
         query: str,
         top_k: int = 5,
         category: str | None = None,
+        max_distance: float = _MAX_COSINE_DISTANCE,
     ) -> list[KnowledgeChunk]:
         """쿼리 텍스트와 코사인 유사도가 높은 청크를 top_k개 반환한다.
 
         Args:
-            query:    검색 쿼리 (성분명, 규칙 설명 등)
-            top_k:    반환할 최대 청크 수
-            category: 지정 시 해당 카테고리로 필터링
+            query:        검색 쿼리 (성분명, 규칙 설명 등)
+            top_k:        반환할 최대 청크 수
+            category:     지정 시 해당 카테고리로 필터링
+            max_distance: 코사인 거리 임계값. 이보다 먼(=관련성 낮은) 청크는 제외한다.
+                          관련 청크가 없으면 빈 리스트를 반환해 LLM에 노이즈가 주입되지 않게 한다.
 
         Returns:
-            KnowledgeChunk 목록 (유사도 내림차순)
+            KnowledgeChunk 목록 (유사도 내림차순, max_distance 이내)
         """
         query_vectors = await self._embed.embed([query])
         if not query_vectors or len(query_vectors[0]) != EMBEDDING_DIM:
@@ -99,10 +103,11 @@ class KnowledgeLoader:
             return []
 
         query_vec = query_vectors[0]
+        distance = KnowledgeChunk.embedding.cosine_distance(query_vec)
 
         stmt = select(KnowledgeChunk).where(KnowledgeChunk.embedding.isnot(None))
         if category:
             stmt = stmt.where(KnowledgeChunk.category == category)
-        stmt = stmt.order_by(KnowledgeChunk.embedding.cosine_distance(query_vec)).limit(top_k)
+        stmt = stmt.where(distance <= max_distance).order_by(distance).limit(top_k)
 
         return list(self._db.scalars(stmt).all())
