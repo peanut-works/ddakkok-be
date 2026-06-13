@@ -14,11 +14,13 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
+from collections import OrderedDict
 from functools import lru_cache
 
 from fastapi import Depends
 from openai import AsyncOpenAI
 
+from app.ai._retry import retry_async
 from app.core.config import Settings, get_settings
 
 logger = logging.getLogger(__name__)
@@ -84,8 +86,54 @@ class MockEmbeddingProvider(EmbeddingProvider):
         return [[0.1] * EMBEDDING_DIM for _ in texts]
 
 
+class CachedEmbeddingProvider(EmbeddingProvider):
+    """텍스트별 임베딩 결과를 in-memory LRU로 캐싱하는 래퍼.
+
+    같은 텍스트는 재호출 없이 캐시 벡터를 반환해 GMS/OpenAI 임베딩 크레딧과
+    지연을 절약한다(RAG가 동일 성분 쿼리를 반복 검색하는 경우 효과적).
+    컨테이너 재시작 시 초기화(in-memory).
+
+    Fallback 안쪽에 배치되므로(FallbackEmbeddingProvider(CachedEmbeddingProvider(real)))
+    실제 provider 성공 결과만 캐싱되고, 실패 시 mock 벡터는 캐싱되지 않는다.
+    """
+
+    def __init__(self, primary: EmbeddingProvider, maxsize: int = 512) -> None:
+        self._primary = primary
+        self._maxsize = maxsize
+        self._cache: OrderedDict[str, list[float]] = OrderedDict()
+
+    async def embed(self, texts: list[str]) -> list[list[float]]:
+        if not texts:
+            return []
+
+        results: list[list[float] | None] = [None] * len(texts)
+        miss_indices: list[int] = []
+
+        for i, text in enumerate(texts):
+            cached = self._cache.get(text)
+            if cached is not None:
+                self._cache.move_to_end(text)
+                results[i] = cached
+            else:
+                miss_indices.append(i)
+
+        if miss_indices:
+            miss_texts = [texts[i] for i in miss_indices]
+            vectors = await self._primary.embed(miss_texts)
+            for idx, vector in zip(miss_indices, vectors, strict=True):
+                results[idx] = vector
+                self._store(texts[idx], vector)
+
+        return [vec for vec in results if vec is not None]
+
+    def _store(self, text: str, vector: list[float]) -> None:
+        if len(self._cache) >= self._maxsize:
+            self._cache.popitem(last=False)  # 가장 오래된 항목 제거 (LRU)
+        self._cache[text] = vector
+
+
 class FallbackEmbeddingProvider(EmbeddingProvider):
-    """primary 실패 시 MockEmbeddingProvider로 자동 전환."""
+    """primary 실패 시 MockEmbeddingProvider로 자동 전환. 실패 시 1회 재시도 후 전환."""
 
     def __init__(self, primary: EmbeddingProvider) -> None:
         self._primary = primary
@@ -94,7 +142,10 @@ class FallbackEmbeddingProvider(EmbeddingProvider):
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
         try:
-            return await self._primary.embed(texts)
+            return await retry_async(
+                lambda: self._primary.embed(texts),
+                label=f"{self._name}.embed",
+            )
         except Exception as exc:
             logger.warning(
                 "[EMBEDDING FALLBACK] provider=%s error=%s: %s",
@@ -118,14 +169,18 @@ def _build_embedding_provider(
 ) -> EmbeddingProvider:
     if embedding_provider == "openai":
         return FallbackEmbeddingProvider(
-            OpenAIEmbeddingProvider(api_key=openai_api_key, model=openai_embedding_model)
+            CachedEmbeddingProvider(
+                OpenAIEmbeddingProvider(api_key=openai_api_key, model=openai_embedding_model)
+            )
         )
     if embedding_provider == "gms":
         return FallbackEmbeddingProvider(
-            OpenAIEmbeddingProvider(
-                api_key=gms_api_key,
-                model=openai_embedding_model,
-                base_url=gms_api_url or None,
+            CachedEmbeddingProvider(
+                OpenAIEmbeddingProvider(
+                    api_key=gms_api_key,
+                    model=openai_embedding_model,
+                    base_url=gms_api_url or None,
+                )
             )
         )
     return MockEmbeddingProvider()
