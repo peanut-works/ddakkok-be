@@ -11,7 +11,7 @@ def normalize_ingredients(
     aliases = db.scalars(select(IngredientAlias)).all()
 
     alias_map = {
-        alias.alias.strip(): alias.canonical_name.strip()
+        alias.alias.lower().strip(): alias.canonical_name.strip()
         for alias in aliases
     }
 
@@ -24,7 +24,7 @@ def normalize_ingredients(
             continue
 
         normalized.append(
-            alias_map.get(clean_ingredient, clean_ingredient)
+            alias_map.get(clean_ingredient.lower(), clean_ingredient)
         )
 
     return normalized

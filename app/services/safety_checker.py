@@ -292,7 +292,7 @@ def _build_child_summary(result: dict[str, Any]) -> str:
             f"{child_name} 아동은 성분 정보를 확인할 수 없어 사용 전 추가 확인이 필요합니다."
         )
 
-        return _build_pass_explanation(child_name)
+    return _build_pass_explanation(child_name)
 
 
 def _build_overall_explanation(

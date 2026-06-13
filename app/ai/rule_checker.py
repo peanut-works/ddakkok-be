@@ -259,6 +259,11 @@ class RuleChecker:
         """
         a = ingredient.lower().strip()
         b = keyword.lower().strip()
+        if not b:
+            return False
+        # 부정 표기 가드: '무향료'가 '향료' 키워드에 매칭되는 오탐을 방지한다.
+        if f"무{b}" in a:
+            return False
         return a == b or b in a or a in b
 
     def _dedupe_matched_rules(
@@ -311,25 +316,24 @@ class RuleChecker:
         # ── 성분 정규화 ─────────────────────────────────────────────────────
         normalized = [self._normalize(i) for i in ner_result.ingredient]
 
+        matched_rules: list[MatchedRule] = []
+
         # ── EXPIRED: 유통기한 만료 ──────────────────────────────────────────
+        # 만료를 early-return하지 않고 matched_rule로만 추가한다.
+        # 알레르기(FAIL)처럼 더 심각한 판정이 가려지지 않도록, 최종 상태는
+        # 아래 규칙 매칭까지 모두 수행한 뒤 severity_rank로 결정한다.
         expiry_status = self._get_expiry_status(ner_result.expiry, today)
         if expiry_status == CheckStatus.EXPIRED:
-            return ChildCheckResult(
-                child_id=child.child_id,
-                status=CheckStatus.EXPIRED,
-                matched_rules=[
-                    MatchedRule(
-                        rule_code="EXPIRY_DATE_001",
-                        status=CheckStatus.EXPIRED,
-                        matched_ingredient="",
-                        reason="제품 유통기한이 지나 사용이 권장되지 않습니다.",
-                    )
-                ],
-                reason="제품 유통기한이 지나 사용이 권장되지 않습니다.",
+            matched_rules.append(
+                MatchedRule(
+                    rule_code="EXPIRY_DATE_001",
+                    status=CheckStatus.EXPIRED,
+                    matched_ingredient="",
+                    reason="제품 유통기한이 지나 사용이 권장되지 않습니다.",
+                )
             )
 
         # ── 규칙 매칭 ────────────────────────────────────────────────────────
-        matched_rules: list[MatchedRule] = []
 
         for rule in self._rules:
             target = rule.get("target_type", "")

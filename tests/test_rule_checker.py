@@ -366,3 +366,36 @@ def test_personal_sensitive_ingredient(checker: RuleChecker) -> None:
 
     assert report.overall_status == CheckStatus.WARN
     assert report.child_results[0].matched_rules[0].rule_code == "SENSITIVE_DIRECT"
+
+
+# ── 10. EXPIRED가 FAIL을 가리지 않음 ────────────────────────────────────────────
+
+def test_expired_does_not_mask_allergy_fail(checker: RuleChecker) -> None:
+    """만료 + 알레르기 유발 성분 → FAIL (EXPIRED가 FAIL을 가리지 않음)."""
+    ner = NERResult(
+        product="유통기한 지난 밀크 물티슈",
+        ingredient=["정제수", "카제인나트륨"],
+        expiry="2025-12-31",  # 기준일(2026-06-09)보다 과거
+    )
+    report = checker.check(ner, [CHILD_MILK_ALLERGY], today=TODAY)
+
+    assert report.overall_status == CheckStatus.FAIL
+    result = report.child_results[0]
+    assert result.status == CheckStatus.FAIL
+    codes = {r.rule_code for r in result.matched_rules}
+    assert "ALLERGY_MILK_001" in codes
+    assert "EXPIRY_DATE_001" in codes  # 만료 정보도 함께 보존
+
+
+# ── 11. 부정 표기 오탐 방지 ─────────────────────────────────────────────────────
+
+def test_negation_prefix_not_matched(checker: RuleChecker) -> None:
+    """'무향료' 성분은 '향료' 키워드에 매칭되지 않는다 (부정 표기 오탐 방지)."""
+    ner = NERResult(
+        product="무향료 로션",
+        ingredient=["정제수", "글리세린", "무향료"],
+        expiry="2027-12-31",
+    )
+    report = checker.check(ner, [CHILD_SENSITIVE_SKIN], today=TODAY)
+
+    assert report.overall_status == CheckStatus.PASS

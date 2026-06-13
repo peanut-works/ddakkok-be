@@ -64,10 +64,10 @@ def test_dashboard_recall_alerts_are_sorted_by_latest_date():
 
     assert len(recall_alerts) >= 3
     assert recall_dates == sorted(recall_dates, reverse=True)
-    # 시드 데이터 변경에 결합되지 않도록 특정 제품명 대신 정렬 속성으로 검증
-    assert recall_alerts[0]["recall_date"] == max(recall_dates)
-    assert recall_alerts[0]["product_name"]
-    assert recall_alerts[0]["reason"]
+    # 최신 리콜은 2026-05-21자 '올포홈 구르미 낮잠패드' 2건 중 하나 (동일 날짜 tie)
+    assert recall_alerts[0]["recall_date"] == "2026-05-21"
+    assert recall_alerts[0]["product_name"].startswith("올포홈 구르미 낮잠패드")
+    assert recall_alerts[0]["reason"] == "폼알데하이드 기준치 초과"
 
 
 def test_dashboard_expiry_alerts_include_expired_or_expiring_products():
