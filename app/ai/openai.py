@@ -51,6 +51,11 @@ class OpenAIProvider(AIProvider):
             "tool_choice": tool_choice,
         }
         response = await self._client.chat.completions.create(**request_kwargs)
-        tool_call = response.choices[0].message.tool_calls[0]
+        message = response.choices[0].message
+        if not message.tool_calls:
+            # 모델이 tool call을 반환하지 않으면 예외를 올려 상위 FallbackAIProvider가
+            # mock 응답으로 전환하게 한다(조용한 None 역참조 크래시 방지).
+            raise ValueError("function_call: 모델이 tool call을 반환하지 않았습니다")
+        tool_call = message.tool_calls[0]
         result: dict[str, Any] = json.loads(tool_call.function.arguments)
         return result

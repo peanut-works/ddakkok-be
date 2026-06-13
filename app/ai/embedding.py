@@ -60,10 +60,8 @@ class OpenAIEmbeddingProvider(EmbeddingProvider):
         base_url: str | None = None,
     ) -> None:
         self._model = model
-        self._client = AsyncOpenAI(
-            api_key=api_key,
-            **({"base_url": base_url} if base_url else {}),
-        )
+        # base_url=None 이면 OpenAI 기본 엔드포인트 사용 (GMS 등은 base_url 지정).
+        self._client = AsyncOpenAI(api_key=api_key, base_url=base_url)
 
     async def embed(self, texts: list[str]) -> list[list[float]]:
         if not texts:
