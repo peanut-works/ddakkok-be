@@ -14,6 +14,7 @@ class MatchedRuleResponse(BaseModel):
     status: str
     matched_ingredient: str
     reason: str
+    source_name: str | None = None
 
 
 class SafetyCheckChildResultResponse(BaseModel):
@@ -30,6 +31,7 @@ class SafetyCheckChildResultResponse(BaseModel):
     matched_ingredient: str | None = None
     reason: str
     teacher_sentence: str
+    source_name: str | None = None
 
 
 class SafetyCheckResponse(BaseModel):
@@ -79,6 +81,7 @@ class SafetyCheckDetailChildResultResponse(BaseModel):
     reason: str | None = None
     teacher_sentence: str
     explanation: str | None = None
+    source_name: str | None = None
 
 
 class SafetyCheckDetailResponse(BaseModel):

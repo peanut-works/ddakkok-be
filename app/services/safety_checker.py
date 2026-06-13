@@ -37,6 +37,25 @@ STATUS_PRIORITY = {
     "FAIL": 4,
 }
 
+# 코드에서 생성되는 규칙(safety_rules 테이블에 없음)의 출처 매핑 (references.md §6)
+_CODE_GENERATED_RULE_SOURCES = {
+    "EXPIRY_DATE_001": "제품 유통기한 기준",
+    "OCR_UNKNOWN_001": "OCR 실패 처리 기준",
+    "SENSITIVE_DIRECT": "자체 주의 성분 사전",
+}
+
+# 매칭은 됐으나 규칙에 출처가 비어 있을 때 사용할 기본 출처
+_DEFAULT_SOURCE_NAME = "제품안전정보센터"
+
+
+def _build_rule_source_map(db: Session) -> dict[str, str | None]:
+    """rule_code → source_name 매핑 (DB safety_rules + 코드 생성 규칙)."""
+    from app.models.safety_rule import SafetyRule
+
+    rows = db.query(SafetyRule.rule_code, SafetyRule.source_name).all()
+    db_map: dict[str, str | None] = {code: src for code, src in rows}
+    return {**_CODE_GENERATED_RULE_SOURCES, **db_map}
+
 
 def _status_value(status: Any) -> str:
     if hasattr(status, "value"):
@@ -467,6 +486,7 @@ def run_safety_check(
                 "status": _status_value(rule.status),
                 "matched_ingredient": rule.matched_ingredient,
                 "reason": rule.reason,
+                "source_name": rule.source_name or _DEFAULT_SOURCE_NAME,
             }
             for rule in matched_rules
         ]
@@ -502,6 +522,11 @@ def run_safety_check(
                 "matched_profile": None,
                 "matched_ingredient": matched_ingredient,
                 "reason": child_result.reason,
+                "source_name": (
+                    (representative_rule.source_name or _DEFAULT_SOURCE_NAME)
+                    if representative_rule is not None
+                    else None
+                ),
                 }
             )
         )
@@ -569,6 +594,7 @@ def get_safety_check_detail(
 
         children_by_id = {child.id: child for child in children}
 
+    rule_source_map = _build_rule_source_map(db)
     results = []
 
     for result in check_results:
@@ -586,6 +612,11 @@ def get_safety_check_detail(
                 "matched_ingredient": result.matched_ingredient,
                 "reason": result.reason,
                 "explanation": result.explanation,
+                "source_name": (
+                    (rule_source_map.get(result.matched_rule_code) or _DEFAULT_SOURCE_NAME)
+                    if result.matched_rule_code
+                    else None
+                ),
                 }
             )
         )
