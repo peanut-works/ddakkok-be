@@ -331,6 +331,178 @@
     {
       "alias": "이산화황",
       "canonical_name": "아황산류"
+    },
+    {
+      "alias": "벌꿀",
+      "canonical_name": "꿀"
+    },
+    {
+      "alias": "사양벌꿀",
+      "canonical_name": "꿀"
+    },
+    {
+      "alias": "아카시아꿀",
+      "canonical_name": "꿀"
+    },
+    {
+      "alias": "잡화꿀",
+      "canonical_name": "꿀"
+    },
+    {
+      "alias": "야생화꿀",
+      "canonical_name": "꿀"
+    },
+    {
+      "alias": "꿀분말",
+      "canonical_name": "꿀"
+    },
+    {
+      "alias": "허니",
+      "canonical_name": "꿀"
+    },
+    {
+      "alias": "honey",
+      "canonical_name": "꿀"
+    },
+    {
+      "alias": "커피",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "커피분말",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "커피추출물",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "에스프레소",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "콜드브루",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "녹차",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "녹차추출물",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "말차",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "홍차",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "홍차추출물",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "코코아",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "코코아분말",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "초콜릿",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "초콜릿칩",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "카카오",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "카카오분말",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "카카오매스",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "과라나",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "마테",
+      "canonical_name": "카페인"
+    },
+    {
+      "alias": "주정",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "식용주정",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "발효주정",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "에틸알코올",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "무수에탄올",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "럼",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "럼주",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "와인",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "청주",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "미림",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "맛술",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "리큐르",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "브랜디",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "위스키",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "소주",
+      "canonical_name": "에탄올"
+    },
+    {
+      "alias": "맥주",
+      "canonical_name": "에탄올"
     }
   ]
 }
