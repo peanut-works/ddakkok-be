@@ -15,6 +15,7 @@ from typing import Any
 
 import httpx
 
+from app.ai._retry import retry_async
 from app.ai.ocr_mock_data import DEFAULT_OCR_SCENARIO, MOCK_OCR_RESULTS
 
 logger = logging.getLogger(__name__)
@@ -147,7 +148,10 @@ class FallbackOCRProvider(OCRProvider):
 
     async def extract_text(self, image: bytes) -> str:
         try:
-            return await self._primary.extract_text(image)
+            return await retry_async(
+                lambda: self._primary.extract_text(image),
+                label=f"{self._provider_name}.extract_text",
+            )
         except Exception as exc:
             logger.warning(
                 "[OCR FALLBACK] provider=%s error=%s: %s",

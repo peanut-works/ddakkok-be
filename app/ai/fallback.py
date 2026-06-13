@@ -1,6 +1,7 @@
 import logging
 from typing import Any
 
+from app.ai._retry import retry_async
 from app.ai.base import AIProvider, ChatMessage
 from app.ai.mock import MockAIProvider
 
@@ -29,7 +30,10 @@ class FallbackAIProvider(AIProvider):
         temperature: float = 0.3,
     ) -> str:
         try:
-            return await self._primary.chat_complete(messages, temperature)
+            return await retry_async(
+                lambda: self._primary.chat_complete(messages, temperature),
+                label=f"{self._provider_name}.chat_complete",
+            )
         except Exception as e:
             self._log_failure("chat_complete", e)
             return await self._fallback.chat_complete(messages, temperature)
@@ -41,7 +45,10 @@ class FallbackAIProvider(AIProvider):
         tool_choice: str | dict[str, Any] = "auto",
     ) -> dict[str, Any]:
         try:
-            return await self._primary.function_call(messages, tools, tool_choice)
+            return await retry_async(
+                lambda: self._primary.function_call(messages, tools, tool_choice),
+                label=f"{self._provider_name}.function_call",
+            )
         except Exception as e:
             self._log_failure("function_call", e)
             return await self._fallback.function_call(messages, tools, tool_choice)
