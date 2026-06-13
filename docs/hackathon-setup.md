@@ -9,7 +9,6 @@
 
 ### 현장 도착 즉시
 - [ ] `.env` 파일 생성 및 API key 입력
-- [ ] GMS API 스펙 받으면 `app/ai/gms.py` TODO 4개 수정
 - [ ] `docker compose up -d` 실행
 - [ ] `GET /api/ai/ping` 으로 AI 연결 확인
 
@@ -33,18 +32,20 @@ cp .env.example .env
 
 ### AI Provider
 
+GMS는 OpenAI 호환 API다. base_url만 GMS로 바꾸면 OpenAI SDK 그대로 사용된다.
+
 ```env
-# Kakao GMS 지급 시 → gms 로 변경. 없으면 openai 사용.
+# SSAFY GMS 지급 시 → gms 로 변경. 없으면 openai 사용.
 AI_PROVIDER=gms
 
 # OpenAI 사용 시 (GMS 없을 때 fallback)
 OPENAI_API_KEY=sk-...
 OPENAI_MODEL=gpt-4o-mini
 
-# Kakao GMS 현장 지급 항목
+# SSAFY GMS 현장 지급 항목
 GMS_API_KEY=...
-GMS_API_URL=https://...     # 예) https://gms.kakao.com/v1
-GMS_MODEL=...               # 예) gms-pro
+GMS_API_URL=https://gms.ssafy.io/gmsapi/api.openai.com/v1
+GMS_MODEL=gpt-4o-mini       # GMS가 지원하는 모델명
 ```
 
 ### OCR
@@ -65,20 +66,14 @@ AI_CACHE_MAXSIZE=256
 
 ---
 
-## 2. GMS API 스펙 반영
+## 2. GMS 연동 (코드 수정 불필요)
 
-현장에서 Kakao GMS 스펙을 받으면 `app/ai/gms.py`의 TODO 4개를 수정한다.
+GMS는 OpenAI 호환 API이므로 별도 provider 구현이 필요 없다.
+`app/ai/factory.py`가 `AI_PROVIDER=gms`일 때 `OpenAIProvider`에 `base_url=GMS_API_URL`만
+바꿔 재사용한다. chat completions / function calling 모두 OpenAI SDK 형식 그대로 동작한다.
 
-| 파일 위치 | TODO 내용 | 현재 가정값 |
-|---|---|---|
-| `_CHAT_PATH` | chat completions 엔드포인트 경로 | `/chat/completions` |
-| `_build_headers()` | 인증 헤더 이름/형식 | `Authorization: Bearer` |
-| `chat_complete()` 응답 파싱 | 응답 JSON 필드 경로 | `choices[0].message.content` |
-| `function_call()` | function calling 지원 여부 및 응답 형식 | OpenAI 호환 가정 |
-
-**GMS가 function calling을 지원하지 않는 경우:**  
-`app/ai/gms.py` `function_call()` 안에 JSON 출력 프롬프트 방식으로 대체 구현 필요.  
-(NER 파싱에 function calling 사용 중 → `app/ai/ner.py` `LabelParser` 도 영향)
+`.env`에 GMS 값 입력 후 `docker compose up -d backend`로 컨테이너를 재생성하면 적용된다.
+(`docker compose restart`는 env를 재로드하지 않으므로 `up -d`를 사용한다.)
 
 ---
 

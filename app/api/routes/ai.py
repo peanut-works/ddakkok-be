@@ -77,7 +77,7 @@ async def ai_ping(
         return AiPingResponse(
             status="fallback",
             provider=settings.ai_provider,
-            response="AI 연결에 실패했습니다. Mock 응답으로 대체됩니다.",
+            response="AI 연결에 실패했습니다. Mock 응답으로 대체됩니다. GMS 키 혹은 서버 상태를 확인해주세요.",
         )
 
 
