@@ -5,7 +5,6 @@ from fastapi import Depends
 from app.ai.base import AIProvider
 from app.ai.cache import CachedAIProvider
 from app.ai.fallback import FallbackAIProvider
-from app.ai.gms import GMSProvider
 from app.ai.mock import MockAIProvider
 from app.ai.openai import OpenAIProvider
 from app.core.config import Settings, get_settings
@@ -30,8 +29,13 @@ def _build_provider(
             primary=OpenAIProvider(api_key=openai_api_key, model=openai_model)
         )
     elif ai_provider == "gms":
+        # GMS는 OpenAI 호환 API — OpenAIProvider에 base_url만 바꿔 재사용
         provider = FallbackAIProvider(
-            primary=GMSProvider(api_key=gms_api_key, api_url=gms_api_url, model=gms_model)
+            primary=OpenAIProvider(
+                api_key=gms_api_key,
+                model=gms_model,
+                base_url=gms_api_url,
+            )
         )
     elif ai_provider == "groq":
         # Groq는 OpenAI 호환 API — base_url만 바꿔 OpenAIProvider 재사용
