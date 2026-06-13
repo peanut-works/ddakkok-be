@@ -109,3 +109,34 @@ Authorization: Bearer {{token}}
 ### 저장된 검사 결과에 대한 설명 생성
 POST {{baseUrl}}/api/safety-checks/{{createCheck.response.body.id}}/explanations
 Authorization: Bearer {{token}}
+
+###############################################
+# 8. 리콜 정보 조회 (feature/recall-api)
+###############################################
+
+### 리콜 목록 (최신순)
+GET {{baseUrl}}/api/recalls
+Authorization: Bearer {{token}}
+
+### 리콜 목록 - 분류 필터
+GET {{baseUrl}}/api/recalls?category=화장품
+Authorization: Bearer {{token}}
+
+### 리콜 목록 - 제품명 부분검색
+GET {{baseUrl}}/api/recalls?q=아토팜
+Authorization: Bearer {{token}}
+
+### 리콜 목록 - 페이징 (1건만)
+GET {{baseUrl}}/api/recalls?limit=1&offset=0
+Authorization: Bearer {{token}}
+
+### 리콜 상세
+GET {{baseUrl}}/api/recalls/1
+Authorization: Bearer {{token}}
+
+### 리콜 상세 - 없는 id (404 확인)
+GET {{baseUrl}}/api/recalls/999999
+Authorization: Bearer {{token}}
+
+### 인증 없이 호출 (401 확인)
+GET {{baseUrl}}/api/recalls
