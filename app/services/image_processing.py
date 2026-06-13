@@ -6,7 +6,7 @@
     Layer 2: 원근 복원    — Homography 행렬로 촬영 각도 왜곡 평면화
     Layer 3: 곡면 복원    — TPS 알고리즘으로 원통형 용기 굽은 텍스트 직선화
     Layer 4: 주름 보정    — DocTr 기반 구겨진 라벨의 비선형 변형 복구
-    Layer 5: 조도 개선    — CLAHE & 대비 정규화로 반사광 억제, 가독성 극대화
+    Layer 5: 조도 개선    — (비활성) 실측상 상용 OCR 정확도를 떨어뜨려 파이프라인에서 제외
 
 각 계층은 독립 실패 허용:
     한 계층에서 예외 발생 시 해당 계층만 건너뛰고 다음 계층으로 진행.
@@ -65,6 +65,7 @@ class ImagePreprocessor:
         """원본 이미지 bytes → 전처리 완료 이미지 bytes.
 
         처리 중 어떤 예외가 발생해도 원본 이미지를 그대로 반환한다.
+        어떤 계층도 이미지를 바꾸지 않으면 원본 bytes를 그대로 반환한다(do-no-harm).
         """
         try:
             img = self._decode(image)
@@ -72,12 +73,19 @@ class ImagePreprocessor:
                 logger.warning("[ImagePreprocessor] 이미지 디코딩 실패 — 원본 반환")
                 return image
 
+            decoded = img
             img = self._safe_apply(img, self._deskew, "1.기울기정렬")
             img = self._safe_apply(img, self._perspective_restore, "2.원근복원")
             img = self._safe_apply(img, self._tps_dewarp, "3.곡면복원")
             img = self._safe_apply(img, self._doctr_unwarp, "4.주름보정")
-            img = self._safe_apply(img, self._enhance_lighting, "5.조도개선")
+            # Layer 5(조도 개선) 비활성: 실측상 상용 OCR(CLOVA) 정확도를 떨어뜨림.
+            # (흑백 CLAHE+정규화가 핵심 필드엔 이득 없이 hiconf -5~7%. docs 실험 참조.)
+            # 약한/온디바이스 OCR용으로 _enhance_lighting 구현은 보존.
 
+            # do-no-harm: 어떤 계층도 이미지를 바꾸지 않았으면 원본 bytes를 그대로 반환해
+            # 불필요한 JPEG 재인코딩 손실(광택 이미지에서 ~6%)조차 만들지 않는다.
+            if img is decoded:
+                return image
             return self._encode(img)
         except Exception as exc:
             logger.warning("[ImagePreprocessor] 전처리 실패 — 원본 반환: %s", exc)
@@ -318,6 +326,11 @@ class ImagePreprocessor:
 
     def _enhance_lighting(self, img: "np.ndarray") -> "np.ndarray":
         """조도 개선 — 반사광 억제 → CLAHE → 대비 정규화.
+
+        주의: 현재 preprocess 파이프라인에서 호출하지 않는다(비활성).
+        실측상 상용 OCR(CLOVA) 정확도를 떨어뜨려 제외했으며, 약한/온디바이스 OCR
+        파이프라인에서 재사용할 수 있도록 구현만 보존한다.
+
 
         1. 240 이상 픽셀을 반사광으로 판단, inpaint로 주변 값 복원
         2. CLAHE (clipLimit=2.0, tileGrid=8×8) 로 국소 대비 향상
