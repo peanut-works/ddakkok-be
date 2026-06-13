@@ -6,7 +6,7 @@
     "data_type": "REFERENCE_FOR_DEMO",
     "purpose": "식약처 지정 알레르기 유발물질 표시대상을 바탕으로 한 해커톤 룰체커용 알레르기 FAIL 룰",
     "source_note": "식약처 표시대상은 알레르기 유발 원재료 및 그 유래 성분을 포함합니다. 아황산류는 최종제품의 이산화황이 10mg/kg 이상인 경우 표시대상입니다.",
-    "rule_count": 22,
+    "rule_count": 25,
     "matching_note": "trigger_name은 아동 건강 프로필의 allergies 값과 매칭하고, ingredient_keywords는 OCR/원재료명에서 탐지할 키워드로 사용합니다."
   },
   "safety_rules": [
@@ -406,6 +406,56 @@
       "severity": "FAIL",
       "reason": "잣 알레르기 관련 성분이 포함되어 있습니다.",
       "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_NUT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "견과류",
+      "ingredient_keywords": [
+        "견과류",
+        "호두",
+        "잣",
+        "아몬드",
+        "캐슈넛",
+        "캐슈너트",
+        "헤이즐넛",
+        "피스타치오",
+        "마카다미아",
+        "피칸",
+        "브라질너트"
+      ],
+      "severity": "FAIL",
+      "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "자체 견과류 주의 사전"
+    },
+    {
+      "rule_code": "SKIN_SENSITIVE_001",
+      "target_type": "SKIN",
+      "trigger_name": "민감성 피부",
+      "ingredient_keywords": [
+        "향료",
+        "에탄올",
+        "알코올",
+        "페녹시에탄올",
+        "소듐벤조에이트"
+      ],
+      "severity": "WARN",
+      "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
+      "source_name": "자체 주의 성분 사전"
+    },
+    {
+      "rule_code": "SKIN_ATOPY_001",
+      "target_type": "SKIN",
+      "trigger_name": "아토피",
+      "ingredient_keywords": [
+        "향료",
+        "색소",
+        "에탄올",
+        "알코올"
+      ],
+      "severity": "WARN",
+      "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
+      "source_name": "자체 주의 성분 사전"
     }
   ]
 }
