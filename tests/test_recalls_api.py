@@ -49,25 +49,25 @@ def test_list_recalls_ordered_by_recall_date_desc():
 
 
 def test_list_recalls_category_filter():
-    response = client.get("/api/recalls?category=화장품", headers=AUTH)
+    response = client.get("/api/recalls?category=식품", headers=AUTH)
 
     assert response.status_code == 200
 
     data = response.json()
 
     assert len(data) > 0
-    assert all(item["category"] == "화장품" for item in data)
+    assert all(item["category"] == "식품" for item in data)
 
 
 def test_list_recalls_keyword_search():
-    response = client.get("/api/recalls?q=아토팜", headers=AUTH)
+    response = client.get("/api/recalls?q=낮잠패드", headers=AUTH)
 
     assert response.status_code == 200
 
     data = response.json()
 
     assert len(data) > 0
-    assert all("아토팜" in item["product_name"] for item in data)
+    assert all("낮잠패드" in item["product_name"] for item in data)
 
 
 def test_list_recalls_limit():

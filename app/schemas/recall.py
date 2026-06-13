@@ -19,12 +19,12 @@ class RecallNoticeResponse(BaseModel):
         json_schema_extra={
             "example": {
                 "id": 1,
-                "product_name": "아토팜 리얼베리어 크림 100ml",
-                "manufacturer": None,
-                "category": "화장품",
-                "recall_date": "2025-06-07",
-                "reason": "기준치 초과 방부제 검출",
-                "action_guide": "해당 제품을 구매한 소비자는 판매 또는 구입처에 반품하세요.",
+                "product_name": "마이디데이 브로멜라인",
+                "manufacturer": "주식회사 피비에이치",
+                "category": "식품",
+                "recall_date": "2026-04-23",
+                "reason": "표시대상 알레르기 유발 원료성분(우유, 대두) 미표시",
+                "action_guide": "해당 제품은 섭취를 중단하고 구입처 또는 판매처에 반품하세요.",
                 "source": "Consumer24",
                 "source_url": None,
             }
