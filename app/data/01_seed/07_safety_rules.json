@@ -1,36 +1,78 @@
 {
+  "meta": {
+    "dataset_name": "mfds_allergy_safety_rules",
+    "dataset_version": "0.1.0",
+    "language": "ko-KR",
+    "data_type": "REFERENCE_FOR_DEMO",
+    "purpose": "식약처 지정 알레르기 유발물질 표시대상을 바탕으로 한 해커톤 룰체커용 알레르기 FAIL 룰",
+    "source_note": "식약처 표시대상은 알레르기 유발 원재료 및 그 유래 성분을 포함합니다. 아황산류는 최종제품의 이산화황이 10mg/kg 이상인 경우 표시대상입니다.",
+    "rule_count": 22,
+    "matching_note": "trigger_name은 아동 건강 프로필의 allergies 값과 매칭하고, ingredient_keywords는 OCR/원재료명에서 탐지할 키워드로 사용합니다."
+  },
   "safety_rules": [
-    {
-      "rule_code": "ALLERGY_MILK_001",
-      "target_type": "ALLERGY",
-      "trigger_name": "우유",
-      "ingredient_keywords": [
-        "우유",
-        "카제인나트륨",
-        "카제인Na",
-        "유청",
-        "유청단백",
-        "탈지분유",
-        "전지분유"
-      ],
-      "severity": "FAIL",
-      "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
-      "source_name": "자체 알레르기 사전"
-    },
     {
       "rule_code": "ALLERGY_EGG_001",
       "target_type": "ALLERGY",
       "trigger_name": "계란",
       "ingredient_keywords": [
         "계란",
+        "알류",
+        "난류",
+        "달걀",
         "난백",
         "난황",
         "전란",
-        "계란분말"
+        "계란분말",
+        "난백분말",
+        "난황분말",
+        "마요네즈"
       ],
       "severity": "FAIL",
       "reason": "계란 알레르기 관련 성분이 포함되어 있습니다.",
-      "source_name": "자체 알레르기 사전"
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_MILK_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "우유",
+      "ingredient_keywords": [
+        "우유",
+        "원유",
+        "유제품",
+        "분유",
+        "탈지분유",
+        "전지분유",
+        "혼합분유",
+        "유당",
+        "유청",
+        "유청단백",
+        "카제인",
+        "카제인나트륨",
+        "카제인Na",
+        "버터",
+        "치즈",
+        "크림",
+        "요거트",
+        "농축우유단백분말"
+      ],
+      "severity": "FAIL",
+      "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_BUCKWHEAT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "메밀",
+      "ingredient_keywords": [
+        "메밀",
+        "메밀가루",
+        "메밀분",
+        "메밀국수",
+        "메밀면"
+      ],
+      "severity": "FAIL",
+      "reason": "메밀 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
     },
     {
       "rule_code": "ALLERGY_PEANUT_001",
@@ -41,75 +83,329 @@
         "피넛",
         "땅콩버터",
         "땅콩분말",
-        "땅콩오일"
+        "땅콩가루",
+        "땅콩오일",
+        "낙화생"
       ],
       "severity": "FAIL",
       "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다.",
-      "source_name": "자체 알레르기 사전"
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
     },
     {
-      "rule_code": "ALLERGY_NUT_001",
+      "rule_code": "ALLERGY_SOYBEAN_001",
       "target_type": "ALLERGY",
-      "trigger_name": "견과류",
+      "trigger_name": "대두",
       "ingredient_keywords": [
-        "견과류",
-        "아몬드",
-        "호두",
-        "캐슈넛",
-        "헤이즐넛",
-        "피스타치오",
-        "마카다미아"
+        "대두",
+        "콩",
+        "백태",
+        "검정콩",
+        "서리태",
+        "대두분말",
+        "콩가루",
+        "볶음대두분말",
+        "대두단백",
+        "분리대두단백",
+        "조직대두단백",
+        "두부",
+        "두유",
+        "된장",
+        "간장",
+        "대두유"
       ],
       "severity": "FAIL",
-      "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다.",
-      "source_name": "자체 알레르기 사전"
+      "reason": "대두 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
     },
     {
-      "rule_code": "SKIN_SENSITIVE_001",
-      "target_type": "SKIN",
-      "trigger_name": "민감성 피부",
+      "rule_code": "ALLERGY_WHEAT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "밀",
       "ingredient_keywords": [
-        "향료",
-        "에탄올",
-        "알코올",
-        "페녹시에탄올",
-        "소듐벤조에이트"
+        "밀",
+        "밀가루",
+        "소맥",
+        "소맥분",
+        "강력분",
+        "중력분",
+        "박력분",
+        "글루텐",
+        "밀단백",
+        "통밀",
+        "빵가루"
       ],
-      "severity": "WARN",
-      "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
-      "source_name": "자체 주의 성분 사전"
+      "severity": "FAIL",
+      "reason": "밀 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
     },
     {
-      "rule_code": "SKIN_ATOPY_001",
-      "target_type": "SKIN",
-      "trigger_name": "아토피",
+      "rule_code": "ALLERGY_MACKEREL_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "고등어",
       "ingredient_keywords": [
-        "향료",
-        "색소",
-        "에탄올",
-        "알코올"
+        "고등어",
+        "고등어살",
+        "고등어분말",
+        "고등어추출물"
       ],
-      "severity": "WARN",
-      "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
-      "source_name": "자체 주의 성분 사전"
+      "severity": "FAIL",
+      "reason": "고등어 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
     },
     {
-      "rule_code": "EXPIRY_DATE_001",
-      "target_type": "EXPIRY",
-      "trigger_name": "유통기한 만료",
-      "ingredient_keywords": [],
-      "severity": "EXPIRED",
-      "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
-      "source_name": "제품 유통기한 기준"
+      "rule_code": "ALLERGY_CRAB_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "게",
+      "ingredient_keywords": [
+        "게",
+        "게살",
+        "꽃게",
+        "대게",
+        "홍게",
+        "게엑기스",
+        "게추출물",
+        "게분말"
+      ],
+      "severity": "FAIL",
+      "reason": "게 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
     },
     {
-      "rule_code": "OCR_UNKNOWN_001",
-      "target_type": "UNKNOWN",
-      "trigger_name": "성분 확인 불가",
-      "ingredient_keywords": [],
-      "severity": "UNKNOWN",
-      "reason": "성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
-      "source_name": "OCR 실패 처리 기준"
+      "rule_code": "ALLERGY_SHRIMP_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "새우",
+      "ingredient_keywords": [
+        "새우",
+        "건새우",
+        "새우살",
+        "새우젓",
+        "새우분말",
+        "새우엑기스",
+        "새우추출물"
+      ],
+      "severity": "FAIL",
+      "reason": "새우 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_PORK_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "돼지고기",
+      "ingredient_keywords": [
+        "돼지고기",
+        "돈육",
+        "돼지",
+        "포크",
+        "햄",
+        "베이컨",
+        "소시지",
+        "젤라틴"
+      ],
+      "severity": "FAIL",
+      "reason": "돼지고기 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_PEACH_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "복숭아",
+      "ingredient_keywords": [
+        "복숭아",
+        "백도",
+        "황도",
+        "복숭아농축액",
+        "복숭아퓨레",
+        "복숭아향"
+      ],
+      "severity": "FAIL",
+      "reason": "복숭아 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_TOMATO_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "토마토",
+      "ingredient_keywords": [
+        "토마토",
+        "토마토페이스트",
+        "토마토퓨레",
+        "토마토분말",
+        "케첩",
+        "토마토케첩"
+      ],
+      "severity": "FAIL",
+      "reason": "토마토 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_SULFITE_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "아황산류",
+      "ingredient_keywords": [
+        "아황산류",
+        "아황산염",
+        "이산화황",
+        "무수아황산",
+        "메타중아황산나트륨",
+        "산성아황산나트륨",
+        "아황산수소나트륨",
+        "차아황산나트륨"
+      ],
+      "severity": "FAIL",
+      "reason": "아황산류 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_WALNUT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "호두",
+      "ingredient_keywords": [
+        "호두",
+        "호두분태",
+        "호두분말",
+        "호두기름",
+        "월넛"
+      ],
+      "severity": "FAIL",
+      "reason": "호두 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_CHICKEN_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "닭고기",
+      "ingredient_keywords": [
+        "닭고기",
+        "닭",
+        "계육",
+        "치킨",
+        "닭가슴살",
+        "닭육수",
+        "닭고기분말"
+      ],
+      "severity": "FAIL",
+      "reason": "닭고기 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_BEEF_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "쇠고기",
+      "ingredient_keywords": [
+        "쇠고기",
+        "소고기",
+        "우육",
+        "비프",
+        "쇠고기분말",
+        "소고기분말",
+        "우육분말",
+        "쇠고기엑기스",
+        "소고기엑기스"
+      ],
+      "severity": "FAIL",
+      "reason": "쇠고기 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_SQUID_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "오징어",
+      "ingredient_keywords": [
+        "오징어",
+        "오징어채",
+        "진미채",
+        "오징어분말",
+        "오징어엑기스",
+        "오징어추출물"
+      ],
+      "severity": "FAIL",
+      "reason": "오징어 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_SHELLFISH_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "조개류",
+      "ingredient_keywords": [
+        "조개류",
+        "조개",
+        "바지락",
+        "모시조개",
+        "가리비",
+        "꼬막",
+        "대합",
+        "굴",
+        "전복",
+        "홍합",
+        "굴소스",
+        "조개엑기스",
+        "조개추출물"
+      ],
+      "severity": "FAIL",
+      "reason": "조개류 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_OYSTER_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "굴",
+      "ingredient_keywords": [
+        "굴",
+        "생굴",
+        "굴소스",
+        "굴엑기스",
+        "굴추출물",
+        "굴분말"
+      ],
+      "severity": "FAIL",
+      "reason": "굴 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_ABALONE_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "전복",
+      "ingredient_keywords": [
+        "전복",
+        "전복살",
+        "전복엑기스",
+        "전복추출물",
+        "전복분말"
+      ],
+      "severity": "FAIL",
+      "reason": "전복 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_MUSSEL_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "홍합",
+      "ingredient_keywords": [
+        "홍합",
+        "홍합살",
+        "홍합엑기스",
+        "홍합추출물",
+        "홍합분말"
+      ],
+      "severity": "FAIL",
+      "reason": "홍합 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
+    },
+    {
+      "rule_code": "ALLERGY_PINE_NUT_001",
+      "target_type": "ALLERGY",
+      "trigger_name": "잣",
+      "ingredient_keywords": [
+        "잣",
+        "잣가루",
+        "잣분말",
+        "잣기름",
+        "송자",
+        "pine nut"
+      ],
+      "severity": "FAIL",
+      "reason": "잣 알레르기 관련 성분이 포함되어 있습니다.",
+      "source_name": "식품의약품안전처 알레르기 유발물질 표시대상"
     }
   ]
 }

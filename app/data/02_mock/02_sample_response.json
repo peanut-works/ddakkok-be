@@ -5,8 +5,8 @@
     "total_responses": 20,
     "overall_status_counts": {
       "PASS": 2,
-      "FAIL": 9,
-      "WARN": 6,
+      "FAIL": 8,
+      "WARN": 7,
       "EXPIRED": 2,
       "UNKNOWN": 1
     }
@@ -193,7 +193,7 @@
         "id": 2,
         "scenario_code": "DEMO_PRODUCT_102_FAIL",
         "scenario_name": "밀크 프로틴 보습 물티슈 - 사용 보류 시나리오",
-        "description": "우유 알레르기 FAIL + 민감성 피부 WARN 동시 확인. 카제인Na 별칭 정규화 포함",
+        "description": "우유 알레르기 FAIL + 민감성 피부 WARN 확인",
         "group": "demo_scenarios"
       },
       "request": {
@@ -438,7 +438,7 @@
         "id": 3,
         "scenario_code": "DEMO_PRODUCT_103_FAIL",
         "scenario_name": "에그 소프트 쿠키 - 사용 보류 시나리오",
-        "description": "계란 알레르기 FAIL 확인",
+        "description": "계란/우유 알레르기 FAIL 확인",
         "group": "demo_scenarios"
       },
       "request": {
@@ -466,16 +466,19 @@
         "product_name": "에그 소프트 쿠키",
         "overall_status": "FAIL",
         "summary": {
-          "pass_count": 9,
+          "pass_count": 6,
           "warn_count": 0,
-          "fail_count": 1,
+          "fail_count": 4,
           "expired_count": 0,
           "unknown_count": 0
         },
-        "overall_summary": "에그 소프트 쿠키 검사 결과 땅콩어린이집 전체 아동 10명 중 사용 보류 1명이 확인되었습니다.",
+        "overall_summary": "에그 소프트 쿠키 검사 결과 땅콩어린이집 전체 아동 10명 중 사용 보류 4명이 확인되었습니다.",
         "teacher_guide": "FAIL 아동에게는 사용을 보류하고 대체 제품을 확인해 주세요.",
         "priority_child_ids": [
-          4
+          1,
+          4,
+          5,
+          7
         ],
         "child_results": [
           {
@@ -483,13 +486,24 @@
             "child_name": "강민준",
             "classroom_id": 1,
             "classroom_name": "햇님반",
-            "status": "PASS",
-            "matched_rules": [],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
-            "child_explanation": "강민준 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
-            "teacher_sentence": "강민준 아동은 일반 사용이 가능합니다."
+            "status": "FAIL",
+            "matched_rules": [
+              {
+                "rule_code": "ALLERGY_MILK_001",
+                "status": "FAIL",
+                "matched_ingredient": "버터",
+                "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
+              }
+            ],
+            "matched_profiles": [
+              "우유 알레르기"
+            ],
+            "matched_ingredients": [
+              "버터"
+            ],
+            "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+            "child_explanation": "강민준 아동은 우유 알레르기로 등록되어 있어 버터 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "강민준 아동에게는 버터 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
             "child_id": 2,
@@ -535,7 +549,8 @@
               "계란 알레르기"
             ],
             "matched_ingredients": [
-              "계란"
+              "계란",
+              "난백"
             ],
             "reason": "계란 알레르기 관련 성분이 포함되어 있습니다.",
             "child_explanation": "최하린 아동은 계란 알레르기로 등록되어 있어 계란 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
@@ -546,13 +561,24 @@
             "child_name": "박지호",
             "classroom_id": 2,
             "classroom_name": "별님반",
-            "status": "PASS",
-            "matched_rules": [],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
-            "child_explanation": "박지호 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
-            "teacher_sentence": "박지호 아동은 일반 사용이 가능합니다."
+            "status": "FAIL",
+            "matched_rules": [
+              {
+                "rule_code": "ALLERGY_PEANUT_001",
+                "status": "FAIL",
+                "matched_ingredient": "버터",
+                "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다."
+              }
+            ],
+            "matched_profiles": [
+              "땅콩 알레르기"
+            ],
+            "matched_ingredients": [
+              "버터"
+            ],
+            "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다.",
+            "child_explanation": "박지호 아동은 땅콩 알레르기로 등록되어 있어 버터 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "박지호 아동에게는 버터 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
             "child_id": 6,
@@ -572,13 +598,24 @@
             "child_name": "오시우",
             "classroom_id": 2,
             "classroom_name": "별님반",
-            "status": "PASS",
-            "matched_rules": [],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
-            "child_explanation": "오시우 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
-            "teacher_sentence": "오시우 아동은 일반 사용이 가능합니다."
+            "status": "FAIL",
+            "matched_rules": [
+              {
+                "rule_code": "ALLERGY_MILK_001",
+                "status": "FAIL",
+                "matched_ingredient": "버터",
+                "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
+              }
+            ],
+            "matched_profiles": [
+              "우유 알레르기"
+            ],
+            "matched_ingredients": [
+              "버터"
+            ],
+            "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+            "child_explanation": "오시우 아동은 우유 알레르기로 등록되어 있어 버터 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "오시우 아동에게는 버터 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
             "child_id": 8,
@@ -627,7 +664,7 @@
         "id": 4,
         "scenario_code": "DEMO_PRODUCT_104_FAIL",
         "scenario_name": "땅콩버터 크런치바 - 사용 보류 시나리오",
-        "description": "땅콩/견과류 알레르기 중 땅콩 룰 FAIL 확인",
+        "description": "땅콩 알레르기 FAIL 확인",
         "group": "demo_scenarios"
       },
       "request": {
@@ -655,17 +692,18 @@
         "product_name": "땅콩버터 크런치바",
         "overall_status": "FAIL",
         "summary": {
-          "pass_count": 8,
+          "pass_count": 7,
           "warn_count": 0,
-          "fail_count": 2,
+          "fail_count": 3,
           "expired_count": 0,
           "unknown_count": 0
         },
-        "overall_summary": "땅콩버터 크런치바 검사 결과 땅콩어린이집 전체 아동 10명 중 사용 보류 2명이 확인되었습니다.",
+        "overall_summary": "땅콩버터 크런치바 검사 결과 땅콩어린이집 전체 아동 10명 중 사용 보류 3명이 확인되었습니다.",
         "teacher_guide": "FAIL 아동에게는 사용을 보류하고 대체 제품을 확인해 주세요.",
         "priority_child_ids": [
+          1,
           5,
-          9
+          7
         ],
         "child_results": [
           {
@@ -673,13 +711,24 @@
             "child_name": "강민준",
             "classroom_id": 1,
             "classroom_name": "햇님반",
-            "status": "PASS",
-            "matched_rules": [],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
-            "child_explanation": "강민준 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
-            "teacher_sentence": "강민준 아동은 일반 사용이 가능합니다."
+            "status": "FAIL",
+            "matched_rules": [
+              {
+                "rule_code": "ALLERGY_MILK_001",
+                "status": "FAIL",
+                "matched_ingredient": "땅콩버터",
+                "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
+              }
+            ],
+            "matched_profiles": [
+              "우유 알레르기"
+            ],
+            "matched_ingredients": [
+              "땅콩버터"
+            ],
+            "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+            "child_explanation": "강민준 아동은 우유 알레르기로 등록되어 있어 땅콩버터 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "강민준 아동에게는 땅콩버터 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
             "child_id": 2,
@@ -730,27 +779,19 @@
               {
                 "rule_code": "ALLERGY_PEANUT_001",
                 "status": "FAIL",
-                "matched_ingredient": "땅콩",
+                "matched_ingredient": "땅콩버터",
                 "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다."
-              },
-              {
-                "rule_code": "ALLERGY_NUT_001",
-                "status": "FAIL",
-                "matched_ingredient": "견과류",
-                "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다."
               }
             ],
             "matched_profiles": [
-              "땅콩 알레르기",
-              "견과류 알레르기"
+              "땅콩 알레르기"
             ],
             "matched_ingredients": [
-              "땅콩",
-              "견과류"
+              "땅콩버터"
             ],
             "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다.",
-            "child_explanation": "박지호 아동은 땅콩 알레르기로 등록되어 있어 땅콩 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
-            "teacher_sentence": "박지호 아동에게는 땅콩 성분이 포함된 이 제품 사용을 보류해 주세요."
+            "child_explanation": "박지호 아동은 땅콩 알레르기로 등록되어 있어 땅콩버터 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "박지호 아동에게는 땅콩버터 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
             "child_id": 6,
@@ -770,13 +811,24 @@
             "child_name": "오시우",
             "classroom_id": 2,
             "classroom_name": "별님반",
-            "status": "PASS",
-            "matched_rules": [],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
-            "child_explanation": "오시우 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
-            "teacher_sentence": "오시우 아동은 일반 사용이 가능합니다."
+            "status": "FAIL",
+            "matched_rules": [
+              {
+                "rule_code": "ALLERGY_MILK_001",
+                "status": "FAIL",
+                "matched_ingredient": "땅콩버터",
+                "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
+              }
+            ],
+            "matched_profiles": [
+              "우유 알레르기"
+            ],
+            "matched_ingredients": [
+              "땅콩버터"
+            ],
+            "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+            "child_explanation": "오시우 아동은 우유 알레르기로 등록되어 있어 땅콩버터 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "오시우 아동에게는 땅콩버터 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
             "child_id": 8,
@@ -796,24 +848,13 @@
             "child_name": "서이준",
             "classroom_id": 1,
             "classroom_name": "햇님반",
-            "status": "FAIL",
-            "matched_rules": [
-              {
-                "rule_code": "ALLERGY_NUT_001",
-                "status": "FAIL",
-                "matched_ingredient": "견과류",
-                "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다."
-              }
-            ],
-            "matched_profiles": [
-              "견과류 알레르기"
-            ],
-            "matched_ingredients": [
-              "견과류"
-            ],
-            "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다.",
-            "child_explanation": "서이준 아동은 견과류 알레르기로 등록되어 있어 견과류 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
-            "teacher_sentence": "서이준 아동에게는 견과류 성분이 포함된 이 제품 사용을 보류해 주세요."
+            "status": "PASS",
+            "matched_rules": [],
+            "matched_profiles": [],
+            "matched_ingredients": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
+            "child_explanation": "서이준 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
+            "teacher_sentence": "서이준 아동은 일반 사용이 가능합니다."
           },
           {
             "child_id": 10,
@@ -836,7 +877,7 @@
         "id": 5,
         "scenario_code": "DEMO_PRODUCT_105_WARN",
         "scenario_name": "향기 톡톡 키즈 로션 - 주의 필요 시나리오",
-        "description": "민감성 피부 WARN + 아토피 WARN 확인. 알코올 별칭 정규화 포함",
+        "description": "민감성 피부 WARN + 아토피 WARN 확인",
         "group": "demo_scenarios"
       },
       "request": {
@@ -904,12 +945,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -974,12 +1009,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -1005,12 +1034,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -1068,7 +1091,8 @@
               "민감성 피부"
             ],
             "matched_ingredients": [
-              "향료"
+              "향료",
+              "에탄올"
             ],
             "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
             "child_explanation": "유나은 아동은 민감성 피부로 등록되어 있어 향료 성분 사용 시 주의가 필요합니다.",
@@ -1110,18 +1134,17 @@
         "product_name": "컬러 버블 클렌저",
         "overall_status": "WARN",
         "summary": {
-          "pass_count": 7,
-          "warn_count": 3,
+          "pass_count": 8,
+          "warn_count": 2,
           "fail_count": 0,
           "expired_count": 0,
           "unknown_count": 0
         },
-        "overall_summary": "컬러 버블 클렌저 검사 결과 땅콩어린이집 전체 아동 10명 중 주의 3명이 확인되었습니다.",
+        "overall_summary": "컬러 버블 클렌저 검사 결과 땅콩어린이집 전체 아동 10명 중 주의 2명이 확인되었습니다.",
         "teacher_guide": "WARN 아동은 소량 사용 후 반응을 확인해 주세요.",
         "priority_child_ids": [
           6,
-          7,
-          10
+          7
         ],
         "child_results": [
           {
@@ -1268,22 +1291,13 @@
             "child_name": "유나은",
             "classroom_id": 2,
             "classroom_name": "별님반",
-            "status": "WARN",
-            "matched_rules": [
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "색소",
-                "reason": "아동 개인 주의 성분 '색소' 포함."
-              }
-            ],
+            "status": "PASS",
+            "matched_rules": [],
             "matched_profiles": [],
-            "matched_ingredients": [
-              "색소"
-            ],
-            "reason": "아동 개인 주의 성분 '색소' 포함.",
-            "child_explanation": "유나은 아동은 개인 주의 성분과 매칭되는 항목이 있어 사용 시 주의가 필요합니다.",
-            "teacher_sentence": "유나은 아동에게 사용할 경우 소량 사용 후 반응을 확인해 주세요."
+            "matched_ingredients": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
+            "child_explanation": "유나은 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
+            "teacher_sentence": "유나은 아동은 일반 사용이 가능합니다."
           }
         ]
       }
@@ -1291,8 +1305,8 @@
     {
       "scenario": {
         "id": 7,
-        "scenario_code": "DEMO_PRODUCT_107_FAIL",
-        "scenario_name": "복합 주의 키즈 크림 - 사용 보류 시나리오",
+        "scenario_code": "DEMO_PRODUCT_107_FAIL_AND_WARN",
+        "scenario_name": "복합 주의 키즈 크림 - 복합 주의 시나리오",
         "description": "한 제품에서 FAIL과 WARN이 함께 발생하는 복합 케이스 확인",
         "group": "demo_scenarios"
       },
@@ -1373,12 +1387,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -1443,12 +1451,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -1480,12 +1482,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -1545,7 +1541,8 @@
               "민감성 피부"
             ],
             "matched_ingredients": [
-              "향료"
+              "향료",
+              "에탄올"
             ],
             "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
             "child_explanation": "유나은 아동은 민감성 피부로 등록되어 있어 향료 성분 사용 시 주의가 필요합니다.",
@@ -1619,12 +1616,12 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
               }
             ],
             "matched_profiles": [],
             "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
             "child_explanation": "강민준 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
             "teacher_sentence": "강민준 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
           },
@@ -1639,12 +1636,12 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
               }
             ],
             "matched_profiles": [],
             "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
             "child_explanation": "김서아 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
             "teacher_sentence": "김서아 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
           },
@@ -1659,12 +1656,12 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
               }
             ],
             "matched_profiles": [],
             "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
             "child_explanation": "이도윤 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
             "teacher_sentence": "이도윤 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
           },
@@ -1679,12 +1676,12 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
               }
             ],
             "matched_profiles": [],
             "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
             "child_explanation": "최하린 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
             "teacher_sentence": "최하린 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
           },
@@ -1699,12 +1696,12 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
               }
             ],
             "matched_profiles": [],
             "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
             "child_explanation": "박지호 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
             "teacher_sentence": "박지호 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
           },
@@ -1719,12 +1716,12 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
               }
             ],
             "matched_profiles": [],
             "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
             "child_explanation": "정윤서 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
             "teacher_sentence": "정윤서 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
           },
@@ -1739,12 +1736,12 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
               }
             ],
             "matched_profiles": [],
             "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
             "child_explanation": "오시우 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
             "teacher_sentence": "오시우 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
           },
@@ -1759,12 +1756,12 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
               }
             ],
             "matched_profiles": [],
             "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
             "child_explanation": "한지아 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
             "teacher_sentence": "한지아 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
           },
@@ -1779,12 +1776,12 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
               }
             ],
             "matched_profiles": [],
             "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
             "child_explanation": "서이준 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
             "teacher_sentence": "서이준 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
           },
@@ -1799,12 +1796,12 @@
                 "rule_code": "EXPIRY_DATE_001",
                 "status": "EXPIRED",
                 "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
               }
             ],
             "matched_profiles": [],
             "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
             "child_explanation": "유나은 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
             "teacher_sentence": "유나은 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
           }
@@ -1815,8 +1812,8 @@
       "scenario": {
         "id": 9,
         "scenario_code": "DEMO_PRODUCT_109_UNKNOWN",
-        "scenario_name": "성분표 훼손 제품 - 판단 불가 시나리오",
-        "description": "OCR/파싱 실패 시 UNKNOWN 확인. 백엔드가 ingredients empty 또는 OCR status failed를 UNKNOWN으로 처리해야 함",
+        "scenario_name": "성분표 훼손 제품 - 성분 확인 불가 시나리오",
+        "description": "OCR/파싱 실패 UNKNOWN 확인",
         "group": "demo_scenarios"
       },
       "request": {
@@ -1850,8 +1847,8 @@
           "expired_count": 0,
           "unknown_count": 10
         },
-        "overall_summary": "성분표 훼손 제품 검사 결과 땅콩어린이집 전체 아동 10명 모두 성분 확인이 필요합니다.",
-        "teacher_guide": "성분표 확인 전까지 사용을 보류하고 제품 정보를 다시 확인해 주세요.",
+        "overall_summary": "성분표 훼손 제품 검사 결과 성분표를 확인할 수 없어 땅콩어린이집 전체 아동 10명의 안전 여부를 판단할 수 없습니다.",
+        "teacher_guide": "성분표 또는 OCR 결과를 다시 확인한 뒤 사용 여부를 판단해 주세요.",
         "priority_child_ids": [
           1,
           2,
@@ -2073,7 +2070,7 @@
         "id": 10,
         "scenario_code": "DEMO_PRODUCT_110_FAIL",
         "scenario_name": "무가당 그릭 요거트 - 사용 보류 시나리오",
-        "description": "알레르기 아동 FAIL 확인",
+        "description": "우유 알레르기 FAIL 확인",
         "group": "demo_scenarios"
       },
       "request": {
@@ -2124,7 +2121,7 @@
               {
                 "rule_code": "ALLERGY_MILK_001",
                 "status": "FAIL",
-                "matched_ingredient": "농축우유단백분말",
+                "matched_ingredient": "원유",
                 "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
               }
             ],
@@ -2132,11 +2129,13 @@
               "우유 알레르기"
             ],
             "matched_ingredients": [
+              "원유",
+              "혼합분유",
               "농축우유단백분말"
             ],
             "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
-            "child_explanation": "강민준 아동은 우유 알레르기로 등록되어 있어 농축우유단백분말 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
-            "teacher_sentence": "강민준 아동에게는 농축우유단백분말 성분이 포함된 이 제품 사용을 보류해 주세요."
+            "child_explanation": "강민준 아동은 우유 알레르기로 등록되어 있어 원유 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "강민준 아동에게는 원유 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
             "child_id": 2,
@@ -2213,7 +2212,7 @@
               {
                 "rule_code": "ALLERGY_MILK_001",
                 "status": "FAIL",
-                "matched_ingredient": "농축우유단백분말",
+                "matched_ingredient": "원유",
                 "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
               }
             ],
@@ -2221,11 +2220,13 @@
               "우유 알레르기"
             ],
             "matched_ingredients": [
+              "원유",
+              "혼합분유",
               "농축우유단백분말"
             ],
             "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
-            "child_explanation": "오시우 아동은 우유 알레르기로 등록되어 있어 농축우유단백분말 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
-            "teacher_sentence": "오시우 아동에게는 농축우유단백분말 성분이 포함된 이 제품 사용을 보류해 주세요."
+            "child_explanation": "오시우 아동은 우유 알레르기로 등록되어 있어 원유 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "오시우 아동에게는 원유 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
             "child_id": 8,
@@ -2274,7 +2275,7 @@
         "id": 11,
         "scenario_code": "DEMO_PRODUCT_111_FAIL",
         "scenario_name": "고소한인절미과자 - 사용 보류 시나리오",
-        "description": "알레르기 아동 FAIL 확인",
+        "description": "우유 알레르기 FAIL 확인",
         "group": "demo_scenarios"
       },
       "request": {
@@ -2325,7 +2326,7 @@
               {
                 "rule_code": "ALLERGY_MILK_001",
                 "status": "FAIL",
-                "matched_ingredient": "우유",
+                "matched_ingredient": "유당",
                 "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
               }
             ],
@@ -2333,11 +2334,13 @@
               "우유 알레르기"
             ],
             "matched_ingredients": [
-              "우유"
+              "유당",
+              "우유",
+              "탈지분유"
             ],
             "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
-            "child_explanation": "강민준 아동은 우유 알레르기로 등록되어 있어 우유 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
-            "teacher_sentence": "강민준 아동에게는 우유 성분이 포함된 이 제품 사용을 보류해 주세요."
+            "child_explanation": "강민준 아동은 우유 알레르기로 등록되어 있어 유당 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "강민준 아동에게는 유당 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
             "child_id": 2,
@@ -2414,7 +2417,7 @@
               {
                 "rule_code": "ALLERGY_MILK_001",
                 "status": "FAIL",
-                "matched_ingredient": "우유",
+                "matched_ingredient": "유당",
                 "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
               }
             ],
@@ -2422,11 +2425,13 @@
               "우유 알레르기"
             ],
             "matched_ingredients": [
-              "우유"
+              "유당",
+              "우유",
+              "탈지분유"
             ],
             "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
-            "child_explanation": "오시우 아동은 우유 알레르기로 등록되어 있어 우유 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
-            "teacher_sentence": "오시우 아동에게는 우유 성분이 포함된 이 제품 사용을 보류해 주세요."
+            "child_explanation": "오시우 아동은 우유 알레르기로 등록되어 있어 유당 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "오시우 아동에게는 유당 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
             "child_id": 8,
@@ -2475,7 +2480,7 @@
         "id": 12,
         "scenario_code": "DEMO_PRODUCT_112_WARN",
         "scenario_name": "미소지움물티슈 - 주의 필요 시나리오",
-        "description": "피부 민감/아토피 아동 WARN 확인",
+        "description": "민감성 피부/아토피 WARN 확인",
         "group": "demo_scenarios"
       },
       "request": {
@@ -2541,7 +2546,7 @@
               {
                 "rule_code": "SKIN_SENSITIVE_001",
                 "status": "WARN",
-                "matched_ingredient": "합성향료",
+                "matched_ingredient": "소듐벤조에이트",
                 "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
               }
             ],
@@ -2549,10 +2554,11 @@
               "민감성 피부"
             ],
             "matched_ingredients": [
+              "소듐벤조에이트",
               "합성향료"
             ],
             "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
-            "child_explanation": "김서아 아동은 민감성 피부로 등록되어 있어 합성향료 성분 사용 시 주의가 필요합니다.",
+            "child_explanation": "김서아 아동은 민감성 피부로 등록되어 있어 소듐벤조에이트 성분 사용 시 주의가 필요합니다.",
             "teacher_sentence": "김서아 아동에게 사용할 경우 소량 사용 후 반응을 확인해 주세요."
           },
           {
@@ -2678,7 +2684,7 @@
               {
                 "rule_code": "SKIN_SENSITIVE_001",
                 "status": "WARN",
-                "matched_ingredient": "합성향료",
+                "matched_ingredient": "소듐벤조에이트",
                 "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
               }
             ],
@@ -2686,10 +2692,11 @@
               "민감성 피부"
             ],
             "matched_ingredients": [
+              "소듐벤조에이트",
               "합성향료"
             ],
             "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
-            "child_explanation": "유나은 아동은 민감성 피부로 등록되어 있어 합성향료 성분 사용 시 주의가 필요합니다.",
+            "child_explanation": "유나은 아동은 민감성 피부로 등록되어 있어 소듐벤조에이트 성분 사용 시 주의가 필요합니다.",
             "teacher_sentence": "유나은 아동에게 사용할 경우 소량 사용 후 반응을 확인해 주세요."
           }
         ]
@@ -2700,7 +2707,7 @@
         "id": 13,
         "scenario_code": "DEMO_PRODUCT_113_WARN",
         "scenario_name": "식기세척기 린스 - 주의 필요 시나리오",
-        "description": "피부 민감/아토피 아동 WARN 확인",
+        "description": "민감성 피부/아토피 WARN 확인",
         "group": "demo_scenarios"
       },
       "request": {
@@ -2768,12 +2775,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -2838,12 +2839,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -2869,12 +2864,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -2932,7 +2921,8 @@
               "민감성 피부"
             ],
             "matched_ingredients": [
-              "향료"
+              "향료",
+              "에탄올"
             ],
             "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
             "child_explanation": "유나은 아동은 민감성 피부로 등록되어 있어 향료 성분 사용 시 주의가 필요합니다.",
@@ -3119,7 +3109,7 @@
     },
     {
       "scenario": {
-        "id": 115,
+        "id": 15,
         "scenario_code": "DEMO_PRODUCT_115_WARN",
         "scenario_name": "에끌라도톰한엠보싱물티슈 - 민감성 피부 주의 시나리오",
         "description": "소듐벤조에이트로 민감성 피부 WARN 확인",
@@ -3322,15 +3312,16 @@
   "classroom_demo_responses": [
     {
       "scenario": {
-        "scenario_name": "햇님반 우유 FAIL + 민감성 피부 WARN",
+        "id": 101,
+        "scenario_code": "CLASSROOM_SUN_PRODUCT_102_FAIL",
+        "scenario_name": "햇님반 밀크 프로틴 보습 물티슈 - 사용 보류 시나리오",
+        "description": "햇님반 우유 알레르기 FAIL + 민감성 피부 WARN 확인",
         "group": "classroom_demo_scenarios"
       },
       "request": {
         "facility_id": 1,
         "facility_name": "땅콩어린이집",
         "scope": "CLASSROOM",
-        "classroom_id": 1,
-        "classroom_name": "햇님반",
         "target_child_ids": [
           1,
           2,
@@ -3339,7 +3330,9 @@
           9
         ],
         "product_id": 102,
-        "product_name": "밀크 프로틴 보습 물티슈"
+        "product_name": "밀크 프로틴 보습 물티슈",
+        "classroom_id": 1,
+        "classroom_name": "햇님반"
       },
       "result": {
         "product_name": "밀크 프로틴 보습 물티슈",
@@ -3450,131 +3443,147 @@
     },
     {
       "scenario": {
-        "scenario_name": "햇님반 계란 FAIL",
+        "id": 102,
+        "scenario_code": "CLASSROOM_STAR_PRODUCT_104_FAIL",
+        "scenario_name": "별님반 땅콩버터 크런치바 - 사용 보류 시나리오",
+        "description": "별님반 땅콩 알레르기 FAIL 확인",
         "group": "classroom_demo_scenarios"
       },
       "request": {
         "facility_id": 1,
         "facility_name": "땅콩어린이집",
         "scope": "CLASSROOM",
-        "classroom_id": 1,
-        "classroom_name": "햇님반",
         "target_child_ids": [
-          1,
-          2,
-          3,
-          4,
-          9
+          5,
+          6,
+          7,
+          8,
+          10
         ],
-        "product_id": 103,
-        "product_name": "에그 소프트 쿠키"
+        "product_id": 104,
+        "product_name": "땅콩버터 크런치바",
+        "classroom_id": 2,
+        "classroom_name": "별님반"
       },
       "result": {
-        "product_name": "에그 소프트 쿠키",
+        "product_name": "땅콩버터 크런치바",
         "overall_status": "FAIL",
         "summary": {
-          "pass_count": 4,
+          "pass_count": 3,
           "warn_count": 0,
-          "fail_count": 1,
+          "fail_count": 2,
           "expired_count": 0,
           "unknown_count": 0
         },
-        "overall_summary": "에그 소프트 쿠키 검사 결과 햇님반 5명 중 사용 보류 1명이 확인되었습니다.",
+        "overall_summary": "땅콩버터 크런치바 검사 결과 별님반 5명 중 사용 보류 2명이 확인되었습니다.",
         "teacher_guide": "FAIL 아동에게는 사용을 보류하고 대체 제품을 확인해 주세요.",
         "priority_child_ids": [
-          4
+          5,
+          7
         ],
         "child_results": [
           {
-            "child_id": 1,
-            "child_name": "강민준",
-            "classroom_id": 1,
-            "classroom_name": "햇님반",
-            "status": "PASS",
-            "matched_rules": [],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
-            "child_explanation": "강민준 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
-            "teacher_sentence": "강민준 아동은 일반 사용이 가능합니다."
-          },
-          {
-            "child_id": 2,
-            "child_name": "김서아",
-            "classroom_id": 1,
-            "classroom_name": "햇님반",
-            "status": "PASS",
-            "matched_rules": [],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
-            "child_explanation": "김서아 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
-            "teacher_sentence": "김서아 아동은 일반 사용이 가능합니다."
-          },
-          {
-            "child_id": 3,
-            "child_name": "이도윤",
-            "classroom_id": 1,
-            "classroom_name": "햇님반",
-            "status": "PASS",
-            "matched_rules": [],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
-            "child_explanation": "이도윤 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
-            "teacher_sentence": "이도윤 아동은 일반 사용이 가능합니다."
-          },
-          {
-            "child_id": 4,
-            "child_name": "최하린",
-            "classroom_id": 1,
-            "classroom_name": "햇님반",
+            "child_id": 5,
+            "child_name": "박지호",
+            "classroom_id": 2,
+            "classroom_name": "별님반",
             "status": "FAIL",
             "matched_rules": [
               {
-                "rule_code": "ALLERGY_EGG_001",
+                "rule_code": "ALLERGY_PEANUT_001",
                 "status": "FAIL",
-                "matched_ingredient": "계란",
-                "reason": "계란 알레르기 관련 성분이 포함되어 있습니다."
+                "matched_ingredient": "땅콩버터",
+                "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다."
               }
             ],
             "matched_profiles": [
-              "계란 알레르기"
+              "땅콩 알레르기"
             ],
             "matched_ingredients": [
-              "계란"
+              "땅콩버터"
             ],
-            "reason": "계란 알레르기 관련 성분이 포함되어 있습니다.",
-            "child_explanation": "최하린 아동은 계란 알레르기로 등록되어 있어 계란 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
-            "teacher_sentence": "최하린 아동에게는 계란 성분이 포함된 이 제품 사용을 보류해 주세요."
+            "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다.",
+            "child_explanation": "박지호 아동은 땅콩 알레르기로 등록되어 있어 땅콩버터 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "박지호 아동에게는 땅콩버터 성분이 포함된 이 제품 사용을 보류해 주세요."
           },
           {
-            "child_id": 9,
-            "child_name": "서이준",
-            "classroom_id": 1,
-            "classroom_name": "햇님반",
+            "child_id": 6,
+            "child_name": "정윤서",
+            "classroom_id": 2,
+            "classroom_name": "별님반",
             "status": "PASS",
             "matched_rules": [],
             "matched_profiles": [],
             "matched_ingredients": [],
             "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
-            "child_explanation": "서이준 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
-            "teacher_sentence": "서이준 아동은 일반 사용이 가능합니다."
+            "child_explanation": "정윤서 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
+            "teacher_sentence": "정윤서 아동은 일반 사용이 가능합니다."
+          },
+          {
+            "child_id": 7,
+            "child_name": "오시우",
+            "classroom_id": 2,
+            "classroom_name": "별님반",
+            "status": "FAIL",
+            "matched_rules": [
+              {
+                "rule_code": "ALLERGY_MILK_001",
+                "status": "FAIL",
+                "matched_ingredient": "땅콩버터",
+                "reason": "우유 알레르기 관련 성분이 포함되어 있습니다."
+              }
+            ],
+            "matched_profiles": [
+              "우유 알레르기"
+            ],
+            "matched_ingredients": [
+              "땅콩버터"
+            ],
+            "reason": "우유 알레르기 관련 성분이 포함되어 있습니다.",
+            "child_explanation": "오시우 아동은 우유 알레르기로 등록되어 있어 땅콩버터 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
+            "teacher_sentence": "오시우 아동에게는 땅콩버터 성분이 포함된 이 제품 사용을 보류해 주세요."
+          },
+          {
+            "child_id": 8,
+            "child_name": "한지아",
+            "classroom_id": 2,
+            "classroom_name": "별님반",
+            "status": "PASS",
+            "matched_rules": [],
+            "matched_profiles": [],
+            "matched_ingredients": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
+            "child_explanation": "한지아 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
+            "teacher_sentence": "한지아 아동은 일반 사용이 가능합니다."
+          },
+          {
+            "child_id": 10,
+            "child_name": "유나은",
+            "classroom_id": 2,
+            "classroom_name": "별님반",
+            "status": "PASS",
+            "matched_rules": [],
+            "matched_profiles": [],
+            "matched_ingredients": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
+            "child_explanation": "유나은 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
+            "teacher_sentence": "유나은 아동은 일반 사용이 가능합니다."
           }
         ]
       }
     },
     {
       "scenario": {
-        "scenario_name": "별님반 아토피 WARN",
+        "id": 103,
+        "scenario_code": "CLASSROOM_STAR_PRODUCT_105_WARN",
+        "scenario_name": "별님반 향기 톡톡 키즈 로션 - 주의 필요 시나리오",
+        "description": "별님반 아토피/민감성 피부 WARN 확인",
         "group": "classroom_demo_scenarios"
       },
       "request": {
         "facility_id": 1,
         "facility_name": "땅콩어린이집",
         "scope": "CLASSROOM",
-        "classroom_id": 2,
-        "classroom_name": "별님반",
         "target_child_ids": [
           5,
           6,
@@ -3583,7 +3592,9 @@
           10
         ],
         "product_id": 105,
-        "product_name": "향기 톡톡 키즈 로션"
+        "product_name": "향기 톡톡 키즈 로션",
+        "classroom_id": 2,
+        "classroom_name": "별님반"
       },
       "result": {
         "product_name": "향기 톡톡 키즈 로션",
@@ -3628,12 +3639,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -3659,12 +3664,6 @@
                 "status": "WARN",
                 "matched_ingredient": "향료",
                 "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다."
-              },
-              {
-                "rule_code": "SENSITIVE_DIRECT",
-                "status": "WARN",
-                "matched_ingredient": "에탄올",
-                "reason": "아동 개인 주의 성분 '에탄올' 포함."
               }
             ],
             "matched_profiles": [
@@ -3709,7 +3708,8 @@
               "민감성 피부"
             ],
             "matched_ingredients": [
-              "향료"
+              "향료",
+              "에탄올"
             ],
             "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
             "child_explanation": "유나은 아동은 민감성 피부로 등록되어 있어 향료 성분 사용 시 주의가 필요합니다.",
@@ -3720,15 +3720,163 @@
     },
     {
       "scenario": {
-        "scenario_name": "별님반 땅콩 FAIL",
+        "id": 104,
+        "scenario_code": "CLASSROOM_SUN_PRODUCT_108_EXPIRED",
+        "scenario_name": "햇님반 유통기한 지난 물티슈 - 유통기한 만료 시나리오",
+        "description": "햇님반 유통기한 만료 EXPIRED 확인",
         "group": "classroom_demo_scenarios"
       },
       "request": {
         "facility_id": 1,
         "facility_name": "땅콩어린이집",
         "scope": "CLASSROOM",
-        "classroom_id": 2,
-        "classroom_name": "별님반",
+        "target_child_ids": [
+          1,
+          2,
+          3,
+          4,
+          9
+        ],
+        "product_id": 108,
+        "product_name": "유통기한 지난 물티슈",
+        "classroom_id": 1,
+        "classroom_name": "햇님반"
+      },
+      "result": {
+        "product_name": "유통기한 지난 물티슈",
+        "overall_status": "EXPIRED",
+        "summary": {
+          "pass_count": 0,
+          "warn_count": 0,
+          "fail_count": 0,
+          "expired_count": 5,
+          "unknown_count": 0
+        },
+        "overall_summary": "유통기한 지난 물티슈 검사 결과 햇님반 5명 모두 유통기한 만료로 사용 불가로 확인되었습니다.",
+        "teacher_guide": "유통기한이 지난 제품이므로 사용하지 말고 폐기 또는 교체해 주세요.",
+        "priority_child_ids": [
+          1,
+          2,
+          3,
+          4,
+          9
+        ],
+        "child_results": [
+          {
+            "child_id": 1,
+            "child_name": "강민준",
+            "classroom_id": 1,
+            "classroom_name": "햇님반",
+            "status": "EXPIRED",
+            "matched_rules": [
+              {
+                "rule_code": "EXPIRY_DATE_001",
+                "status": "EXPIRED",
+                "matched_ingredient": "",
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+              }
+            ],
+            "matched_profiles": [],
+            "matched_ingredients": [],
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+            "child_explanation": "강민준 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
+            "teacher_sentence": "강민준 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
+          },
+          {
+            "child_id": 2,
+            "child_name": "김서아",
+            "classroom_id": 1,
+            "classroom_name": "햇님반",
+            "status": "EXPIRED",
+            "matched_rules": [
+              {
+                "rule_code": "EXPIRY_DATE_001",
+                "status": "EXPIRED",
+                "matched_ingredient": "",
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+              }
+            ],
+            "matched_profiles": [],
+            "matched_ingredients": [],
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+            "child_explanation": "김서아 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
+            "teacher_sentence": "김서아 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
+          },
+          {
+            "child_id": 3,
+            "child_name": "이도윤",
+            "classroom_id": 1,
+            "classroom_name": "햇님반",
+            "status": "EXPIRED",
+            "matched_rules": [
+              {
+                "rule_code": "EXPIRY_DATE_001",
+                "status": "EXPIRED",
+                "matched_ingredient": "",
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+              }
+            ],
+            "matched_profiles": [],
+            "matched_ingredients": [],
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+            "child_explanation": "이도윤 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
+            "teacher_sentence": "이도윤 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
+          },
+          {
+            "child_id": 4,
+            "child_name": "최하린",
+            "classroom_id": 1,
+            "classroom_name": "햇님반",
+            "status": "EXPIRED",
+            "matched_rules": [
+              {
+                "rule_code": "EXPIRY_DATE_001",
+                "status": "EXPIRED",
+                "matched_ingredient": "",
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+              }
+            ],
+            "matched_profiles": [],
+            "matched_ingredients": [],
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+            "child_explanation": "최하린 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
+            "teacher_sentence": "최하린 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
+          },
+          {
+            "child_id": 9,
+            "child_name": "서이준",
+            "classroom_id": 1,
+            "classroom_name": "햇님반",
+            "status": "EXPIRED",
+            "matched_rules": [
+              {
+                "rule_code": "EXPIRY_DATE_001",
+                "status": "EXPIRED",
+                "matched_ingredient": "",
+                "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다."
+              }
+            ],
+            "matched_profiles": [],
+            "matched_ingredients": [],
+            "reason": "제품 유통기한이 지나 사용이 권장되지 않습니다.",
+            "child_explanation": "서이준 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
+            "teacher_sentence": "서이준 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
+          }
+        ]
+      }
+    },
+    {
+      "scenario": {
+        "id": 105,
+        "scenario_code": "CLASSROOM_STAR_PRODUCT_115_WARN",
+        "scenario_name": "별님반 에끌라도톰한엠보싱물티슈 - 민감성 피부 주의 시나리오",
+        "description": "별님반 소듐벤조에이트 민감성 피부 WARN 확인",
+        "group": "classroom_demo_scenarios"
+      },
+      "request": {
+        "facility_id": 1,
+        "facility_name": "땅콩어린이집",
+        "scope": "CLASSROOM",
         "target_child_ids": [
           5,
           6,
@@ -3736,23 +3884,25 @@
           8,
           10
         ],
-        "product_id": 104,
-        "product_name": "땅콩버터 크런치바"
+        "product_id": 115,
+        "product_name": "에끌라도톰한엠보싱물티슈",
+        "classroom_id": 2,
+        "classroom_name": "별님반"
       },
       "result": {
-        "product_name": "땅콩버터 크런치바",
-        "overall_status": "FAIL",
+        "product_name": "에끌라도톰한엠보싱물티슈",
+        "overall_status": "WARN",
         "summary": {
           "pass_count": 4,
-          "warn_count": 0,
-          "fail_count": 1,
+          "warn_count": 1,
+          "fail_count": 0,
           "expired_count": 0,
           "unknown_count": 0
         },
-        "overall_summary": "땅콩버터 크런치바 검사 결과 별님반 5명 중 사용 보류 1명이 확인되었습니다.",
-        "teacher_guide": "FAIL 아동에게는 사용을 보류하고 대체 제품을 확인해 주세요.",
+        "overall_summary": "에끌라도톰한엠보싱물티슈 검사 결과 별님반 5명 중 주의 1명이 확인되었습니다.",
+        "teacher_guide": "WARN 아동은 소량 사용 후 반응을 확인해 주세요.",
         "priority_child_ids": [
-          5
+          10
         ],
         "child_results": [
           {
@@ -3760,32 +3910,13 @@
             "child_name": "박지호",
             "classroom_id": 2,
             "classroom_name": "별님반",
-            "status": "FAIL",
-            "matched_rules": [
-              {
-                "rule_code": "ALLERGY_PEANUT_001",
-                "status": "FAIL",
-                "matched_ingredient": "땅콩",
-                "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다."
-              },
-              {
-                "rule_code": "ALLERGY_NUT_001",
-                "status": "FAIL",
-                "matched_ingredient": "견과류",
-                "reason": "견과류 알레르기 관련 성분이 포함되어 있습니다."
-              }
-            ],
-            "matched_profiles": [
-              "땅콩 알레르기",
-              "견과류 알레르기"
-            ],
-            "matched_ingredients": [
-              "땅콩",
-              "견과류"
-            ],
-            "reason": "땅콩 알레르기 관련 성분이 포함되어 있습니다.",
-            "child_explanation": "박지호 아동은 땅콩 알레르기로 등록되어 있어 땅콩 성분이 포함된 제품 사용을 보류하는 것이 좋습니다.",
-            "teacher_sentence": "박지호 아동에게는 땅콩 성분이 포함된 이 제품 사용을 보류해 주세요."
+            "status": "PASS",
+            "matched_rules": [],
+            "matched_profiles": [],
+            "matched_ingredients": [],
+            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
+            "child_explanation": "박지호 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
+            "teacher_sentence": "박지호 아동은 일반 사용이 가능합니다."
           },
           {
             "child_id": 6,
@@ -3831,157 +3962,24 @@
             "child_name": "유나은",
             "classroom_id": 2,
             "classroom_name": "별님반",
-            "status": "PASS",
-            "matched_rules": [],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "아동 건강 프로필과 매칭되는 위험 성분 없음",
-            "child_explanation": "유나은 아동은 등록된 건강 프로필과 매칭되는 위험 성분이 확인되지 않았습니다.",
-            "teacher_sentence": "유나은 아동은 일반 사용이 가능합니다."
-          }
-        ]
-      }
-    },
-    {
-      "scenario": {
-        "scenario_name": "햇님반 유통기한 EXPIRED",
-        "group": "classroom_demo_scenarios"
-      },
-      "request": {
-        "facility_id": 1,
-        "facility_name": "땅콩어린이집",
-        "scope": "CLASSROOM",
-        "classroom_id": 1,
-        "classroom_name": "햇님반",
-        "target_child_ids": [
-          1,
-          2,
-          3,
-          4,
-          9
-        ],
-        "product_id": 108,
-        "product_name": "유통기한 지난 물티슈"
-      },
-      "result": {
-        "product_name": "유통기한 지난 물티슈",
-        "overall_status": "EXPIRED",
-        "summary": {
-          "pass_count": 0,
-          "warn_count": 0,
-          "fail_count": 0,
-          "expired_count": 5,
-          "unknown_count": 0
-        },
-        "overall_summary": "유통기한 지난 물티슈 검사 결과 햇님반 5명 모두 유통기한 만료로 사용 불가로 확인되었습니다.",
-        "teacher_guide": "유통기한이 지난 제품이므로 사용하지 말고 폐기 또는 교체해 주세요.",
-        "priority_child_ids": [
-          1,
-          2,
-          3,
-          4,
-          9
-        ],
-        "child_results": [
-          {
-            "child_id": 1,
-            "child_name": "강민준",
-            "classroom_id": 1,
-            "classroom_name": "햇님반",
-            "status": "EXPIRED",
+            "status": "WARN",
             "matched_rules": [
               {
-                "rule_code": "EXPIRY_DATE_001",
-                "status": "EXPIRED",
-                "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
+                "rule_code": "SKIN_SENSITIVE_001",
+                "status": "WARN",
+                "matched_ingredient": "소듐벤조에이트",
+                "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다."
               }
             ],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
-            "child_explanation": "강민준 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
-            "teacher_sentence": "강민준 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
-          },
-          {
-            "child_id": 2,
-            "child_name": "김서아",
-            "classroom_id": 1,
-            "classroom_name": "햇님반",
-            "status": "EXPIRED",
-            "matched_rules": [
-              {
-                "rule_code": "EXPIRY_DATE_001",
-                "status": "EXPIRED",
-                "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
-              }
+            "matched_profiles": [
+              "민감성 피부"
             ],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
-            "child_explanation": "김서아 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
-            "teacher_sentence": "김서아 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
-          },
-          {
-            "child_id": 3,
-            "child_name": "이도윤",
-            "classroom_id": 1,
-            "classroom_name": "햇님반",
-            "status": "EXPIRED",
-            "matched_rules": [
-              {
-                "rule_code": "EXPIRY_DATE_001",
-                "status": "EXPIRED",
-                "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
-              }
+            "matched_ingredients": [
+              "소듐벤조에이트"
             ],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
-            "child_explanation": "이도윤 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
-            "teacher_sentence": "이도윤 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
-          },
-          {
-            "child_id": 4,
-            "child_name": "최하린",
-            "classroom_id": 1,
-            "classroom_name": "햇님반",
-            "status": "EXPIRED",
-            "matched_rules": [
-              {
-                "rule_code": "EXPIRY_DATE_001",
-                "status": "EXPIRED",
-                "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
-              }
-            ],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
-            "child_explanation": "최하린 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
-            "teacher_sentence": "최하린 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
-          },
-          {
-            "child_id": 9,
-            "child_name": "서이준",
-            "classroom_id": 1,
-            "classroom_name": "햇님반",
-            "status": "EXPIRED",
-            "matched_rules": [
-              {
-                "rule_code": "EXPIRY_DATE_001",
-                "status": "EXPIRED",
-                "matched_ingredient": "",
-                "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다."
-              }
-            ],
-            "matched_profiles": [],
-            "matched_ingredients": [],
-            "reason": "제품 유통기한이 지나 사용을 권장하지 않습니다.",
-            "child_explanation": "서이준 아동에게는 유통기한이 지난 제품 사용을 권장하지 않습니다.",
-            "teacher_sentence": "서이준 아동에게는 유통기한이 지난 이 제품을 사용하지 말아 주세요."
+            "reason": "민감성 피부 아동에게 자극이 될 수 있는 성분입니다.",
+            "child_explanation": "유나은 아동은 민감성 피부로 등록되어 있어 소듐벤조에이트 성분 사용 시 주의가 필요합니다.",
+            "teacher_sentence": "유나은 아동에게 사용할 경우 소량 사용 후 반응을 확인해 주세요."
           }
         ]
       }
