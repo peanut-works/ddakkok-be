@@ -79,6 +79,7 @@ class MatchedRule(BaseModel):
     status: CheckStatus
     matched_ingredient: str
     reason: str
+    source_name: str | None = None
 
 
 class ChildCheckResult(BaseModel):
@@ -139,6 +140,7 @@ def _rules_from_db(db: Session) -> list[dict[str, Any]]:
             "ingredient_keywords": r.ingredient_keywords,
             "severity": r.severity,
             "reason": r.reason,
+            "source_name": r.source_name,
         }
         for r in rows
     ]
@@ -308,6 +310,7 @@ class RuleChecker:
                         status=CheckStatus.UNKNOWN,
                         matched_ingredient="",
                         reason="성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
+                        source_name="OCR 실패 처리 기준",
                     )
                 ],
                 reason="성분표를 확인할 수 없어 안전 여부를 판단할 수 없습니다.",
@@ -330,6 +333,7 @@ class RuleChecker:
                     status=CheckStatus.EXPIRED,
                     matched_ingredient="",
                     reason="제품 유통기한이 지나 사용이 권장되지 않습니다.",
+                    source_name="제품 유통기한 기준",
                 )
             )
 
@@ -358,6 +362,7 @@ class RuleChecker:
                                 status=CheckStatus(rule["severity"]),
                                 matched_ingredient=ingredient,
                                 reason=rule["reason"],
+                                source_name=rule.get("source_name"),
                             )
                         )
                         break  # 같은 규칙에서 중복 추가 방지
@@ -376,6 +381,7 @@ class RuleChecker:
                                 status=CheckStatus.WARN,
                                 matched_ingredient=ingredient,
                                 reason=f"아동 개인 주의 성분 '{sensitive}' 포함.",
+                                source_name="자체 주의 성분 사전",
                             )
                         )
                     break
@@ -388,6 +394,7 @@ class RuleChecker:
                     status=CheckStatus.WARN,
                     matched_ingredient="",
                     reason=f"유통기한이 {_EXPIRY_WARN_DAYS}일 이내로 임박했습니다.",
+                    source_name="제품 유통기한 기준",
                 )
             )
 

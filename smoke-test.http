@@ -140,3 +140,166 @@ Authorization: Bearer {{token}}
 
 ### 인증 없이 호출 (401 확인)
 GET {{baseUrl}}/api/recalls
+
+###############################################
+# 9. 규칙 출처(source_name) 확인 (feature/safety-source)
+###############################################
+
+### 안전 검사 생성 → results[].matched_rules[].source_name 확인
+# @name sourceCheck
+POST {{baseUrl}}/api/safety-checks
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "product_id": 102,
+  "classroom_id": 1,
+  "child_ids": [1, 2]
+}
+# 기대:
+#  - 아동1 FAIL(우유/카제인나트륨) → matched_rules[].source_name = "식품의약품안전처 알레르기 유발물질 표시대상"
+#  - 아동2 WARN(페녹시에탄올 개인 주의성분) → source_name = "자체 주의 성분 사전"
+
+### 상세 조회 → results[].source_name (대표 출처)
+GET {{baseUrl}}/api/safety-checks/{{sourceCheck.response.body.id}}
+Authorization: Bearer {{token}}
+
+### 만료 제품 검사 → EXPIRY 출처 확인 (product 108: 유통기한 지난 물티슈)
+POST {{baseUrl}}/api/safety-checks
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "product_id": 108,
+  "classroom_id": 1,
+  "child_ids": [3]
+}
+# 기대: EXPIRED → matched_rules[].source_name = "제품 유통기한 기준"
+
+### 견과류 자체룰 출처 확인 (product 104: 땅콩버터 크런치바=아몬드 포함, 아동9=견과류 알레르기)
+POST {{baseUrl}}/api/safety-checks
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "product_id": 104,
+  "classroom_id": 1,
+  "child_ids": [9]
+}
+# 기대: FAIL(견과류/아몬드) → matched_rules[].source_name = "자체 견과류 주의 사전"
+
+###############################################
+# 10. 신규 제품 전체 흐름 (파싱 → 저장 → 검사)
+#     라벨 파싱은 GMS 호출. 저장/검사는 RuleChecker.
+###############################################
+
+### [어른 치약] 라벨 파싱 (GMS가 OCR text 구조화)
+POST {{baseUrl}}/api/products/parse-label-text
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "text": "[제품명] 덴티메이트토탈케어치약 [중량] 50g [전성분] 유효성분:일불소인산나트륨,탄산칼슘,피리독신염산염 기타 첨가제:D-소르비톨액, L-멘톨, 라우릴황산나트륨, 로즈마리엑스, 글리세린, 사카린나트륨, 세이지엑스, 자일리톨, 정제수, 카르복시메틸셀룰로오스나트륨, 카모마일추출물, 폴리에틸렌글리콜1500, 함수규산, 향료 [효능 효과] 이를 희게 유지하고 튼튼하게 한다. 불소에 의한 충치 예방. [사용상 주의사항] 이 치약의 불소 함유량은 1,000ppm임. 삼키지 않도록 주의. 만 6세 이하 어린이는 보호자 지도하에 소량 사용. [제조자 및 판매자] (주) 크리오 [사용 기한 및 제조번호] 튜브 상단 별도 표시 의약외품",
+  "category": "ETC"
+}
+
+### [어른 치약] 제품 저장
+# @name createToothpaste
+POST {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "덴티메이트토탈케어치약",
+  "category": "ETC",
+  "manufacturer": "(주)크리오",
+  "raw_ingredients_text": "일불소인산나트륨, 탄산칼슘, 피리독신염산염, D-소르비톨액, L-멘톨, 라우릴황산나트륨, 로즈마리엑스, 글리세린, 사카린나트륨, 세이지엑스, 자일리톨, 정제수, 카르복시메틸셀룰로오스나트륨, 카모마일추출물, 폴리에틸렌글리콜1500, 함수규산, 향료",
+  "ingredients": ["일불소인산나트륨", "탄산칼슘", "피리독신염산염", "D-소르비톨액", "L-멘톨", "라우릴황산나트륨", "로즈마리엑스", "글리세린", "사카린나트륨", "세이지엑스", "자일리톨", "정제수", "카르복시메틸셀룰로오스나트륨", "카모마일추출물", "폴리에틸렌글리콜1500", "함수규산", "향료"]
+}
+
+### [어른 치약] 안전 검사 (민감성 아동2 / 일반 아동3)
+POST {{baseUrl}}/api/safety-checks
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "product_id": {{createToothpaste.response.body.id}},
+  "classroom_id": 1,
+  "child_ids": [2, 3]
+}
+# 기대: 아동2(민감성 피부) WARN(향료), 아동3 PASS
+
+### [물티슈] 라벨 파싱
+POST {{baseUrl}}/api/products/parse-label-text
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "text": "제품명: 순한 아기 물티슈\n제조사: 해커톤생활건강\n성분: 정제수, 향료, 페녹시에탄올, 소듐벤조에이트\n유통기한: 2027.12.31",
+  "category": "WET_TISSUE"
+}
+
+### [물티슈] 제품 저장
+# @name createWipes
+POST {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "순한 아기 물티슈",
+  "category": "WET_TISSUE",
+  "manufacturer": "해커톤생활건강",
+  "expiry_date": "2027-12-31",
+  "raw_ingredients_text": "정제수, 향료, 페녹시에탄올, 소듐벤조에이트",
+  "ingredients": ["정제수", "향료", "페녹시에탄올", "소듐벤조에이트"]
+}
+
+### [물티슈] 안전 검사 (우유 아동1 / 민감성 아동2)
+POST {{baseUrl}}/api/safety-checks
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "product_id": {{createWipes.response.body.id}},
+  "classroom_id": 1,
+  "child_ids": [1, 2]
+}
+# 기대: 아동1(우유) PASS, 아동2(민감성) WARN(향료/페녹시에탄올/소듐벤조에이트)
+
+### [몬스터 음료수] 라벨 파싱
+POST {{baseUrl}}/api/products/parse-label-text
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "text": "제품명: 몬스터 에너지\n제조사: 한국코카콜라\n성분: 정제수, 설탕, 합성향료, 카페인, 타우린, 구연산\n유통기한: 2027.03.31",
+  "category": "FOOD"
+}
+
+### [몬스터 음료수] 제품 저장
+# @name createMonster
+POST {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "몬스터 에너지",
+  "category": "FOOD",
+  "manufacturer": "한국코카콜라",
+  "expiry_date": "2027-03-31",
+  "raw_ingredients_text": "정제수, 설탕, 합성향료, 카페인, 타우린, 구연산",
+  "ingredients": ["정제수", "설탕", "합성향료", "카페인", "타우린", "구연산"]
+}
+
+### [몬스터 음료수] 안전 검사 (우유 아동1 / 민감성 아동2 / 일반 아동3)
+POST {{baseUrl}}/api/safety-checks
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "product_id": {{createMonster.response.body.id}},
+  "classroom_id": 1,
+  "child_ids": [1, 2, 3]
+}
+# 기대: 아동2(민감성) WARN(합성향료→향료), 아동1·3 PASS
+# 참고: 카페인은 RuleChecker 룰 대상이 아니라 알레르기 기준으론 PASS — 카페인 자체 주의는 별도 영역
