@@ -50,6 +50,12 @@ class OpenAIProvider(AIProvider):
             "tools": tools,
             "tool_choice": tool_choice,
         }
+
+        # 구조화 추출(NER)은 결정론적이어야 한다 — 같은 OCR 텍스트면 항상 같은 결과.
+        # temperature=0 고정. (gpt-5 계열은 temperature 미지원이라 생략.)
+        if not self._model.startswith("gpt-5"):
+            request_kwargs["temperature"] = 0.0
+
         response = await self._client.chat.completions.create(**request_kwargs)
         message = response.choices[0].message
         if not message.tool_calls:
