@@ -456,6 +456,59 @@
       "severity": "WARN",
       "reason": "아토피 피부 아동에게 자극 가능성이 있는 성분입니다.",
       "source_name": "자체 주의 성분 사전"
+    },
+    {
+      "rule_code": "FOOD_HONEY_INFANT_001",
+      "target_type": "AGE_CAUTION",
+      "trigger_name": "만 1세 미만",
+      "ingredient_keywords": [
+        "꿀",
+        "벌꿀",
+        "사양벌꿀",
+        "꿀분말",
+        "허니"
+      ],
+      "severity": "WARN",
+      "reason": "꿀 성분이 포함되어 있어 만 1세 미만 영아에게는 제공 전 확인이 필요합니다.",
+      "source_name": "영유아 식품 섭취 주의 기준"
+    },
+    {
+      "rule_code": "FOOD_CAFFEINE_001",
+      "target_type": "AGE_CAUTION",
+      "trigger_name": "카페인 주의",
+      "ingredient_keywords": [
+        "카페인",
+        "커피",
+        "커피추출물",
+        "녹차",
+        "녹차추출물",
+        "홍차",
+        "홍차추출물",
+        "코코아",
+        "초콜릿"
+      ],
+      "severity": "WARN",
+      "reason": "카페인 함유 가능 원재료가 포함되어 있어 어린이 또는 카페인 민감 대상자는 섭취 전 확인이 필요합니다.",
+      "source_name": "어린이 카페인 섭취 주의 기준"
+    },
+    {
+      "rule_code": "FOOD_ALCOHOL_001",
+      "target_type": "AGE_CAUTION",
+      "trigger_name": "알코올성 원재료 확인",
+      "ingredient_keywords": [
+        "주정",
+        "알코올",
+        "에탄올",
+        "럼",
+        "와인",
+        "청주",
+        "미림",
+        "맛술",
+        "리큐르"
+      ],
+      "severity": "WARN",
+      "reason": "알코올성 원재료 또는 조리용 주류 성분이 포함되어 있을 수 있어 아동 제공 전 확인이 필요합니다.",
+      "source_name": "자체 아동 제공 주의 기준"
     }
   ]
 }
